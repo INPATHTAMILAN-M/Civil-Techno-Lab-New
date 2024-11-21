@@ -1,0 +1,278 @@
+Sl.No,Feature,API,Request Type,Header,Type,Body raw json value
+1,Login,http://files.covaiciviltechlab.com/login/,Post,-,Json,"{
+    ""username"": ""emp@gmail.com"",
+    ""password"": ""123""
+}"
+2,Logout,http://files.covaiciviltechlab.com/logout/,get,"key: Authorization, value: Token 0f582457ac760cbb578e5dd04017f19dcc1aeacb",,
+3,Cutomer Create,https://files.covaiciviltechlab.com/create_customer/,Post,"key: Authorization, value: Token Token  c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""user"":""1"",
+    ""phone_no"":""9876543210"",
+    ""gstin_no"":""101022254541111"",
+    ""email"":""v@gmail.com"",
+    ""address1"":""RS Puram, Coimbatore"",
+    ""city1"":""coimbatore"",
+    ""state1"":""Tamilnadu"",
+    ""country1"":""India"",
+    ""pincode1"":""631027"",
+    ""contact_person1"":""cp"",
+    ""mobile_no1"":""9123456789"",
+    ""contact_person_email1"":""c@gmail.com"",
+    ""code"":""5"",
+    ""place_of_testing"":""cbe"",
+    ""address2"":""anna nagar"",
+    ""city2"":""chennai"",
+    ""state2"":""Tamilnadu"",
+    ""country2"":""India"",
+    ""pincode2"":""9876543201"",
+    ""contact_person2"":""cpp"",
+    ""mobile_no2"":""9543216789"",
+    ""contact_person_email2"":""p@gmail.com""
+}"
+,Cutomer List,https://files.covaiciviltechlab.com/customer_list/,Get,,,
+,Cutomer Edit,https://files.covaiciviltechlab.com/edit_customer/10/,Put,,Json,"{
+    ""phone_no"":""9876541111""
+}"
+,Cutomer Delete,https://files.covaiciviltechlab.com/delete_customer/10/,Delete,,,
+4,Employee Create,https://files.covaiciviltechlab.com/create_employee/,Post,"key: Authorization, value: Token Token c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""username"":""user@gmail.com"",
+    ""password"":""12345"",
+    ""employee_name"":""Empolyee1"",
+    ""login_name"":""admin1"",
+    ""address"":""saibaba colony"",
+    ""mobile_number"":""9876543210"",
+    ""phone_number"":""9123456780"",
+    ""email"":""user1@gmail.com"",
+    ""dob"":""2023-11-22"",
+    ""gender"":""M"",
+    ""qualification"":""MBA"",
+    ""joining_date"":""2023-12-11"",
+    ""salary"":""45000"",
+    ""Signature"": 
+}"
+,Employee List,https://files.covaiciviltechlab.com/employee_list/,Get,,,
+,Employee Edit,https://files.covaiciviltechlab.com/edit_employee/12/,Put,,,"{
+    ""username"":""user@gmail.com"",
+    ""password"":""12345"",
+    ""employee_name"":""Empolyee1"",
+    ""login_name"":""admin1"",
+    ""address"":""saibaba colony"",
+    ""mobile_number"":""9876543210"",
+    ""phone_number"":""9123456780"",
+    ""email"":""user1@gmail.com"",
+    ""dob"":""2023-11-22"",
+    ""gender"":""M"",
+    ""qualification"":""MBA1"",
+    ""joining_date"":""2023-12-11"",
+    ""salary"":""49000""
+}"
+,Employee Delete,https://files.covaiciviltechlab.com/delete_employee/12/,Delete,,,
+5,Tax Create,https://files.covaiciviltechlab.com/create_tax/,Post,"key: Authorization, value: Token Token c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""tax_name"":""Sample tax"",
+    ""tax_percentage"":""18"",
+    ""tax_status"":""E""
+}"
+,Tax List,https://files.covaiciviltechlab.com/tax_list/,Get,,,
+,Tax Update,https://files.covaiciviltechlab.com/edit_tax/1/,Put,,,
+,Tax Delete,https://files.covaiciviltechlab.com/delete_tax/1/,Delete,,,
+6,Material Create,https://files.covaiciviltechlab.com/create_material/,Post,"key: Authorization, value: Token Token  c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""material_name"":""Tiles""
+}"
+,Material List,https://files.covaiciviltechlab.com/material_list/,Get,,,
+,Material Update,https://files.covaiciviltechlab.com/edit_material/2/,Put,,,
+,Material Delete,https://files.covaiciviltechlab.com/delete_material/2/,Delete,,,
+7,Report Templates Create,https://files.covaiciviltechlab.com/create_report_template/,Get/Post,"key: Authorization, value: Token Token  c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""material"": 8,
+    ""report_template_name"": ""General_report"",
+    ""template"": ""Example content"",
+    ""print_format"":1,
+    ""letter_pad_logo"": 1
+}"
+,Report Templates List,https://files.covaiciviltechlab.com/report_template_list/,Get,,,
+,Report Templates Update,https://files.covaiciviltechlab.com/edit_report_template/1/,Get/Put,,,
+,Report Templates Delete,https://files.covaiciviltechlab.com/delete_report_template/1/,Delete,,,
+8,Test Create,https://files.covaiciviltechlab.com/create_test/,Get/Post,"key: Authorization, value: Token Token c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""material_name"":3,
+    ""test_name"":""Soundness"",
+    ""price_per_piece"":1111
+
+}"
+,Test List,https://files.covaiciviltechlab.com/test_list/,Get,,,
+,Test Update,https://files.covaiciviltechlab.com/edit_test/4/,Get/Put,,,
+,Test Delete,https://files.covaiciviltechlab.com/delete_test/4/,Delete,,,
+9,Expense Create,https://files.covaiciviltechlab.com/create_expense/,Post,"key: Authorization, value: Token Token c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""expense_name"":""Salary""
+}"
+,Expense List,https://files.covaiciviltechlab.com/expense_list/,Get,,,
+,Expense Edit,https://files.covaiciviltechlab.com/edit_expense/8/,Put,,Json,"{
+    ""expense_name"":""Salary""
+}"
+,Expense Delete,https://files.covaiciviltechlab.com/delete_expense/8/,Delete,,,
+10,Expense User Create,https://files.covaiciviltechlab.com/create_expense_user/,Post,"key: Authorization, value: Token Token c00455f113c50b7cbd6feb2decab92759b9877e2",Json,"{
+    ""name"":""ISO Consultancy"",
+    ""phone"":""9087654321"",
+    ""address"":""saibaba colony""
+}"
+,Expense User List,https://files.covaiciviltechlab.com/expense_user_list/,Get,,,
+,Expense User Update,https://files.covaiciviltechlab.com/edit_expense_user/11/,Put,,,
+,Expense User Delete,https://files.covaiciviltechlab.com/delete_expense_user/11/,Delete,,,
+11,Invoice Create,https://files.covaiciviltechlab.com/create_invoice/,Get / Post,"key: Authorization, value: Token Token beadd7a200daa71b76d7737c878b5098e9f13633",Json,"{
+    ""customer"":27,
+    ""sales_mode"":1,
+    ""project_name"": ""Mr.Jeyapal's Residence, Vellanaipatti, Coimbatore""
+}"
+,Invoice List,https://files.covaiciviltechlab.com/invoice_list/,Get,,,
+,Invoice Update,https://files.covaiciviltechlab.com/edit_invoice/1/,Get / Put,,Json,"{
+        ""id"": 1,
+        ""customer"": 27,
+        ""sales_mode"": 2,
+        ""project_name"": ""Mr.Jeyapal's Residence, Vellanaipatti, Coimbatore"",
+         ""tax"":9
+    }"
+,Invoice Delete,https://files.covaiciviltechlab.com/delete_invoice/1/,Delete,,,
+12,Get Material Test,https://files.covaiciviltechlab.com/get_material_test/,Get,,,
+13,Invoice Test Create,https://files.covaiciviltechlab.com/create_invoice_test/,Post,"key: Authorization, value: Token Token beadd7a200daa71b76d7737c878b5098e9f13633",Json,"[
+{
+    ""invoice"":17,
+    ""test"":10,
+    ""quantity"":2,
+    ""price_per_sample"":200,
+    ""total"":400
+}
+,
+{
+    ""invoice"":17,
+    ""test"":11,
+    ""quantity"":2,
+    ""price_per_sample"":200,
+    ""total"":400
+}
+]"
+,Invoice Test List,https://files.covaiciviltechlab.com/invoice_test_list/21/,Get ( 21 invoice id),,,
+,Invoice Test Update,https://files.covaiciviltechlab.com/edit_invoice_test/1/,Get / Put,,Json,"{
+    ""quantity"":2,
+    ""price_per_sample"":32,
+    ""total"":64
+}"
+,Invoice Test Delete,https://files.covaiciviltechlab.com/delete_invoice_test/1/,Delete,,,
+14,Receipt,,,,,
+15,Pending payements,http://files.covaiciviltechlab.com/pending_payment,,,,
+16,Expesnse Entry Create,https://files.covaiciviltechlab.com/create_expense_entry/,Get / Post,"key: Authorization, value: Token Token beadd7a200daa71b76d7737c878b5098e9f13633",Json,"{
+    ""date"":""2023-12-12"",
+    ""expense_user"":""7"",
+    ""expense_category"":""1"",
+    ""amount"":""9999"",
+    ""narration"":"" sample expense""
+
+
+}"
+,Expesnse Entry List,https://files.covaiciviltechlab.com/expense_entry_list/,Get,,,
+,Expesnse Entry Update,https://files.covaiciviltechlab.com/edit_expense_entry/1/,Get / Put,,,
+,Expesnse Entry Delete,https://files.covaiciviltechlab.com/delete_expense_user/1/,Delete,,,
+17,Invoice file upload create,127.0.0.1:8000/create_invoice_file_upload/,post/ formdata,"invoice, file",,
+,Invoice file upload list, 127.0.0.1:8000/invoice_file_upload_list/,get ,,,
+,Invoice file upload edit, 127.0.0.1:8000/edit_invoice_file_upload/7/,put method,,,
+,Invoice file upload delete,127.0.0.1:8000/delete_invoice_file_upload/8/,delete,,,
+,,,,,,
+,,,,,,
+18,Testing Report,,,,,
+19,Sale Report,https://files.covaiciviltechlab.com/sale_report/,get,to get customer drop down values,,
+,Sale Report search,http://files.covaiciviltechlab.com/sale_report/,post method,"raw json
+{
+    ""project_name"":""Demo"",
+    ""from_date"":""2023-12-30"",
+    ""to_date"":"""",
+    ""customer"":""6""
+}",,
+,,,,,,
+20,Expense Report,127.0.0.1:8000/expense_report/,get method,,,
+21,Ledger,,,,,
+,,,,,,
+22,,/edit_invoice_test_template/1/,,,,
+,,,,,,
+,,,,,,
+23,Change password,http://files.covaiciviltechlab.com/change-password/,Post ,,{,
+,,,,,"""old_password"":""123"",",
+,,,,,"""new_password"":""123"",",
+,,,,,"""confirm_new_password"":""123""",
+,,,,,,
+,,,,,},
+,,,,,,
+24,Payment add,http://files.covaiciviltechlab.com/add_payment/1/,"Post
+
+1 - Invoice id",Token ,"{
+    ""payment_mode"":""upi"",
+    ""cheque_number"":"""",
+    ""upi"":""22222222111"",
+    ""date"":""2023-12-12"",
+    ""amount"":100
+}",
+,,,,,,
+,,,,,,
+25,Payment Edit,http://files.covaiciviltechlab.com/edit_payment/4/,"Post
+
+4 - payment id",,"{
+    ""payment_mode"":""upi"",
+    ""cheque_number"":"""",
+    ""upi"":""22222222111"",
+    ""date"":""2023-12-12"",
+    ""amount"":100
+}",
+,,,,,,
+,,,,,,
+26,Payment delete,http://files.covaiciviltechlab.com/delete_payment/4/,4 payment id,,,
+,,,,,,
+,,,,,,
+,,,,,,
+27,Expense report filter,http://files.covaiciviltechlab.com/expense_report/,"Post method 
+with header","{
+    ""expense_user"":""alagu"",
+    ""expense_category"":1,
+    ""from_date"":"""",
+    ""to_date"":""2024-01-25""
+    
+}",,
+,,,,,,
+28,Invoice filter,http://files.covaiciviltechlab.com/invoice_list/,"Post method 
+with header","{
+    ""from_date"":"""",
+    ""to_date"":"""",
+    ""customer"":"""",
+    ""project_name"":"""",
+    ""completed"":""""
+}",,
+,,,,,,
+29,Pending payment filter,http://files.covaiciviltechlab.com/pending_payment/,"Post method 
+with header","{
+    ""from_date"":"""",
+    ""to_date"":"""",
+    ""customer"":"""",
+    ""project_name"":"""",
+    ""invoice_no"":""002""
+}",,
+,,,,,,
+,,,,,,
+30,Epense entry filter ,http://files.covaiciviltechlab.com/expense_entry_list/,"Post method 
+with header","{
+    ""from_date"":"""",
+    ""to_date"":"""",
+    ""expense_user"":"""",
+    ""expense_category"":""""
+}",,
+,,,,,,
+,,,,,,
+31,File upload filter,http://files.covaiciviltechlab.com/invoice_file_upload_list/,"Post method 
+with header","{
+    ""from_date"":"""",
+    ""to_date"":"""",
+    ""invoice_no"":"""",
+    ""category"":""""
+}",,
+,,,,,,
+32,Test List,http://files.covaiciviltechlab.com/test-list/,"Post method 
+with header","{
+    ""material"":"""",
+    ""from_date"":"""",
+    ""to_date"":"""",
+    ""customer"":"""",
+    ""test"":""""
+}",,

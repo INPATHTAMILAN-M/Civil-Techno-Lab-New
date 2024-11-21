@@ -1,0 +1,31 @@
+version: "3"
+services:
+  db:
+    image: mysql:8.0  # Specify MySQL version
+    container_name: civil-db
+    environment:
+      MYSQL_DATABASE: civil  # Database name
+      MYSQL_PASSWORD: civil  # Password for the user
+      MYSQL_ROOT_PASSWORD: civil  # Root password
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persistent storage for MySQL data
+      - ./mysql_init:/docker-entrypoint-initdb.d
+
+    networks:
+      - django_mysql_network
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  mysql_data:
+
+networks:
+  django_mysql_network:
