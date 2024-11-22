@@ -15,7 +15,7 @@ from account.serializers import Employee_Serializer
 from account.models import Employee
 from datetime import datetime
 from general.serializers import Create_Material_Serializer,Test_Serializer1
-
+from django.conf import settings
 
 class Create_Expense_Entry(APIView):
     
@@ -375,10 +375,10 @@ class Create_Invoice_Test(APIView):
                 data = data.replace('Date :', date)
 
                 if i_test.test.material_name.material_name == 'Rebound Hammer':
-                    data = data.replace('<td colspan="2">&nbsp;</td>', '<td colspan="2"><img alt="Logo" src="https://files.covaiciviltechlab.com/static/header-hammer.png" style="width:100%" /> </td>',1)
+                    data = data.replace('<td colspan="2">&nbsp;</td>', f'<td colspan="2"><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/header-hammer.png" style="width:100%" /> </td>',1)
                     data = data.replace('ULR:',f"ULR: {i_test.ulr}")
                 else:                
-                    data = data.replace('<td colspan="2">&nbsp;</td>', '<td colspan="2"><img alt="Logo" src="https://files.covaiciviltechlab.com/static/header.gif" style="width:100%" /> </td>',1)
+                    data = data.replace('<td colspan="2">&nbsp;</td>', f'<td colspan="2"><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/header.gif" style="width:100%" /> </td>',1)
                 data = data.replace('Place of Testing Name', str(i_test.invoice.place_of_testing))
                 data = data.replace('Project Name', str(i_test.invoice.project_name))
                 qr = qrcode.QRCode(
@@ -403,7 +403,7 @@ class Create_Invoice_Test(APIView):
         
                 i_test.invoice_image = invoice_img_path
                  
-                data = data.replace('qr code', '<img height="120", width="120" src="https://files.covaiciviltechlab.com/'+invoice_img_path+'">')
+                data = data.replace('qr code', f'<img height="120", width="120" src="{settings.BACKEND_DOMAIN}/'+invoice_img_path+'">')
              
                 i_test.report_template = data
 
@@ -730,7 +730,7 @@ class Edit_Invoice_Test_Template(APIView):
                 # Check if the div with the specified class exists
                 if div_to_modify:
                     # Modify the content of the div
-                    img_element = soup.new_tag('img', src='https://files.covaiciviltechlab.com/media/'+str(serializer.signature.signature))
+                    img_element = soup.new_tag('img', src=f'{settings.BACKEND_DOMAIN}/media/'+str(serializer.signature.signature))
 
 
                     div_to_modify.replace_with(img_element)
@@ -781,7 +781,7 @@ def qr(request):
     )
 
     # Add data to the QR code
-    qr.add_data("https://files.covaiciviltechlab.com/create_invoice/")
+    qr.add_data(f"{settings.BACKEND_DOMAIN}/create_invoice/")
     qr.make(fit=True)
 
     # Create an image from the QR code

@@ -151,6 +151,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
+BACKEND_DOMAIN = 'http://app.covaicivillab.com'
 
 CKEDITOR_CONFIGS = {
     'default': {

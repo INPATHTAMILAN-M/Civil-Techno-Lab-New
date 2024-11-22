@@ -108,6 +108,15 @@ DATABASES = {
     }
 }
 
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',  # Use SQLite database engine
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # The name of the SQLite database
+#     }
+# }
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -132,16 +141,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "static_collect")
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR.parent, "static")]
+ 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 
 ALLOWED_HOSTS=['*']
@@ -151,6 +160,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
+BACKEND_DOMAIN = 'http://app.covaicivillab.com'
 
 CKEDITOR_CONFIGS = {
     'default': {
