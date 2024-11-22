@@ -702,7 +702,6 @@ class Sale_Report(APIView):
 class Edit_Invoice_Test_Template(APIView):
 
     def get(self, request,id):
-    
         invoice_test_object = Invoice_Test.objects.get(id=id)
         invoice_test = Invoice_Test_Serializer(invoice_test_object)
         invoice = Invoice.objects.get(id=invoice_test_object.invoice.id)
