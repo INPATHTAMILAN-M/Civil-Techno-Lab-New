@@ -114,12 +114,12 @@ class Invoice_Test_Serializer(serializers.ModelSerializer):
     test_name = serializers.SerializerMethodField()
     final_html = serializers.SerializerMethodField()
     count = serializers.SerializerMethodField()
-
+    without_signature = serializers.SerializerMethodField()
     without_header_footer = serializers.SerializerMethodField()
 
     class Meta:
         model = Invoice_Test
-        fields = ['id','invoice','test','test_name','quantity','price_per_sample','total','report_template','final_html','count','completed','signature','invoice_image','without_header_footer','is_authorised_signatory']   
+        fields = ['id','invoice','test','test_name','quantity','price_per_sample','total','report_template','final_html','count','completed','signature','invoice_image','without_signature','without_header_footer','is_authorised_signatory']   
 
     def get_test_name(self,obj):
         return obj.test.test_name
@@ -130,11 +130,15 @@ class Invoice_Test_Serializer(serializers.ModelSerializer):
     def get_without_header_footer(self,obj):
 
         if obj.signature:
-           
             data  = obj.report_template
             soup = BeautifulSoup(data, 'html.parser')
             # Find and remove the image tag with the specific src
             img_tag = soup.find('img', {'src': f'{settings.BACKEND_DOMAIN}/static/header-hammer.png'})
+            if img_tag:
+                img_tag.extract()
+
+
+            img_tag = soup.find('img', {'src': 'https://files.covaiciviltechlab.com/static/header.gif'})
             if img_tag:
                 img_tag.extract()
 
@@ -185,6 +189,11 @@ class Invoice_Test_Serializer(serializers.ModelSerializer):
             if img_tag:
                 img_tag.extract()
 
+
+            img_tag = soup.find('img', {'src': 'https://files.covaiciviltechlab.com/static/header.gif'})
+            if img_tag:
+                img_tag.extract()
+
             # Convert back to string after modification
             data = str(soup)
             data = data.replace(f'<img src="{settings.BACKEND_DOMAIN}/static/header.gif" alt="Logo">','')  
@@ -227,7 +236,61 @@ class Invoice_Test_Serializer(serializers.ModelSerializer):
             return None
 
     
+    def get_without_signature(self,obj): 
+        
+        if obj.signature:   
+            data  = obj.report_template
+            soup = BeautifulSoup(data, 'html.parser')
+            # Find and remove the image tag with the specific src
+            img_tag = soup.find('img', {'src': f'{settings.BACKEND_DOMAIN}/static/header-hammer.png'})
+            if img_tag:
+                img_tag.extract()
+
+
+            img_tag = soup.find('img', {'src': 'https://files.covaiciviltechlab.com/static/header.gif'})
+            if img_tag:
+                img_tag.extract()
+
+            # Convert back to string after modification
+            data = str(soup)
+            data = data.replace(f'<img src="{settings.BACKEND_DOMAIN}/static/header.gif" alt="Logo">','')  
+            data = data.replace(f'<img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/header.gif"/>','')                        
+            data = data.replace('<tr>','',1)
+            data = data.replace('<td colspan="2">','',1)
+            data = data.replace('</td>','',1)
+            data = data.replace('</tr>','',1)
+            data = data + f'<figure class="table"><table cellpadding="0" cellspacing="1" border="0" style="border:none !important; border-spacing:0.6pt; width:100%"><tr><td width="40%" style="border:none !important;"><p><img src="{settings.BACKEND_DOMAIN}/static/ragu r.png"  height="150px" width="150px"></p><p style="text-align:justify"><strong>M.RAGURAM, ME (STRUCTURAL)., AMIE <br>CHARTERED ENGINEER (AM 1818123)<br>Covai Civil Lab Private Limited </strong></p></td><td width="40%"  style="border:0 !important;"><p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" height="38px" width="38px"></p><p id="dynamic-signature"></p><p style="font-size:12px"><strong style="font-size:12px">'+str(obj.signature)+'<br>'+str(obj.signature.role)+f'</strong></p><p style="font-size:12px"><strong>Covai Civil Lab Private Limited</strong></p>  </td> <td width="20%"  style="border:0 !important;" class="qr-code"> <img src="{settings.BACKEND_DOMAIN}/'+str(obj.invoice_image)+'" ></td> </tr></table></figure>'
+            soup = BeautifulSoup(data, 'html.parser')
+            first_table = str(soup.select_one("table:nth-of-type(1)"))    
+            text_to_replace = "Page Break"
+            # Replace text
+            count = 1
     
+        
+        
+            text_occurrences = soup.find_all('p', text=re.compile('Page Break'))
+            for element in text_occurrences:  
+                count = count +1                
+                first_table_updated = first_table.replace('Page No: 1','Page No: '+str(count)) 
+                first_table_updated = first_table.replace('Page No:1','Page No: '+str(count)) 
+                first_table_updated = first_table.replace('Page No:   1','Page No: '+str(count)) 
+                first_table_updated = first_table_updated.replace('<table','<table style="margin-bottom:10px !important" class="pagebreak"')        
+                new_content = BeautifulSoup(first_table_updated, 'html.parser') 
+                tr_elements = new_content.find_all('tr')
+
+                # Check if there are at least three <tr> elements
+                if len(tr_elements) >= 3:
+                    # Remove the third <tr> element
+                    tr_elements[2].decompose()            
+                element.replace_with(new_content)
+                    
+            soup.prettify()
+            data  = str(soup)
+            #data = data.replace('Page Break','<div class="pagebreak"> </div>')
+            return data
+        else:
+            None
+
     def get_final_html(self,obj):
 
         if obj.signature:
@@ -235,6 +298,7 @@ class Invoice_Test_Serializer(serializers.ModelSerializer):
             data = data.replace('Page Break','<div class="pagebreak"> </div>')
             data = data +f'<figure class="table"><table cellpadding="0" cellspacing="1" border="0" style="border:none !important; border-spacing:0.6pt; width:100%"><tr><td width="40%" style="border:none !important;"><p><img src="{settings.BACKEND_DOMAIN}/static/ragu r.png"  height="150px" width="150px"></p><p style="font-size:12px"><strong  style="font-size:12px">M.RAGURAM, ME (STRUCTURAL)., AMIE <br>CHARTERED ENGINEER (AM 1818123)<br>Covai Civil Lab Private Limited </strong></p></td><td width="40%"  style="border:0 !important;"><p id="dynamic-signature"><img src="{settings.BACKEND_DOMAIN}/media/'+str(obj.signature.signature)+'" height="150px" width="150px"></p><p style="font-size:12px"><strong style="font-size:12px">'+str(obj.signature)+'<br>'+str(obj.signature.role)+f'</strong></p><p style="font-size:12px"><strong>Covai Civil Lab Private Limited</strong></p> </td> <td width="20%"  style="border:0 !important;" class="qr-code"> <img src="{settings.BACKEND_DOMAIN}/'+str(obj.invoice_image)+f'" ></td> </tr> <tr><td colspan="3" style="border:0 !important;"> <hr style="color: #000;"></td></tr> <tr style="border-spacing:0.6pt; border:0 !important;"> <td colspan="3" style="border:0px !important; border-style:inset; border-width:0.75pt; vertical-align:middle"> <p><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/test-footer.png" style="width:100%" /></p> </td> </tr> </table></figure>'
             return data
+
         elif obj.is_authorised_signatory:
             data = obj.report_template
             data = data.replace('Page Break','<div class="pagebreak"> </div>')

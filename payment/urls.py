@@ -7,21 +7,17 @@ urlpatterns = [
     path('expense_entry_list/', views.List_Expense_Entry.as_view(), name='expense_entry_list'),
     path('edit_expense_entry/<int:id>/', views.Edit_Expense_Entry.as_view(), name='edit_expense_entry'),
     path('delete_expense_entry/<int:id>/', views.Delete_Expense_Entry.as_view(), name='delete_expense_entry'),
-
     path('create_invoice/', views.Create_Invoice.as_view(), name='create_invoice'),
     path('invoice_list/', views.List_Invoice.as_view(), name='invoice_list'),
     path('edit_invoice/<int:id>/', views.Edit_Invoice.as_view(), name='edit_invoice'),
     path('delete_invoice/<int:id>/', views.Delete_Invoice.as_view(), name='delete_invoice'),
-
     path('get_material_test/', views.Material_Test.as_view(), name='material_test'),
     path('create_invoice_test/', views.Create_Invoice_Test.as_view(), name='create_invoice_test'),
     path('invoice_test_list/<int:id>/', views.List_Invoice_Test.as_view(), name='invoice_test_list'),
     path('edit_invoice_test/<int:id>/', views.Edit_Invoice_Test.as_view(), name='edit_invoice_test'),
     path('delete_invoice_test/<int:id>/', views.Delete_Invoice_Test.as_view(), name='delete_invoice_test'),
-
     path('edit_invoice_test_template/<int:id>/', views.Edit_Invoice_Test_Template.as_view(), name='edit_invoice_test_template'),
-
-   path('preview_invoice_test_template/<int:id>/', views.Preview_Invoice_Test_Template.as_view(), name='preview_invoice_test_template'),
+    path('preview_invoice_test_template/<int:id>/', views.Preview_Invoice_Test_Template.as_view(), name='preview_invoice_test_template'),
 
 
     #madhan
