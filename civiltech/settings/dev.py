@@ -92,20 +92,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'civiltech.wsgi.application'
 
 DATABASES = {
-
    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'civil_new',
         'USER': 'repute',
-        'PASSWORD': 'PNR4erp!!!',
-        'HOST': 'localhost',
-        'PORT': '',
-        'CONN_MAX_AGE': None,
+        'PASSWORD': 'PNR4erp!!!',  
+        'HOST': 'localhost',  
+        'PORT': '', 
+        'CONN_MAX_AGE': 3600,
+        'CONN_HEALTH_CHECKS': True,
         'OPTIONS': {
-        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'", 
         },
     }
 }
+
 
 
 # Password validation
