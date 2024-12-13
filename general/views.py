@@ -18,7 +18,7 @@ class Manage_Tax(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get(self, request, *args, **kwargs):
-        taxes = Tax.objects.all()
+        taxes = Tax.objects.all().order_by('-id')
         serializer = Tax_Serializer(taxes, many=True)  
         return Response(serializer.data)
     
@@ -77,7 +77,7 @@ class Create_Material(APIView):
 class Manage_Material(APIView):
 
     def get(self, request, *args, **kwargs):
-        materials = Material.objects.all()
+        materials = Material.objects.all().order_by('-id')
         serializer = Material_Serializer(materials, many=True)
         return Response(serializer.data)
 
@@ -216,7 +216,7 @@ class Create_Test(APIView):
 
 class List_Test(APIView):
     def get(self, request, *args, **kwargs):
-        tests = Test.objects.all()
+        tests = Test.objects.all().order_by('-id')
         serializer = Test_Serializer(tests, many=True)
         return Response(serializer.data)
 
@@ -268,7 +268,7 @@ class Manage_Expense(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, *args, **kwargs):
-        expenses = Expense.objects.all()
+        expenses = Expense.objects.all().order_by('-id')
         serializer = Expense_Serializer(expenses, many=True)
         return Response(serializer.data)
 

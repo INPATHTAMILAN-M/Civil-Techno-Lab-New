@@ -161,14 +161,15 @@ class Manage_Employee(APIView):
         empolyee_serializer = Create_Employee_Serializer(data=request.data,partial=True)
         if user_serializer.is_valid() and empolyee_serializer.is_valid():
             user_serializer = user_serializer.save()
+            employee_group = Group.objects.get(name='Employee')
+            user_serializer.groups.add(employee_group)       
+            user_serializer.save()     
             empolyee_serializer = empolyee_serializer.save(user=user_serializer,created_by=request.user, modified_by=request.user)
             return Response({'created':True}, status=status.HTTP_201_CREATED)
         else:
             errors = dict()
             if user_serializer.errors:
                 errors['user'] = user_serializer.errors
-
-            print(empolyee_serializer.is_valid())
 
             if not empolyee_serializer.is_valid():
                 errors['employee'] = empolyee_serializer.errors
@@ -240,7 +241,7 @@ class Manage_City(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get(self, request, *args, **kwargs):
-        cities = City.objects.all()
+        cities = City.objects.all().order_by('-id')
         serializer = City_Serializer(cities, many=True)  
         context = {
             'cities':serializer.data,

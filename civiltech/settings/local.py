@@ -14,8 +14,7 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -100,7 +99,7 @@ WSGI_APPLICATION = 'civiltech.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-        'NAME': 'civil',                 # The name of the MySQL database
+        'NAME': 'civil_new',                 # The name of the MySQL database
         'USER': 'root',                        # MySQL username
         'PASSWORD': 'civil',           # MySQL password
         'HOST': '127.0.0.1',  # The name of the MySQL container or its IP address
@@ -141,10 +140,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR.parent, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
  
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -160,7 +159,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
-BACKEND_DOMAIN = 'http://app.covaicivillab.com'
+BACKEND_DOMAIN = 'https://63fkxqqj-8000.inc1.devtunnels.ms'
 
 CKEDITOR_CONFIGS = {
     'default': {

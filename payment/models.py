@@ -24,7 +24,7 @@ class Invoice(models.Model):
     sales_mode = models.ForeignKey(SalesMode, on_delete=models.CASCADE,null=True,blank=True)
     project_name = models.CharField(max_length=255)
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    tax = models.ManyToManyField(Tax)
+    tax = models.ManyToManyField(Tax,null=True,blank=True)
     advance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -48,6 +48,7 @@ class Invoice(models.Model):
     modified_date = models.DateTimeField(auto_now=True,null=True)
     place_of_testing = models.CharField(max_length=255, null=True, blank=True)
     completed = models.CharField(max_length=6, choices= invoice_test_choices,default="No")
+    is_old_invoice_format = models.BooleanField(default=False)
 
 
     '''material = models.ForeignKey(Material, on_delete=models.CASCADE)

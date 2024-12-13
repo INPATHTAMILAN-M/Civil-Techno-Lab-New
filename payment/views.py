@@ -1,4 +1,3 @@
-from django.shortcuts import render,redirect
 from rest_framework.views import APIView
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
@@ -6,7 +5,6 @@ from rest_framework import status
 from general.models import Material,Expense,Test,Tax
 from .models import Expense_Entry,Invoice,SalesMode,Invoice_Test, Invoice_File, Invoice_File_Category, Receipt
 from account.models import Customer
-#from general.serializers import Material_Serializer1
 from .serializers import Create_Expense_Entry_Serializer,Expense_Entry_Serializer,Expense_Serializer1,Create_Invoice_Serializer,Invoice_Serializer,Customer_Serializer1,Sales_mode_Serializer1,Tax_Serializer1,Material_Test_Serializer,Material_Serializer2,Create_Invoice_Test_Serializer,Invoice_Test_Serializer,Invoice_Serializer1,Test_serializer, Pending_Invoice_Serializer, Create_Invoice_File_Serializer, Invoice_File_Serializer, Expense_Entry_Serializer1, Customer_Serializer_For_Invoice, Invoice_Serializer_For_Report, Edit_Invoice_Serializer, Invoice_Serializer_For_Print, Customer_Serializer_For_Print, Invoice_Test_Serializer_For_Print, Invoice_File_Category_Serializer, Invoice_Serializer_For_Dashboard, Receipt_Serializer, Receipt_Serializer_List, Invoice_Report, Expense_File_Report_Serializer, Invoice_File_Report_Serializer, Test_List_Serializer
 from django.db.models import Sum, Q
 import json
@@ -46,8 +44,6 @@ class List_Expense_Entry(APIView):
         serializer = Expense_Entry_Serializer(expense_entries, many=True)
         return Response(serializer.data)
     
-
-
     def post(self, request):
         expense_user = request.data['expense_user']
         expense_category = request.data['expense_category']
@@ -73,7 +69,6 @@ class List_Expense_Entry(APIView):
     
 
 class Edit_Expense_Entry(APIView):
-
     def get(self, request,id): 
         expense = Expense.objects.all()
         expense_serializer = Expense_Serializer1(expense, many=True)      
@@ -1163,7 +1158,8 @@ class Test_List(APIView):
         return Response(context)
         
 
-
+def modify(requst):
+    invoices = Invoice.objects.exclude(invoice_no__contains='/').update(is_old_invoice_format=True)
 
 
     

@@ -18,40 +18,23 @@ urlpatterns = [
     path('delete_invoice_test/<int:id>/', views.Delete_Invoice_Test.as_view(), name='delete_invoice_test'),
     path('edit_invoice_test_template/<int:id>/', views.Edit_Invoice_Test_Template.as_view(), name='edit_invoice_test_template'),
     path('preview_invoice_test_template/<int:id>/', views.Preview_Invoice_Test_Template.as_view(), name='preview_invoice_test_template'),
-
-
     #madhan
     path('pending_payment/', views.Pending_Payment.as_view(), name='pending payment'),
-
-    
     #invoice file upload
     path('create_invoice_file_upload/', views.Create_Invoice_File_Upload.as_view(), name='create_invoice_file_upload'),
     path('invoice_file_upload_list/', views.Manage_Invoice_File_Upload.as_view(), name='invoice_file_upload_list'),
     path('edit_invoice_file_upload/<int:id>/', views.Update_Invoice_File_Upload.as_view(), name='edit_invoice_file_upload'),
     path('delete_invoice_file_upload/<int:id>/', views.Manage_Invoice_File_Upload.as_view(), name='delete_invoice_file_upload'),
-    
     path('expense_report/', views.Expense_Report.as_view(), name='expense_report'),
-
-
     path('sale_report/', views.Sale_Report.as_view(), name='sale_report'),
-
     path('qr/', views.qr, name='qr'),
-
-
     path('print_invoice/<int:pk>/', views.Print_Invoice.as_view(), name='Print_invoice'),
-
     path('dashboard/', views.Dashboard.as_view(), name='dashboard'),
-
-
     path('add_payment/<int:pk>/', views.Add_Payment.as_view(), name='add_payment'),
     path('edit_payment/<int:pk>/', views.Edit_Payment.as_view(), name='edit_payment'),
     path('delete_payment/<int:id>/', views.Delete_Payment.as_view(), name='delete_payment'),
-
-
     path('expense_file_report/', views.Expense_File_Report.as_view(), name='expense_file_report'),
     path('invoice_file_report/', views.Invoice_File_Report.as_view(), name='invoice_file_report'),
-
-
     path('test-list/', views.Test_List.as_view(), name='test-list'),
 
         
