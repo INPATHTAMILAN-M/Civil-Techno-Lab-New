@@ -94,7 +94,7 @@ WSGI_APPLICATION = 'civiltech.wsgi.application'
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'civil-version-2',
+        'NAME': 'civil_new',
         'USER': 'repute',
         'PASSWORD': 'PNR4erp!!!',  
         'HOST': 'localhost',  
