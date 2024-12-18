@@ -156,7 +156,6 @@ class Customer_List(APIView):
 class Manage_Employee(APIView):
 
     def post(self, request, *args, **kwargs):
-
         user_serializer = UserSerializer(data=request.data)
         empolyee_serializer = Create_Employee_Serializer(data=request.data,partial=True)
         if user_serializer.is_valid() and empolyee_serializer.is_valid():
@@ -170,10 +169,8 @@ class Manage_Employee(APIView):
             errors = dict()
             if user_serializer.errors:
                 errors['user'] = user_serializer.errors
-
             if not empolyee_serializer.is_valid():
                 errors['employee'] = empolyee_serializer.errors
-
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, *args,**kwargs):
