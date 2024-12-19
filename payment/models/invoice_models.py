@@ -18,7 +18,6 @@ class SalesMode(models.Model):
         return self.sales_mode
 
 class Invoice(models.Model):
-
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     sales_mode = models.ForeignKey(SalesMode, on_delete=models.CASCADE,null=True,blank=True)
     project_name = models.CharField(max_length=255)

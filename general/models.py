@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import  date
-from ckeditor_uploader.fields import RichTextUploadingField
 
 tax_status_choices= [('E','Enable'),('D','Disable'),]
 
@@ -16,6 +14,10 @@ class Tax(models.Model):
 
     def __str__(self):
         return self.tax_name
+    
+    def calculate_tax(self, amount):
+        tax_amount = (self.tax_percentage / 100) * amount
+        return tax_amount
 
 
 class Print_Format(models.Model):

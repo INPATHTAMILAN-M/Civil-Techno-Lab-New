@@ -8,8 +8,8 @@ project = config('PROJECT', default='dev')
 
 # Determine which settings to import based on the project variable
 if project == 'local':
-    print("Running development...", 'green')
+    print("Running local...", 'green')
     from .local import *
 else:
-    print("Running production...", 'green')
+    print("Running development...", 'green')
     from .dev import *

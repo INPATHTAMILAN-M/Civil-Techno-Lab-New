@@ -1,6 +1,19 @@
-from django.contrib import admin
 from django.urls import path
-from .import views
+
+from . import views
+from .views import QuotationCreateView, QuotationUpdateView
+from .views import (
+    QuotationCreateView,
+    QuotationRetrieveView,
+    QuotationListView,
+    QuotationUpdateView,
+)
+from .views import (
+    QuotationItemCreateView,
+    QuotationItemListView,
+    QuotationItemRetrieveView,
+    QuotationItemUpdateView,
+)
 
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
@@ -18,8 +31,10 @@ urlpatterns = [
     path('delete_invoice_test/<int:id>/', views.Delete_Invoice_Test.as_view(), name='delete_invoice_test'),
     path('edit_invoice_test_template/<int:id>/', views.Edit_Invoice_Test_Template.as_view(), name='edit_invoice_test_template'),
     path('preview_invoice_test_template/<int:id>/', views.Preview_Invoice_Test_Template.as_view(), name='preview_invoice_test_template'),
+
     #madhan
     path('pending_payment/', views.Pending_Payment.as_view(), name='pending payment'),
+
     #invoice file upload
     path('create_invoice_file_upload/', views.Create_Invoice_File_Upload.as_view(), name='create_invoice_file_upload'),
     path('invoice_file_upload_list/', views.Manage_Invoice_File_Upload.as_view(), name='invoice_file_upload_list'),
@@ -37,5 +52,15 @@ urlpatterns = [
     path('invoice_file_report/', views.Invoice_File_Report.as_view(), name='invoice_file_report'),
     path('test-list/', views.Test_List.as_view(), name='test-list'),
 
-        
+    path('quotations/', QuotationListView.as_view(), name='quotation-list'),          # List all quotations
+    path('quotations/create/', QuotationCreateView.as_view(), name='quotation-create'), # Create a new quotation
+    path('quotations/<int:pk>/', QuotationRetrieveView.as_view(), name='quotation-retrieve'), # Retrieve a single quotation
+    path('quotations/<int:pk>/update/', QuotationUpdateView.as_view(), name='quotation-update'), # Update a quotation
+
+    path('quotation-items/', QuotationItemListView.as_view(), name='quotation-item-list'),  # List all QuotationItems
+    path('quotation-items/create/', QuotationItemCreateView.as_view(), name='quotation-item-create'),  # Create QuotationItem
+    path('quotation-items/<int:pk>/', QuotationItemRetrieveView.as_view(), name='quotation-item-retrieve'),  # Retrieve QuotationItem
+    path('quotation-items/<int:pk>/update/', QuotationItemUpdateView.as_view(), name='quotation-item-update'),  # Update QuotationItem
+           
 ]
+
