@@ -1,4 +1,4 @@
-from .quatation_models import Quotation, QuotationItem
+from .quatation_models import Quotation, QuotationItem, QuotationReport
 from .invoice_models import (
     Invoice, Invoice_Test, 
     Test_Report,Receipt,

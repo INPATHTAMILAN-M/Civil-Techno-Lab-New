@@ -16,25 +16,25 @@ class TestSerializer(serializers.ModelSerializer):
 class QuotationItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['quotation','test', 'quantity', 'quotation_image', 'signature', 
+        fields = ['quotation','test', 'quantity', 'signature', 'price_per_sample',
                   'is_authorised_signatory', 'created_by']
         
 class QuotationItemListSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['id', 'test', 'quantity', 'quotation_image', 'signature', 
-                  'is_authorised_signatory', 'created_by', 'created_date', 'modified_by', 'modified_date']
+        fields = ['id', 'test', 'quantity', 'signature', 'is_authorised_signatory',
+                  'created_by', 'created_date', 'modified_by', 'modified_date']
         
 class QuotationItemGetSerializer(serializers.ModelSerializer):
     test = TestSerializer()
     class Meta:
         model = QuotationItem
-        fields = ['id', 'test', 'quantity', 'quotation_image', 'signature', 
+        fields = ['id', 'test', 'quantity', 'signature', 
                   'is_authorised_signatory', 'created_by', 'created_date', 'modified_by', 'modified_date']
         
 
 class QuotationItemUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['test', 'quantity', 'quotation_image', 'signature', 
+        fields = ['test', 'quantity', 'signature', 
                   'is_authorised_signatory']

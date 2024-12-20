@@ -5,10 +5,15 @@ class Quotation(models.Model):
     QUOTATION_FORMAT = "QUO-{number}/{year}"
     customer = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name="quotations")
     quotation_number = models.CharField(max_length=20, unique=True, blank=True)  # Will be auto-generated
+    quotation_qr = models.ImageField(upload_to='quotations/', blank=True, null=True)
     date_created = models.DateField(default=now)
     tax = models.ManyToManyField('general.Tax', blank=True)
     total_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     completed = models.BooleanField(default=False)
+    created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_created')
+    created_date = models.DateField(auto_now_add=True, null=True)
+    modified_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_modified')
+    modified_date = models.DateTimeField(auto_now=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.quotation_number:
@@ -32,9 +37,10 @@ class Quotation(models.Model):
 
 class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name="quotation_items")
+    # meterial_name = models.ForeignKey(Material)
     test = models.ForeignKey('general.Test', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    quotation_image = models.CharField(max_length=255, null=True, blank=True)
+    price_per_sample = models.DecimalField(max_digits=10, decimal_places=2)
     signature = models.ForeignKey('account.Employee', on_delete=models.CASCADE, null=True, blank=True)
     is_authorised_signatory = models.BooleanField(default=False)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_items_created')
@@ -43,7 +49,7 @@ class QuotationItem(models.Model):
     modified_date = models.DateTimeField(auto_now=True, null=True)
 
     def total_price(self):
-        return self.quantity * self.test.price_per_piece
+        return self.quantity * self.price_per_sample if self.price_per_sample else self.test.price_per_piece
 
     def __str__(self):
         return f"{self.test.test_name} - {self.quotation.quotation_number}"
@@ -51,4 +57,8 @@ class QuotationItem(models.Model):
 
 class QuotationReport(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name="quotation_reports")
-    report = models.FileField(upload_to='reports/')
+    quotation_file = models.FileField(upload_to='quotation_reports/')
+    created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_reports_created')
+    created_date = models.DateField(auto_now_add=True, null=True)
+    modified_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_reports_modified')
+    modified_date = models.DateTimeField(auto_now=True, null=True)

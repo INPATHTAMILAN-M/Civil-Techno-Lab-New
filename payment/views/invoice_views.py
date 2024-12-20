@@ -118,9 +118,6 @@ class Delete_Expense_Entry(APIView):
 
 
 class Create_Invoice(APIView):
-
-    
-
     # Function to determine the financial year
     def get_financial_year(self):
         current_date = datetime.now() 
@@ -515,16 +512,12 @@ class Pending_Payment(APIView):
     
 
 
-
-
-
 class Create_Invoice_File_Upload(APIView):
     def get(self, request):
         invoices = Invoice.objects.filter(invoice_no__isnull=False).order_by('-id')
         invoice_serializer = Invoice_Serializer1(invoices,many=True)
         expense_entries = Expense_Entry.objects.all().order_by('-id')
         expense_entries = Expense_Entry_Serializer(expense_entries,many=True)
-
         categories = Invoice_File_Category.objects.all()
         categories = Invoice_File_Category_Serializer(categories,many=True)
         

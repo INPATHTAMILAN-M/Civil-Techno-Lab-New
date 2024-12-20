@@ -14,6 +14,14 @@ from .views import (
     QuotationItemRetrieveView,
     QuotationItemUpdateView,
 )
+from .views import (
+    QuotationReportList,
+    QuotationReportCreate,
+    QuotationReportDetail,
+    QuotationReportUpdate
+
+
+)
 
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
@@ -61,6 +69,13 @@ urlpatterns = [
     path('quotation-items/create/', QuotationItemCreateView.as_view(), name='quotation-item-create'),  # Create QuotationItem
     path('quotation-items/<int:pk>/', QuotationItemRetrieveView.as_view(), name='quotation-item-retrieve'),  # Retrieve QuotationItem
     path('quotation-items/<int:pk>/update/', QuotationItemUpdateView.as_view(), name='quotation-item-update'),  # Update QuotationItem
+
+   
+    path('quotation-reports/', QuotationReportList.as_view(), name='quotation-report-list'),
+    path('quotation-reports/create/', QuotationReportCreate.as_view(), name='quotation-report-create'),
+    path('quotation-reports/<int:pk>/', QuotationReportDetail.as_view(), name='quotation-report-detail'),
+    path('quotation-reports/<int:pk>/update/', QuotationReportUpdate.as_view(), name='quotation-report-update'),
+    
            
 ]
 

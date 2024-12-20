@@ -161,7 +161,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
-BACKEND_DOMAIN = 'https://63fkxqqj-8000.inc1.devtunnels.ms'
+BACKEND_DOMAIN = 'http://127.0.0.0.1:8000'
 
 CKEDITOR_CONFIGS = {
     'default': {
