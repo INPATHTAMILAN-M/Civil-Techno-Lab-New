@@ -46,19 +46,5 @@ class QuotationUpdateView(UpdateAPIView):
     http_method_names = ['patch']
 
     def perform_update(self, serializer):
-        quotation = serializer.instance
-
-        taxes = quotation.tax.all()
-        quotation_items = quotation.quotation_items.all()
-        quotation = serializer.instance
-
-        data = {
-            "taxes":taxes,
-            "quotation_items":quotation_items,
-            "quotation":quotation
-        }
-
-        print(quotation.customer)
-
         return super().perform_update(serializer)
     

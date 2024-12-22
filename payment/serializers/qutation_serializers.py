@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from payment.models import QuotationItem, Quotation
+from payment.models import QuotationItem, Quotation, QuotationReport
 from general.models import Material, Tax
 from account.models import Customer
 
@@ -42,6 +42,11 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
         model = Quotation
         fields = ['id', 'tax', 'completed', 'quotation_items']
 
+    
+    def update(self, instance, validated_data):
+        if validated_data.get("completed"):
+            QuotationReport.objects.create(quotation=instance, created_by=self.context['request'].user)
+        return super().update(instance, validated_data)
     
 
 class QuotationListSerializer(serializers.ModelSerializer):

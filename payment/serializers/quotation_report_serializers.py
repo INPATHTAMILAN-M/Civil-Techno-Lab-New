@@ -11,7 +11,7 @@ class QuotationReportListSerializer(serializers.ModelSerializer):
 class QuotationReportDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationReport
-        fields = ['id', 'quotation', 'created_by', 'created_date', 'modified_by', 'modified_date']
+        fields = ['id', 'quotation', 'created_by', 'created_date']
 
 class QuotationReportCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,5 +28,3 @@ class QuotationReportUpdateSerializer(serializers.ModelSerializer):
         model = QuotationReport
         fields = ['quotation_file']
 
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
