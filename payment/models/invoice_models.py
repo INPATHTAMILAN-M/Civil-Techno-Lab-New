@@ -157,7 +157,7 @@ class Invoice(models.Model):
 
 
 class Invoice_Test(models.Model):    
-    invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE,null=True,blank=True)
+    invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE,null=True,blank=True,related_name='invoice_tests')
     customer =  models.ForeignKey(Customer,on_delete=models.CASCADE,null=True,blank=True)
     test = models.ForeignKey(Test,on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=20, decimal_places=2, default=0)
@@ -335,8 +335,11 @@ class Invoice_File(models.Model):
 
 
 
-    
 
+class InvoiceReport(models.Model):
+    invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE)
+    created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='invoice_reports_created')
+    created_date = models.DateField(auto_now_add=True, null=True)
 
 
 

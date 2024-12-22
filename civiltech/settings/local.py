@@ -31,21 +31,28 @@ ALLOWED_HOSTS = ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
+    # Django Core Apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third Party Apps
+    'corsheaders',
+    'django_filters',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'ckeditor',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
+
+    # Local Apps
     'account',
     'general',
     'payment',
     'report',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'ckeditor',
-
 ]
 
 MIDDLEWARE = [
@@ -68,7 +75,23 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
   
+}
+
+SPECTACULAR_SETTINGS = {
+    
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'CIVIL-TECH API DOCUMENTATION',
+    'DESCRIPTION': 'THIS IS THE API DOCUMENTATION FOR CIVIL-TECH VERSION 2.0.0',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
 }
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
@@ -77,7 +100,7 @@ ROOT_URLCONF = 'civiltech.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,7 +128,7 @@ DATABASES = {
         'USER': 'root',                        # MySQL username
         'PASSWORD': 'civil',           # MySQL password
         'HOST': '127.0.0.1',  # The name of the MySQL container or its IP address
-        'PORT': '3307',                        # Default MySQL port
+        'PORT': '3306',                        # Default MySQL port
     }
 }
 
@@ -161,7 +184,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
-BACKEND_DOMAIN = 'http://127.0.0.0.1:8000'
+BACKEND_DOMAIN = 'http://127.0.0.1:8000'
+QR_DOMAIN = 'http://127.0.0.1:8000'
+
 
 CKEDITOR_CONFIGS = {
     'default': {

@@ -50,8 +50,10 @@ class Invoice_Test_Admin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(SalesMode)
-admin.site.register(Invoice_File)
-admin.site.register(Invoice_File_Category)
-admin.site.register(Quotation)
-admin.site.register(QuotationItem)
+from django.apps import apps
+models = apps.get_app_config('payment').get_models()
+for model in models:
+    try:
+        admin.site.register(model)
+    except admin.sites.AlreadyRegistered:
+        pass

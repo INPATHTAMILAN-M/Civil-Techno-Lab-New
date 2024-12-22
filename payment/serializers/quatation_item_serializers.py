@@ -17,12 +17,12 @@ class QuotationItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
         fields = ['quotation','test', 'quantity', 'signature', 'price_per_sample',
-                  'is_authorised_signatory', 'created_by']
+                   'created_by']
         
 class QuotationItemListSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['id', 'test', 'quantity', 'signature', 'is_authorised_signatory',
+        fields = ['id', 'test', 'quantity', 'signature',
                   'created_by', 'created_date', 'modified_by', 'modified_date']
         
 class QuotationItemGetSerializer(serializers.ModelSerializer):
@@ -30,11 +30,10 @@ class QuotationItemGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
         fields = ['id', 'test', 'quantity', 'signature', 
-                  'is_authorised_signatory', 'created_by', 'created_date', 'modified_by', 'modified_date']
+                  'created_by', 'created_date', 'modified_by', 'modified_date']
         
 
 class QuotationItemUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['test', 'quantity', 'signature', 
-                  'is_authorised_signatory']
+        fields = ['test', 'quantity', 'signature']

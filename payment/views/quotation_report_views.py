@@ -1,6 +1,9 @@
 from rest_framework import generics, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
+from django_filters.rest_framework import DjangoFilterBackend
+
 from ..models import QuotationReport
+from ..filters import QuotationReportFilter
 from ..serializers import (
     QuotationReportListSerializer,
     QuotationReportDetailSerializer,
@@ -8,9 +11,12 @@ from ..serializers import (
     QuotationReportUpdateSerializer
 )
 
+
 class QuotationReportList(generics.ListAPIView):
     queryset = QuotationReport.objects.all()
     serializer_class = QuotationReportListSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = QuotationReportFilter
     permission_classes = [permissions.IsAuthenticated]
 
 class QuotationReportCreate(generics.CreateAPIView):
@@ -22,7 +28,7 @@ class QuotationReportCreate(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
-class QuotationReportDetail(generics.RetrieveDestroyAPIView):
+class QuotationReportDetail(generics.RetrieveAPIView):
     queryset = QuotationReport.objects.all()
     serializer_class = QuotationReportDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -32,3 +38,4 @@ class QuotationReportUpdate(generics.UpdateAPIView):
     serializer_class = QuotationReportUpdateSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['patch']    

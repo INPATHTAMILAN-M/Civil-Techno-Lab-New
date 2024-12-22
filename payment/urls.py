@@ -19,8 +19,11 @@ from .views import (
     QuotationReportCreate,
     QuotationReportDetail,
     QuotationReportUpdate
+)
 
-
+from .views import (
+    InvoiceReportListView,
+    InvoiceReportGetView
 )
 
 urlpatterns = [
@@ -72,9 +75,12 @@ urlpatterns = [
 
    
     path('quotation-reports/', QuotationReportList.as_view(), name='quotation-report-list'),
-    path('quotation-reports/create/', QuotationReportCreate.as_view(), name='quotation-report-create'),
+    # path('quotation-reports/create/', QuotationReportCreate.as_view(), name='quotation-report-create'),
     path('quotation-reports/<int:pk>/', QuotationReportDetail.as_view(), name='quotation-report-detail'),
-    path('quotation-reports/<int:pk>/update/', QuotationReportUpdate.as_view(), name='quotation-report-update'),
+    # path('quotation-reports/<int:pk>/update/', QuotationReportUpdate.as_view(), name='quotation-report-update'),
+
+    path('invoice-reports/', InvoiceReportListView.as_view(), name='quotation-report-list'),
+    path('invoice-reports/<int:pk>/', InvoiceReportGetView.as_view(), name='quotation-report-list'),
     
            
 ]

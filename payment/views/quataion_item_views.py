@@ -29,3 +29,4 @@ class QuotationItemRetrieveView(RetrieveAPIView):
 class QuotationItemUpdateView(UpdateAPIView):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemUpdateSerializer
+    http_method_names = ['patch']

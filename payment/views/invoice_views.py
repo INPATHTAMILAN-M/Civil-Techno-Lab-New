@@ -13,8 +13,10 @@ from general.models import Material, Expense, Test, Tax
 from general.serializers import Create_Material_Serializer, Test_Serializer1
 from ..models import (
     Expense_Entry, Invoice, SalesMode, Invoice_Test, Invoice_File,
-    Invoice_File_Category, Receipt
+    Invoice_File_Category, Receipt, InvoiceReport
 )
+
+
 from ..serializers import (
     Create_Expense_Entry_Serializer, Expense_Entry_Serializer,
     Expense_Serializer1, Create_Invoice_Serializer, Invoice_Serializer,
@@ -177,7 +179,7 @@ class Create_Invoice(APIView):
             )
 
             # Add data to the QR code
-            qr.add_data("https://app.covaiciviltechlab.com/invoice/viewinvoicereport?id="+str(serializer.id))
+            qr.add_data(f"{settings.QR_DOMAIN}/invoice/viewinvoicereport?id="+str(serializer.id))
             qr.make(fit=True)
 
             # Create an image from the QR code
@@ -307,24 +309,29 @@ class Edit_Invoice(APIView):
         return Response(context)
 
     def put(self, request, id):
-        invoice = Invoice.objects.get(id=id)
+        try:
+            invoice = Invoice.objects.get(id=id)
+        except Invoice.DoesNotExist:
+            return Response({"error": "Invoice not found"}, status=status.HTTP_404_NOT_FOUND)
+            
         serializer = Edit_Invoice_Serializer(invoice, data=request.data)
         if serializer.is_valid():
             serializer = serializer.save(modified_by=request.user)
             invoice = Invoice.objects.get(id=serializer.id)
-            if int(invoice.total_amount) == int(invoice.advance):
-                invoice.fully_paid = True
-            else:
-                invoice.fully_paid = False
-            invoice = invoice.save()
+            invoice.fully_paid = int(invoice.total_amount) == int(invoice.advance)
+            invoice.save()
 
-            invoice = Invoice.objects.get(id=serializer.id)
-
+            if invoice.completed == "Yes":
+                InvoiceReport.objects.create(
+                    invoice=invoice,
+                    created_by=request.user,
+                    created_date=datetime.now().date()
+                )
 
             serializer = Invoice_Serializer_For_Report(invoice)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 class Delete_Invoice(APIView):
 

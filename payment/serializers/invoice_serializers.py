@@ -418,7 +418,10 @@ class Invoice_Serializer_For_Report(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
-        fields = ['customer_name','customer_gst_no','project_name','invoice_no','date','export_date', 'amount','tds_amount','cgst_tax','sgst_tax','total_amount','cash','cheque_neft','tax_deduction','advance','balance','discount','amount_paid_date','bank','cheque_number','payment_mode','place_of_testing','tax','sales_mode','incompleted_test','upi','completed']
+        fields = ['customer_name','customer_gst_no','project_name','invoice_no','date','export_date', 
+                  'amount','tds_amount','cgst_tax','sgst_tax','total_amount','cash','cheque_neft','tax_deduction',
+                  'advance','balance','discount','amount_paid_date','bank','cheque_number','payment_mode','place_of_testing',
+                  'tax','sales_mode','incompleted_test','upi','completed']
 
 
     def get_incompleted_test(self,obj):
