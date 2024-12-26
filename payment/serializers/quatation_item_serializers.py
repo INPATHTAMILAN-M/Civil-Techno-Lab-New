@@ -13,12 +13,23 @@ class TestSerializer(serializers.ModelSerializer):
         fields = ['id', 'material_name', 'test_name', 'price_per_piece', 'created_by', 
                  'created_date', 'modified_by', 'modified_date']
         
-class QuotationItemCreateSerializer(serializers.ModelSerializer):
+class QuotationItemUnifiedSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['quotation','test', 'quantity', 'signature', 'price_per_sample',
-                   'created_by']
-        
+        fields = ['quotation', 'test', 'quantity', 'signature', 'price_per_sample']
+
+class QuotationItemBulkCreateSerializer(serializers.Serializer):
+    items = QuotationItemUnifiedSerializer(many=True)
+
+    def create(self, validated_data):
+        request_user = self.context['request'].user
+        items_data = validated_data.get('items', [])
+        for item in items_data:
+            item['created_by'] = request_user
+
+        quotation_items = [QuotationItem(**item) for item in items_data]
+        return QuotationItem.objects.bulk_create(quotation_items)
+
 class QuotationItemListSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
@@ -36,4 +47,10 @@ class QuotationItemGetSerializer(serializers.ModelSerializer):
 class QuotationItemUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['test', 'quantity', 'signature']
+        fields = ['test', 'quantity']
+        
+
+class QuotationItemDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuotationItem
+        fields = ['id']

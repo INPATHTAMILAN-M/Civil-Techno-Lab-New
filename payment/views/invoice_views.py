@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from account.models import Customer, Employee
 from account.serializers import Employee_Serializer
 from general.models import Material, Expense, Test, Tax
-from general.serializers import Create_Material_Serializer, Test_Serializer1
+from general.serializers1 import Create_Material_Serializer, Test_Serializer1
 from ..models import (
     Expense_Entry, Invoice, SalesMode, Invoice_Test, Invoice_File,
     Invoice_File_Category, Receipt, InvoiceReport
@@ -1100,7 +1100,7 @@ class Invoice_File_Report(APIView):
         customer = request.data['customer']
         project_name = request.data['project_name']
         invoice_no = invoice_no = request.data['invoice_no']
-        search = request.data['search']
+        # search = request.data['search']
 
         invoicefiles  = Invoice_File.objects.filter(category__name="Invoice",invoice__isnull=False).order_by('-id')
 
@@ -1116,8 +1116,8 @@ class Invoice_File_Report(APIView):
         if invoice_no:
             invoicefiles = invoicefiles.filter(invoice__invoice_no=invoice_no)
 
-        if search:
-            invoicefiles = invoicefiles.filter(Q(invoice__invoice_no__icontains = search) | Q(invoice__customer__name__icontains = search))
+        # if search:
+        #     invoicefiles = invoicefiles.filter(Q(invoice__invoice_no__icontains = search) | Q(invoice__customer__name__icontains = search))
 
         serializer = Invoice_File_Report_Serializer(invoicefiles, many=True,context={'request':request})     
         context  = {

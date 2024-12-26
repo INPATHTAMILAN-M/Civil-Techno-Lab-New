@@ -128,7 +128,7 @@ DATABASES = {
         'USER': 'root',                        # MySQL username
         'PASSWORD': 'civil',           # MySQL password
         'HOST': '127.0.0.1',  # The name of the MySQL container or its IP address
-        'PORT': '3306',                        # Default MySQL port
+        'PORT': '3307',                        # Default MySQL port
     }
 }
 
@@ -184,8 +184,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
-BACKEND_DOMAIN = 'http://127.0.0.1:8000'
-QR_DOMAIN = 'http://127.0.0.1:8000'
+BACKEND_DOMAIN = 'https://63fkxqqj-8000.inc1.devtunnels.ms'
+QR_DOMAIN = 'https://63fkxqqj-8000.inc1.devtunnels.ms'
 
 
 CKEDITOR_CONFIGS = {

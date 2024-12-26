@@ -31,7 +31,7 @@ class Quotation(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.quotation_number
+        return f"{self.id} - {self.quotation_number}"
 
     def items(self):
         return self.quotation_items.all()
@@ -53,7 +53,7 @@ class QuotationItem(models.Model):
         return self.quantity * self.test.price_per_piece
     
     def __str__(self):
-        return f"{self.test.test_name} - {self.quotation.quotation_number}"
+        return f" {self.test.test_name} - {self.quotation.quotation_number}"
 
 
 class QuotationReport(models.Model):

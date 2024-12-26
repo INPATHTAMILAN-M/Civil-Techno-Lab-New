@@ -1,31 +1,23 @@
 from django.urls import path
 
 from . import views
-from .views import QuotationCreateView, QuotationUpdateView
 from .views import (
     QuotationCreateView,
     QuotationRetrieveView,
     QuotationListView,
     QuotationUpdateView,
-)
-from .views import (
     QuotationItemCreateView,
     QuotationItemListView,
     QuotationItemRetrieveView,
     QuotationItemUpdateView,
-)
-from .views import (
+    QuotationItemDeleteView,
     QuotationReportList,
     QuotationReportCreate,
     QuotationReportDetail,
-    QuotationReportUpdate
-)
-
-from .views import (
+    QuotationReportUpdate,
     InvoiceReportListView,
     InvoiceReportGetView
 )
-
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
     path('expense_entry_list/', views.List_Expense_Entry.as_view(), name='expense_entry_list'),
@@ -71,6 +63,7 @@ urlpatterns = [
     path('quotation-items/', QuotationItemListView.as_view(), name='quotation-item-list'),  # List all QuotationItems
     path('quotation-items/create/', QuotationItemCreateView.as_view(), name='quotation-item-create'),  # Create QuotationItem
     path('quotation-items/<int:pk>/', QuotationItemRetrieveView.as_view(), name='quotation-item-retrieve'),  # Retrieve QuotationItem
+    path('quotation-items/<int:pk>/delete/', QuotationItemDeleteView.as_view(), name='quotation-item-delete'),
     path('quotation-items/<int:pk>/update/', QuotationItemUpdateView.as_view(), name='quotation-item-update'),  # Update QuotationItem
 
    

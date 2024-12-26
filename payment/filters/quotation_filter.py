@@ -11,6 +11,7 @@ class QuotationFilter(django_filters.FilterSet):
     end_date = DateFilter(field_name='date_created', lookup_expr='lte')
     quotation_number = CharFilter(field_name='quotation_number', lookup_expr='icontains')
     customer_name = CharFilter(method='filter_customer_name')
+    customer = CharFilter(field_name='customer', lookup_expr='exact')
 
     def filter_customer_name(self, queryset, name, value):
         return queryset.filter(
@@ -20,4 +21,4 @@ class QuotationFilter(django_filters.FilterSet):
 
     class Meta:
         model = Quotation
-        fields = ['quotation_number', 'customer', 'completed', 'created_by']
+        fields = ['quotation_number', 'customer', 'customer_name','completed', 'created_by']

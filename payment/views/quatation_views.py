@@ -1,8 +1,13 @@
-import qrcode
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, ListAPIView
 from django.conf import settings
-
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, permissions
+from rest_framework.generics import (
+    CreateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+)
+import qrcode
 from ..models import Quotation
 from ..filters import QuotationFilter
 from ..serializers import (
@@ -18,6 +23,7 @@ from ..serializers import (
 class QuotationCreateView(CreateAPIView):
     queryset = Quotation.objects.all()
     serializer_class = QuotationCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
     
     def perform_create(self, serializer):
         instance = serializer.save(created_by=self.request.user)
@@ -31,19 +37,22 @@ class QuotationCreateView(CreateAPIView):
         instance.save()
 
 class QuotationRetrieveView(RetrieveAPIView):
-    queryset = Quotation.objects.all()
+    queryset = Quotation.objects.all().order_by('-id')
     serializer_class = QuotationRetrieveSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class QuotationListView(ListAPIView):
-    queryset = Quotation.objects.all()
+    queryset = Quotation.objects.all().order_by('-id')
     serializer_class = QuotationListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = QuotationFilter
+    permission_classes = [permissions.IsAuthenticated]
 
 class QuotationUpdateView(UpdateAPIView):
-    queryset = Quotation.objects.all()
+    queryset = Quotation.objects.all().order_by('-id')
     serializer_class = QuotationUpdateSerializer
     http_method_names = ['patch']
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_update(self, serializer):
         return super().perform_update(serializer)
