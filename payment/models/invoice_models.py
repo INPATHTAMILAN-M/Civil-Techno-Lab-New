@@ -337,7 +337,8 @@ class Invoice_File(models.Model):
 
 
 class InvoiceReport(models.Model):
-    invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE)
+    invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE, related_name='invoice_reports')
+    invoice_file = models.FileField(upload_to='invoice_report/', null=True, blank=True)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='invoice_reports_created')
     created_date = models.DateField(auto_now_add=True, null=True)
 

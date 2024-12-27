@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load mathfilters %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A4 Printable Invoice Template" />
+    <title>Invoice Preview - A4 Printable</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Nunito", serif;
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+        color: #333;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p {
+        margin: 0;
+      }
+
+      a {
+        text-decoration: none;
+        color: #333;
+      }
+
+      /* Printable Area */
+      @page {
+        size: A4;
+        margin: 0mm;
+      }
+
+      @media print {
+        body {
+          margin: 0;
+          padding: 0;
+        }
+
+        .no-print {
+          display: none;
+        }
+      }
+
+      /* A4 Container */
+      .container {
+        max-width: 210mm;
+        min-height: 297mm;
+        padding: 10mm 5mm;
+        margin: auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Header Section */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #e0e6ed;
+        padding-bottom: 10px;
+      }
+
+      .header h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+      }
+
+      .header img {
+        width: 150px;
+        height: auto;
+      }
+
+      .company-details {
+        text-align: right;
+        font-size: 12px;
+      }
+
+      /* Customer Details */
+      .customer-details,
+      .invoice-details {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .details {
+        width: 48%;
+      }
+
+      .details p {
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+
+      .details .label {
+        font-weight: 700;
+        color: #555;
+      }
+
+      /* Table Section */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 12px;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+
+      table th {
+        background-color: #f9f9f9;
+        font-weight: 700;
+      }
+
+      table td.align-right {
+        text-align: right;
+      }
+
+      /* Summary Section */
+      .summary {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .bank-details {
+        width: 60%;
+        font-size: 12px;
+      }
+
+      .total {
+        width: 35%;
+        font-size: 12px;
+      }
+
+      .total table {
+        border: none;
+      }
+
+      .total table td {
+        border: none;
+        padding: 5px 0;
+      }
+
+      .total table td.label {
+        font-weight: 700;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: #555;
+      }
+
+      .qr-code{
+        display: inline-block;
+        width: 48%;
+        /* text-align: center; */
+        margin-top: 20px;
+      }
+
+      .signature {
+        display: inline-block;
+        width: 48%;
+        text-align: end;
+        margin-top: 20px;
+      }
+
+      .qr-code img,
+      .signature img {
+        width: 100px;
+        height: auto;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header Section -->
+      <div class="header">
+        <div>
+          <h3>Invoice</h3>
+          <p>Invoice No: {{ invoice.invoice_no }}</p>
+        </div>
+        <div style="text-align: end;">
+          <img
+            src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/images/logo.png"
+            alt="Company Logo"
+          />
+          <div class="company-details">
+            <p>An ISO/IEC 17025:2017 CERTIFIED LAB</p>
+            <p>411/4, Vijayalakshmi Nagar, Neelikonampalayam Po, Coimbatore</p>
+            <p>GSTIN: 33AALCC7761L1Z7</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer and Invoice Details -->
+      <div class="customer-details" >
+        <div class="details">
+          <p class="label">Issued For:</p>
+          <p>{{ customer.name }}</p>
+          <p>{{ customer.address }}</p>
+          <p>{{ customer.city1 }}, {{ customer.state1 }}, {{ customer.country1 }}</p>
+        </div>
+        <div class="details" style="text-align:end">
+          <p><span class="label">Date:</span> {{ invoice.date|date:"d/m/Y" }}</p>
+          <p><span class="label">Project Name:</span> {{ invoice.project_name }}</p>
+          <p><span class="label">Place of Testing:</span> {{ invoice.place_of_testing }}</p>
+        </div>
+      </div>
+
+      <!-- Table Section -->
+      <table>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Name of Test</th>
+            <th>HSN/SAC</th>
+            <th>Qty</th>
+            <th class="align-right">Rate/Sample (INR)</th>
+            <th class="align-right">Amount (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in invoice_items %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.test.test_name }}</td>
+            <td>998346</td>
+            <td>{{ item.quantity }}</td>
+            <td class="align-right">{{ item.test.price_per_piece|floatformat:2 }}</td>
+            <td class="align-right">{{ item.total }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Summary and Bank Details -->
+      <div class="summary">
+        <div class="bank-details">
+          <p><b>Name:</b>  Covai Civil Lab Private Limited.</p>
+          <p><b>Account No:</b> 923020070722530</p>
+          <p><b>Bank Name:</b> Axis Bank, Vadavalli</p>
+          <p><b>IFSC Code:</b> UTIB0003080</p>
+        </div>
+        <div class="total">
+          <table>
+            <tr>
+              <td class="label">Subtotal:</td>
+              <td class="align-right">{{ total_amount|floatformat:2 }}</td>
+            </tr>
+            <tr>
+              <td class="label">{{tax_display}}</td>
+              <td class="align-right">
+                {% with tax_amount=total_amount|mul:tax_total|div:100 %}
+                {{ tax_amount|floatformat:2}}
+                {% endwith %}
+              </td>
+            </tr>
+            <tr>
+              <td class="label">Total:</td>
+              <td class="align-right">
+                {% with tax_amount=total_amount|mul:tax_total|div:100 %}
+                    {{ total_amount|add:tax_amount|floatformat:2 }}
+                {% endwith %}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- QR Code and Signature -->
+      <div class="qr-code">
+        <img
+          src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/images/qr-code.png"
+          alt="QR Code"
+        />
+      </div>
+      <div class="signature">
+        <img
+          src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/images/sign.png"
+          alt="Signature"
+        />
+        <p>Authorised Signatory</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          <b>Declaration:</b> We declare this invoice shows the actual price of
+          services described.
+        </p>
+        <p>SUBJECT TO COIMBATORE JURISDICTION</p>
+        <p>This is a computer-generated invoice.</p>
+      </div>
+    </div>
+  </body>
+</html>

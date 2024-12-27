@@ -58,5 +58,6 @@ class QuotationItem(models.Model):
 
 class QuotationReport(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name="quotation_reports")
+    quotation_file = models.FileField(upload_to='quotation/', null=True, blank=True)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_reports_created')
     created_date = models.DateField(auto_now_add=True, null=True)

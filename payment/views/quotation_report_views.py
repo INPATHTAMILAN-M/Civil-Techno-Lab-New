@@ -13,7 +13,7 @@ from ..serializers import (
 
 
 class QuotationReportList(generics.ListAPIView):
-    queryset = QuotationReport.objects.all()
+    queryset = QuotationReport.objects.all().order_by('-id')
     serializer_class = QuotationReportListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = QuotationReportFilter
@@ -29,7 +29,7 @@ class QuotationReportCreate(generics.CreateAPIView):
         return super().create(request, *args, **kwargs)
 
 class QuotationReportDetail(generics.RetrieveAPIView):
-    queryset = QuotationReport.objects.all()
+    queryset = QuotationReport.objects.all().order_by('-id')
     serializer_class = QuotationReportDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
 

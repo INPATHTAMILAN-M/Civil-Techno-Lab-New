@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'drf_spectacular',
     'drf_spectacular_sidecar',
+    'mathfilters',
 
     # Local Apps
     'account',

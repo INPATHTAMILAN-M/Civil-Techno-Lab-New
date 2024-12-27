@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load mathfilters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            /* margin-bottom: 200px; */
+            font-family: "Nunito", serif;
+            font-size: 14px;
+        }
+        p{
+            font-size: 14px;
+        }
+        .t-head{
+            /* border: 1px solid black; */
+            height: fit-content;
+            width:100%;
+            margin: auto;
+            margin-top: 20px;
+        }
+        .t-head .logo{
+            display: flex;
+            justify-content: center;
+        }
+        .t-head .logo img{
+            width: 500px;
+            /* object-fit: contain; */
+        }
+        table,td,th{
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th{
+            text-align: left;
+        }
+        td{
+            padding: 8px;
+        }
+        .sign-div{
+            display: flex;
+            justify-content: space-between;
+            /* margin-top: 20px; */
+            width: 100%;
+            /* border: 1px solid black; */
+            /* flex-wrap: wrap; */
+        }
+        .sign-div-item{
+            /* border: 1px solid black; */
+            margin: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: left;
+        }
+        .sign-div-item p{
+            font-size: 14px !important;
+        }
+    </style>
+</head>
+<body>
+
+   
+    <div style="width: 97%; margin: auto;">
+        
+        <table class="t-head" style="border-bottom:none;  width: 100%;">
+            <tbody >
+                <tr>
+                    <td class="logo" style="text-align: center; border: none;">
+                        <img src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/header.gif"  alt="Covai Civil Lap Private Limited">
+                    </td>
+                </tr>
+            </tbody>        
+        </table>
+    
+       
+        <table class="t-head" style="margin-top: 0; width: 100%; border-collapse: collapse;">
+            <tbody >
+                <tr>
+                    <td style="text-align: center; width: 60%; font-weight: bold; ">QUOTATION</td>
+                    <td style="text-align: right;">Date: {{ quotation.date_created }}</td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 10px;">
+                        {{ quotation.customer.customer_name}}<br>
+                        {{ quotation.customer.city1 }},
+                        {{ quotation.customer.state1 }},
+                        {{ quotation.customer.country1 }}
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    
+     
+        <div style="margin-top: 20px;">
+            <p>
+                Dear Sir, <br>
+                <b>Sub: </b>Quotation for Material Testing Services<br>
+                Sending this quote as per our discussion regarding the test at the identified location. Please find the details as below:
+            </p>
+        </div>
+    
+        <table class="t-head" style="margin-top: -10px; width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="padding: 8px;">S. No</th>
+                    <th style=" padding: 8px;">WORK DESCRIPTION</th>
+                    <th style="padding: 8px;">UNIT</th>
+                    <th style=" padding: 8px;">RATE</th>
+                    <th style=" padding: 8px;">AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in quotation_items %}
+                <tr>
+                    <td style="padding: 8px;">{{ forloop.counter }}</td>
+                    <td style=" padding: 8px;">{{ item.test.test_name }}</td>
+                    <td style=" padding: 8px;">{{ item.quantity }}</td>
+                    <td style="padding: 8px;">{{ item.price_per_sample }}</td>
+                    <td style=" padding: 8px;">{{ item.price_per_sample|mul:item.quantity }}</td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <td colspan="4">Sub Total</td>
+                    <td>{{ quotation.total_amount }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        {{tax_display}}
+                    </td>      
+                    <td>
+                        {% with tax_amount=quotation.total_amount|mul:tax_total|div:100 %}
+                            {{ tax_amount }}
+                        {% endwith %}
+                    </td>                                   
+                </tr>
+                <tr>
+                    <td colspan="4" style="font-weight:bold">Total</td>
+                    <td>
+                        {% with tax_amount=quotation.total_amount|mul:tax_total|div:100 %}
+                            {{ quotation.total_amount|add:tax_amount }}
+                        {% endwith %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 20px;">
+            <p style="text-align: center; font-size: 16px;">Payment terms:</p>
+            <p>
+                1. 50% of the sub total to be paid along with the Work Order. <br>
+                2. The remaining amount is to be paid immediately upon completion of work. <br>
+                3. Tax Deduction at Source (TDS), if applicable shall be effected when a suitable certificate is issued along with the payment.
+            </p>
+        </div>
+
+        <table style="width: 100%; margin-top: -10px;">
+            <tbody>
+                <tr>
+                    <td colspan="5" style="font-weight: bold;">SCOPE OF THE WORK</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">COVAI CIVIL TECH LAB</td>
+                    <td style="font-weight: bold;">{{ quotation.customer.customer_name }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <!-- <p>REBOUND HAMMER <br> -->
+                            Sample from RC members <br>
+                            Conducting tests on compressive strength for relevant I.S. standards. <br>
+                            Provide a test report within 1 days after the completion of the test
+                            at the site.
+                        </p>
+                    </td>
+                    <td>
+                        Provide Work Completion Letter or Certificate while giving
+                        test report.
+                        Chipping work will come under your scope.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="sign-div" >
+            <div class="sign-div-item" >
+                <img style="width: 150px;"src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/ragu r.png" alt="">
+                <p>M.RAGURAM, ME (STRUCTURAL)., AMIE <br>
+                    CHARTERED ENGINEER (AM 1818123) <br>
+                    Covai Civil Lab Private Limited
+                </p>
+            </div>
+            <div class="sign-div-item"  >
+                <img style="width: 150px;" src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/thirumalai.png" alt="">
+                <p>Tirumalai Ravikumar <br>
+                    Technical Director <br>
+                    Covai Civil Lab Private Limited
+                </p>
+            </div>
+          
+            <div class="sign-div-item"  >
+                <img style="width: 100px; height: 100px;" src="{{quotation_qr}}" alt="">
+            </div>
+        </div>
+        <hr>
+        <div style="margin-top: 20px; text-align: center;">
+            <img style="width: 100%;" src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/test-footer.png" alt="">
+        </div>
+    </div>
+    
+    
+</body>
+</html>

@@ -1,4 +1,5 @@
 
+from django.conf import settings
 from rest_framework import serializers
 from payment.models import InvoiceReport, Invoice, Invoice_Test
 from general.models import Tax
@@ -48,13 +49,25 @@ class InvoiceTestSerializer(serializers.ModelSerializer):
 
 class InvoiceListSerializer(serializers.ModelSerializer):
     customer = serializers.StringRelatedField()
+    invoice_file = serializers.SerializerMethodField()
     class Meta:
         model = Invoice
         fields = ('id','customer', 'sales_mode', 'project_name', 'discount', 'tax', 
                  'advance', 'balance', 'total_amount', 'tds_amount', 'fully_paid',
                  'date', 'invoice_no', 'payment_mode', 'cheque_number', 'upi',
                  'bank', 'amount_paid_date', 'invoice_image', 'place_of_testing',
-                 'completed', 'is_old_invoice_format', "invoice_tests")
+                 'completed', 'is_old_invoice_format', "invoice_tests",'invoice_file')
+        
+    def get_invoice_file(self, obj):
+        # Fetch the most recent QuotationReport using the related_name
+        recent_report = obj.invoice_reports.order_by('-id').first()
+        
+        if recent_report and recent_report.invoice_file:
+            # Build the full URL using BACKEND_DOMAIN
+            full_url = f"{settings.BACKEND_DOMAIN}{recent_report.invoice_file.url}"
+            return full_url
+        
+        return None
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -94,13 +107,15 @@ class InvoiceReportUpdateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 class InvoiceReportListSerializer(serializers.ModelSerializer):
+    
     invoice = InvoiceListSerializer()
     class Meta:
         model = InvoiceReport
         fields = ('id', 'invoice', 'created_by', 'created_date')
 
+
 class InvoiceReportDetailSerializer(serializers.ModelSerializer):
     invoice = InvoiceSerializer()
     class Meta:
         model = InvoiceReport
-        fields = ('id', 'invoice', 'created_by', 'created_date',)
+        fields = ('id', 'invoice', 'created_by', 'created_date','invoice_file')

@@ -595,11 +595,12 @@ class Expense_File_Report_Serializer(serializers.ModelSerializer):
 class Invoice_File_Report_Serializer(serializers.ModelSerializer):
     file = serializers.SerializerMethodField()
     invoice_date = serializers.SerializerMethodField()
+    project_name = serializers.CharField(source='invoice.project_name')
  
     
     class Meta:
         model = Invoice_File
-        fields = ['id','invoice_no','invoice_customer','invoice_amount','invoice_date','file']
+        fields = ['id','invoice_no','invoice_customer','invoice_amount','invoice_date','file','project_name']
 
 
     def get_file(self, obj):

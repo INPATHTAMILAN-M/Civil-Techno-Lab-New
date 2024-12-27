@@ -49,10 +49,44 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
         model = Quotation
         fields = ['id', 'tax', 'completed','customer','quotation_items']
 
-    
+
     def update(self, instance, validated_data):
         if validated_data.get("completed"):
-            QuotationReport.objects.create(quotation=instance, created_by=self.context['request'].user)
+            import os
+            from django.template.loader import render_to_string
+            from weasyprint import HTML
+            from django.conf import settings
+            from django.db.models import Sum
+    
+
+            tax_mapping = {
+                'SGST': 'SGST',
+                'CGST': ' CGST',
+                'IGST': ' IGST'
+            }
+            tax_display = "".join(f"{tax_mapping[tax.tax_name]} ({tax.tax_percentage}%)" for tax in instance.tax.all())            
+            
+            context = {
+                'quotation': instance,
+                'customer': instance.customer,
+                'quotation_items': instance.quotation_items.all(),
+                'tax': instance.tax.all(),
+                "tax_total":instance.tax.all().aggregate(Sum('tax_percentage'))['tax_percentage__sum'] or 0,
+                "tax_display": tax_display,
+            }
+
+            html_content = render_to_string('quotation.html', context)
+            pdf_file = HTML(string=html_content).write_pdf()
+            pdf_dir = os.path.join(settings.MEDIA_ROOT, 'quotations')
+            os.makedirs(pdf_dir, exist_ok=True)
+            file_path = os.path.join(pdf_dir, f"quotation_{instance.date_created}.pdf")
+            with open(file_path, 'wb') as f:
+                f.write(pdf_file)
+            instance.pdf_path = file_path
+            instance.save()
+            QuotationReport.objects.create(quotation=instance, 
+                                            created_by=self.context['request'].user,
+                                            quotation_file=f"/quotations/quotation_{instance.date_created}.pdf")
         return super().update(instance, validated_data)
     
 
