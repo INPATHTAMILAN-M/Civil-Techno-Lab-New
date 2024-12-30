@@ -24,6 +24,9 @@ urlpatterns = [
     path('edit_city/<int:id>/',views.Manage_City.as_view(), name='edit_city'),
     path('delete_city/<int:id>/',views.Manage_City.as_view(), name='delete_city'),
 
+
+    path('customers/', views.CustomerListCreateView.as_view(), name='customer-list-create'),
+
     
 ]
 

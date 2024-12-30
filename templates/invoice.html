@@ -207,7 +207,7 @@
         </div>
         <div style="text-align: end;">
           <img
-            src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/images/logo.png"
+            src="{{settings.BACKEND_DOMAIN}}/static/images/logo.png"
             alt="Company Logo"
           />
           <div class="company-details">
@@ -296,13 +296,13 @@
       <!-- QR Code and Signature -->
       <div class="qr-code">
         <img
-          src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/images/qr-code.png"
+          src="{{invoice.invoice_image.url}}"
           alt="QR Code"
         />
       </div>
       <div class="signature">
         <img
-          src="https://63fkxqqj-8000.inc1.devtunnels.ms/static/images/sign.png"
+          src="{{settings.BACKEND_DOMAIN}}/static/images/sign.png"
           alt="Signature"
         />
         <p>Authorised Signatory</p>

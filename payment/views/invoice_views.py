@@ -345,6 +345,7 @@ class Edit_Invoice(APIView):
                     'tax': invoice.tax.all(),
                     "tax_total":invoice.tax.all().aggregate(Sum('tax_percentage'))['tax_percentage__sum'] or 0,
                     "tax_display": tax_display,
+                    "settings": settings,
                 }
 
                 html_content = render_to_string('invoice.html', context)

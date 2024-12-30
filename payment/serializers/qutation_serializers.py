@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from payment.models import QuotationItem, Quotation, QuotationReport
-from general.models import Material, Tax
+from general.models import Tax
 from account.models import Customer
+from django.conf import settings
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -73,6 +74,7 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
                 'tax': instance.tax.all(),
                 "tax_total":instance.tax.all().aggregate(Sum('tax_percentage'))['tax_percentage__sum'] or 0,
                 "tax_display": tax_display,
+                "setting": settings
             }
 
             html_content = render_to_string('quotation.html', context)
