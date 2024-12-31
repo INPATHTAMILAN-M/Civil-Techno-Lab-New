@@ -53,7 +53,4 @@ class QuotationUpdateView(UpdateAPIView):
     serializer_class = QuotationUpdateSerializer
     http_method_names = ['patch']
     permission_classes = [permissions.IsAuthenticated]
-
-    def perform_update(self, serializer):
-        return super().perform_update(serializer)
     

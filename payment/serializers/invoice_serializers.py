@@ -40,7 +40,8 @@ class Expense_Entry_Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = Expense_Entry
-        fields = ['id','expense_user','date','amount','expense_category','narration','created_by','created_date','modified_by','modified_date','expense_category_name']
+        fields = ['id','expense_user','date','amount','expense_category','narration',
+                  'created_by','created_date','modified_by','modified_date','expense_category_name']
 
     def get_expense_category_name(self,obj):
         return str(obj.expense_category)
@@ -335,14 +336,13 @@ class Pending_Invoice_Serializer(serializers.ModelSerializer):
     customer = serializers.StringRelatedField()
     incompleted_test = serializers.SerializerMethodField()
 
-    
     class Meta:
         model =  Invoice
-        fields = ['id','customer','project_name','total_amount','advance','balance','invoice_no','fully_paid','incompleted_test']
+        fields = ['id','customer','project_name','total_amount',
+                  'advance','balance','invoice_no','fully_paid','incompleted_test']
     
     def get_incompleted_test(self,obj):
         return str(obj.incompleted_test)
-
 
 class Create_Invoice_File_Serializer(serializers.ModelSerializer):
     class Meta:

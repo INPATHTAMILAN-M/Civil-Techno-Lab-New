@@ -13,7 +13,7 @@ class Customer(models.Model):
     city1 = models.ForeignKey(City, on_delete=models.CASCADE,related_name="city1",null=True)
     state1 = models.ForeignKey(State, on_delete=models.CASCADE,related_name="state1",null=True)
     country1 = models.ForeignKey(Country, on_delete=models.CASCADE,related_name="country1",null=True)
-    pincode1 = models.CharField(max_length=6)
+    pincode1 = models.CharField(max_length=6,null=True)
     contact_person1 = models.CharField(max_length=255,null=True,blank=True)
     mobile_no1 = models.CharField(max_length=10,null=True,blank=True)
     contact_person_email1 = models.EmailField(null=True,blank=True)

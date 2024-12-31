@@ -223,8 +223,8 @@
         <div class="details">
           <p class="label">Issued For:</p>
           <p>{{ customer.name }}</p>
-          <p>{{ customer.address }}</p>
-          <p>{{ customer.city1 }}, {{ customer.state1 }}, {{ customer.country1 }}</p>
+          <p>{{ customer.address1 }}</p>
+          <!-- <p>{{ customer.city1 }}, {{ customer.state1 }}, {{ customer.country1 }}</p> -->
         </div>
         <div class="details" style="text-align:end">
           <p><span class="label">Date:</span> {{ invoice.date|date:"d/m/Y" }}</p>
@@ -305,7 +305,26 @@
           src="{{settings.BACKEND_DOMAIN}}/static/images/sign.png"
           alt="Signature"
         />
-        <p>Authorised Signatory</p>
+        <p class="text-gray ">Authorised Signatory,</p>
+        <p class="text-gray ">Covai Civil Lab Private Limited.</p>
+        <p >
+          <b>Phone</b>:
+          <a href="tel:9840014193" class="f-14 text-gray">9840014193 |</a>
+        </p>
+        <p class="f-14 text-gray ">
+          <b>Email</b>:
+          <a href="mailto:cbe@covaicivillab.com" class="f-14 text-gray">
+            cbe@covaicivillab.com |</a
+          >
+        </p>
+
+        <p class="f-14 text-gray">
+          <b>Website</b>:
+          <a href="https://covaicivillab.com" class="f-14 text-gray"
+            >covaicivillab.com</a
+          >
+        </p>
+      </div>
       </div>
 
       <!-- Footer -->

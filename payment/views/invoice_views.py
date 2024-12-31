@@ -334,7 +334,7 @@ class Edit_Invoice(APIView):
                     'CGST': ' CGST',
                     'IGST': ' IGST'
                 }
-                tax_display = "".join(f"{tax_mapping[tax.tax_name] } ({tax.tax_percentage}%)" for tax in invoice.tax.all())            
+                tax_display = "+".join(f"{tax_mapping[tax.tax_name] } ({tax.tax_percentage}%)" for tax in invoice.tax.all())            
                 
         
                 context = {
@@ -352,13 +352,13 @@ class Edit_Invoice(APIView):
                 pdf_file = HTML(string=html_content).write_pdf()
                 pdf_dir = os.path.join(settings.MEDIA_ROOT, 'invoice_report')
                 os.makedirs(pdf_dir, exist_ok=True)
-                file_path = os.path.join(pdf_dir, f"invoice_report_{invoice.date}.pdf")
+                file_path = os.path.join(pdf_dir, f"invoice_report_{invoice.id}.pdf")
                 with open(file_path, 'wb') as f:
                     f.write(pdf_file)
 
-                InvoiceReport.objects.create(invoice=invoice, 
-                                            created_by=self.request.user,
-                                            invoice_file=f"/invoice_report/invoice_report_{invoice.date}.pdf")
+                InvoiceReport.objects.update_or_create(invoice=invoice, 
+                                                created_by=self.request.user,
+                                                invoice_file=f"/invoice_report/invoice_report_{invoice.id}.pdf")
         
 
             serializer = Invoice_Serializer_For_Report(invoice)

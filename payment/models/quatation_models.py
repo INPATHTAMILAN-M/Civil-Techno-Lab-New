@@ -10,6 +10,7 @@ class Quotation(models.Model):
     date_created = models.DateField(default=now)
     tax = models.ManyToManyField('general.Tax', blank=True)
     total_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
+    sub_total = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     completed = models.BooleanField(default=False)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_created')
     created_date = models.DateField(auto_now_add=True, null=True)

@@ -58,38 +58,49 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
             from weasyprint import HTML
             from django.conf import settings
             from django.db.models import Sum
-    
+            from ..models import QuotationReport
 
-            tax_mapping = {
-                'SGST': 'SGST',
-                'CGST': ' CGST',
-                'IGST': ' IGST'
-            }
-            tax_display = "".join(f"{tax_mapping[tax.tax_name]} ({tax.tax_percentage}%)" for tax in instance.tax.all())            
-            
+            # Refresh the instance to get the most recent data
+            instance.refresh_from_db()
+
             context = {
-                'quotation': instance,
+                'quotation': validated_data.get('quotation', instance),                
                 'customer': instance.customer,
                 'quotation_items': instance.quotation_items.all(),
-                'tax': instance.tax.all(),
-                "tax_total":instance.tax.all().aggregate(Sum('tax_percentage'))['tax_percentage__sum'] or 0,
-                "tax_display": tax_display,
-                "setting": settings
+                'sub_total': instance.sub_total,
+                'tax': validated_data.get('tax', []),
+                'tax_total': sum(tax.tax_percentage for tax in validated_data.get('tax', [])) or 0,  # Sum tax percentages using dot notation
+                'tax_display': "+".join(f"{tax.tax_name} ({tax.tax_percentage}%)" for tax in validated_data.get('tax', [])),
+                "settings": settings
             }
 
             html_content = render_to_string('quotation.html', context)
             pdf_file = HTML(string=html_content).write_pdf()
+            
+            # Set up the file path and save the PDF file
             pdf_dir = os.path.join(settings.MEDIA_ROOT, 'quotations')
             os.makedirs(pdf_dir, exist_ok=True)
-            file_path = os.path.join(pdf_dir, f"quotation_{instance.date_created}.pdf")
+            file_path = os.path.join(pdf_dir, f"quotation_{instance.id}.pdf")
+            
             with open(file_path, 'wb') as f:
                 f.write(pdf_file)
+            
+            # Update the instance's pdf_path and save it
             instance.pdf_path = file_path
             instance.save()
-            QuotationReport.objects.create(quotation=instance, 
-                                            created_by=self.context['request'].user,
-                                            quotation_file=f"/quotations/quotation_{instance.date_created}.pdf")
+
+            # Update or create the QuotationReport entry
+            QuotationReport.objects.update_or_create(
+                quotation=instance, 
+                created_by=instance.created_by,  # Use `created_by` or another user-tracking field
+                defaults={
+                    'quotation_file': f"/quotations/quotation_{instance.id}.pdf"
+                }
+            )
+
+        # Continue with the default update behavior
         return super().update(instance, validated_data)
+
     
 
 class QuotationListSerializer(serializers.ModelSerializer):

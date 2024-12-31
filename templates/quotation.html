@@ -2,6 +2,7 @@
 <html lang="en">
 
 {% load mathfilters %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -92,9 +93,7 @@
                 <tr>
                     <td style="padding-top: 10px;">
                         {{ quotation.customer.customer_name}}<br>
-                        {{ quotation.customer.city1 }},
-                        {{ quotation.customer.state1 }},
-                        {{ quotation.customer.country1 }}
+                        {{ quotation.customer.address1 }}
                     </td>
                     <td></td>
                 </tr>
@@ -132,14 +131,14 @@
             {% endfor %}
                 <tr>
                     <td colspan="4">Sub Total</td>
-                    <td>{{ quotation.total_amount }}</td>
+                    <td>{{ quotation.sub_total }}</td>
                 </tr>
                 <tr>
                     <td colspan="4">
                         {{tax_display}}
                     </td>      
                     <td>
-                        {% with tax_amount=quotation.total_amount|mul:tax_total|div:100 %}
+                        {% with tax_amount=quotation.sub_total|mul:tax_total|div:100|floatformat:2 %}
                             {{ tax_amount }}
                         {% endwith %}
                     </td>                                   
@@ -147,8 +146,8 @@
                 <tr>
                     <td colspan="4" style="font-weight:bold">Total</td>
                     <td>
-                        {% with tax_amount=quotation.total_amount|mul:tax_total|div:100 %}
-                            {{ quotation.total_amount|add:tax_amount }}
+                        {% with tax_amount=quotation.sub_total|mul:tax_total|div:100 %}
+                            {{ quotation.sub_total|add:tax_amount }}
                         {% endwith %}
                     </td>
                 </tr>
@@ -195,14 +194,14 @@
             <div class="sign-div-item"  >
                 <img style="width: 150px;" src="{{settings.BACKEND_DOMAIN}}/static/thirumalai.png" alt="">
                 <p>Tirumalai Ravikumar <br>
-                    Technical Director <br>
+                    Managing Director <br>
                     Covai Civil Lab Private Limited
                 </p>
             </div>
           
-            <div class="sign-div-item"  >
-                <img style="width: 100px; height: 100px;" src="{{quotation_qr}}" alt="">
-            </div>
+            <!-- <div class="sign-div-item"  >
+                <img style="width: 100px; height: 100px;" src="{{quotation.quotation_qr.url}}" alt="">
+            </div> -->
         </div>
         <hr>
         <div style="margin-top: 20px; text-align: center;">
