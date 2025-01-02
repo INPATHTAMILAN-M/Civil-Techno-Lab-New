@@ -296,9 +296,10 @@
       <!-- QR Code and Signature -->
       <div class="qr-code">
         <img
-          src="{{settings.BACKEND_DOMAIN}}{{invoice.invoice_image.url}}"
+          src="{{settings.BACKEND_DOMAIN}}/{{invoice.invoice_image}}"
           alt="QR Code"
         />
+        <p></p>
       </div>
       <div class="signature">
         <img
