@@ -1,3 +1,11 @@
+import os
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.conf import settings
+from django.db.models import Sum
+from ..models import QuotationReport
+
+
 from rest_framework import serializers
 from payment.models import QuotationItem, Quotation, QuotationReport
 from general.models import Tax
@@ -52,51 +60,45 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
-        if validated_data.get("completed"):
-            import os
-            from django.template.loader import render_to_string
-            from weasyprint import HTML
-            from django.conf import settings
-            from django.db.models import Sum
-            from ..models import QuotationReport
+        
+        
 
-            # Refresh the instance to get the most recent data
-            instance.refresh_from_db()
+        # Refresh the instance to get the most recent data
+        instance.refresh_from_db()
 
-            context = {
-                'quotation': validated_data.get('quotation', instance),                
-                'customer': instance.customer,
-                'quotation_items': instance.quotation_items.all(),
-                'sub_total': instance.sub_total,
-                'tax': validated_data.get('tax', []),
-                'tax_total': sum(tax.tax_percentage for tax in validated_data.get('tax', [])) or 0,  # Sum tax percentages using dot notation
-                'tax_display': "+".join(f"{tax.tax_name} ({tax.tax_percentage}%)" for tax in validated_data.get('tax', [])),
-                "settings": settings
+        context = {
+            'quotation': validated_data.get('quotation', instance),                
+            'customer': instance.customer,
+            'quotation_items': instance.quotation_items.all(),
+            'sub_total': instance.sub_total,
+            'tax': validated_data.get('tax', []),
+            'tax_total': sum(tax.tax_percentage for tax in validated_data.get('tax', [])) or 0,  # Sum tax percentages using dot notation
+            'tax_display': "+".join(f"{tax.tax_name} ({tax.tax_percentage}%)" for tax in validated_data.get('tax', [])),
+            "settings": settings
+        }
+
+        html_content = render_to_string('quotation.html', context)
+        pdf_file = HTML(string=html_content).write_pdf()
+        
+        # Set up the file path and save the PDF file
+        pdf_dir = os.path.join(settings.MEDIA_ROOT, 'quotations')
+        os.makedirs(pdf_dir, exist_ok=True)
+        file_path = os.path.join(pdf_dir, f"quotation_{instance.id}.pdf")
+        
+        with open(file_path, 'wb') as f:
+            f.write(pdf_file)
+        
+        # Update the instance's pdf_path and save it
+        instance.pdf_path = file_path
+        instance.save()
+
+        # Update or create the QuotationReport entry
+        QuotationReport.objects.update_or_create(
+            quotation=instance, 
+            defaults={
+                'quotation_file': f"/quotations/quotation_{instance.id}.pdf"
             }
-
-            html_content = render_to_string('quotation.html', context)
-            pdf_file = HTML(string=html_content).write_pdf()
-            
-            # Set up the file path and save the PDF file
-            pdf_dir = os.path.join(settings.MEDIA_ROOT, 'quotations')
-            os.makedirs(pdf_dir, exist_ok=True)
-            file_path = os.path.join(pdf_dir, f"quotation_{instance.id}.pdf")
-            
-            with open(file_path, 'wb') as f:
-                f.write(pdf_file)
-            
-            # Update the instance's pdf_path and save it
-            instance.pdf_path = file_path
-            instance.save()
-
-            # Update or create the QuotationReport entry
-            QuotationReport.objects.update_or_create(
-                quotation=instance, 
-                created_by=instance.created_by,  # Use `created_by` or another user-tracking field
-                defaults={
-                    'quotation_file': f"/quotations/quotation_{instance.id}.pdf"
-                }
-            )
+        )
 
         # Continue with the default update behavior
         return super().update(instance, validated_data)

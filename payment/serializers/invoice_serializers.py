@@ -335,14 +335,27 @@ class Test_serializer(serializers.ModelSerializer):
 class Pending_Invoice_Serializer(serializers.ModelSerializer):
     customer = serializers.StringRelatedField()
     incompleted_test = serializers.SerializerMethodField()
+    invoice_file = serializers.SerializerMethodField()
+    
 
     class Meta:
         model =  Invoice
         fields = ['id','customer','project_name','total_amount',
-                  'advance','balance','invoice_no','fully_paid','incompleted_test']
+                  'advance','balance','invoice_no','fully_paid','incompleted_test',"invoice_file"]
     
     def get_incompleted_test(self,obj):
         return str(obj.incompleted_test)
+    
+    def get_invoice_file(self, obj):
+        # Fetch the most recent QuotationReport using the related_name
+        recent_report = obj.invoice_reports.order_by('-id').first()
+        
+        if recent_report and recent_report.invoice_file:
+            # Build the full URL using BACKEND_DOMAIN
+            full_url = f"{settings.BACKEND_DOMAIN}{recent_report.invoice_file.url}"
+            return full_url
+        
+        return None
 
 class Create_Invoice_File_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -442,11 +455,29 @@ class Invoice_Report(serializers.ModelSerializer):
     neft = serializers.SerializerMethodField()
     tds = serializers.SerializerMethodField()
     cheque_neft = serializers.SerializerMethodField()
+    invoice_file = serializers.SerializerMethodField()
+
+
 
 
     class Meta:
         model = Invoice
-        fields = ['customer_name','customer_gst_no','project_name','invoice_no','date','export_date', 'amount','cgst_tax','sgst_tax','total_amount','cash','cheque_neft','tds','tax_deduction','advance','balance','discount','amount_paid_date','bank','cheque_number','payment_mode','place_of_testing','tax','sales_mode','incompleted_test','upi','neft','completed','igst_tax']
+        fields = ['customer_name','customer_gst_no','project_name','invoice_no',
+                  'date','export_date', 'amount','cgst_tax','sgst_tax','total_amount',
+                  'cash','cheque_neft','tds','tax_deduction','advance','balance','discount',
+                  'amount_paid_date','bank','cheque_number','payment_mode','place_of_testing','tax',
+                  'sales_mode','incompleted_test','upi','neft','completed','igst_tax','invoice_file']
+        
+    def get_invoice_file(self, obj):
+        # Fetch the most recent QuotationReport using the related_name
+        recent_report = obj.invoice_reports.order_by('-id').first()
+        
+        if recent_report and recent_report.invoice_file:
+            # Build the full URL using BACKEND_DOMAIN
+            full_url = f"{settings.BACKEND_DOMAIN}{recent_report.invoice_file.url}"
+            return full_url
+        
+        return None
 
 
     def get_incompleted_test(self,obj):

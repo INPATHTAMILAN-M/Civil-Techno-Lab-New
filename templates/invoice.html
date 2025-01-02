@@ -270,6 +270,10 @@
         <div class="total">
           <table>
             <tr>
+              <td class="label">Discount {{discount}}%:</td>
+              <td class="align-right">{{ discount_amount|floatformat:2 }}</td>
+            </tr>
+            <tr>
               <td class="label">Subtotal:</td>
               <td class="align-right">{{ total_amount|floatformat:2 }}</td>
             </tr>
@@ -289,6 +293,31 @@
                 {% endwith %}
               </td>
             </tr>
+            {% if advance_amount %}
+            <tr>
+              <td class="label">Advance:</td>
+              <td class="align-right">{{ advance_amount|floatformat:2 }}</td>
+            </tr>
+
+            {% else %}
+            <tr>
+              <td class="label">Advance:</td>
+              <td class="align-right">0</td>
+            </tr>
+
+            {% endif %}
+            {% if pending_amount %}
+            <tr>
+              <td class="label">Balance:</td>
+              <td class="align-right">{{ pending_amount|floatformat:2 }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td class="label">Balance:</td>
+              <td class="align-right">0</td>
+            </tr>
+            {% endif %}
+
           </table>
         </div>
       </div>
