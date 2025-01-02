@@ -6,6 +6,8 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 import os
 
+
+
 from ..models import Quotation, QuotationItem, QuotationReport
 
 
@@ -28,17 +30,38 @@ def calculate_total_amount(quotation):
     print("Tax Amount:", tax_amount)
     return sub_total + tax_amount , sub_total
 
-@receiver([post_save,pre_save,post_delete], sender=QuotationItem)
-def update_quotation_total(sender, instance, **kwargs):
-    print("QuotationItem updated....................................")
-    if instance:
-        new_total, sub_total = calculate_total_amount(instance.quotation)
-        instance.quotation.total_amount = int(new_total)
-        instance.quotation.sub_total = int(sub_total)
-        instance.quotation.save()
-        print("Quotation total amount updated:", new_total)
-    else:
-        print("Quotation not set for QuotationItem")
+# @receiver([post_save,pre_save,post_delete], sender=QuotationItem)
+# def update_quotation_total(sender, instance, **kwargs):
+#     print("QuotationItem updated....................................")
+#     if instance:
+#         new_total, sub_total = calculate_total_amount(instance.quotation)
+#         instance.quotation.total_amount = int(new_total)
+#         instance.quotation.sub_total = int(sub_total)
+#         instance.quotation.save()
+#         print("Quotation total amount updated:", new_total)
+#     else:
+#         print("Quotation not set for QuotationItem")
+
+
+@receiver([post_save, post_delete], sender=QuotationItem)
+def update_quotation_totals(sender, instance, **kwargs):
+    """
+    Recalculate totals for a Quotation whenever a QuotationItem is added, updated, or removed.
+    """
+    quotation = instance.quotation
+    if quotation:
+        try:
+            # Calculate totals
+            new_total, sub_total = calculate_total_amount(quotation)
+
+            # Update the Quotation
+            quotation.total_amount = new_total
+            quotation.sub_total = sub_total
+            quotation.save()
+            print(f"Quotation {quotation.id} totals updated: Total - {new_total}, Subtotal - {sub_total}")
+        except Exception as e:
+            print(f"Error updating quotation totals: {e}")
+
 
 
 @receiver([post_save,post_delete], sender=Quotation)
