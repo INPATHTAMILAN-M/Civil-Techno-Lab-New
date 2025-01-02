@@ -222,18 +222,24 @@
       <div class="customer-details" >
         <div class="details">
           <p class="label">Issued For:</p>
-          <p>{{ customer.name }}</p>
+          <p>{{ customer.customer_name }}</p>
           <p>{{ customer.address1 }}</p>
-          <!-- <p>{{ customer.city1 }}, {{ customer.state1 }}, {{ customer.country1 }}</p> -->
+          <p class="text-gray mb-2 f-14">-Original for Recipient</p>
+          <p class="text-gray mb-2 f-14">
+            -Duplicate for Supplier Transporter
+          </p>
+          <p class="text-gray mb-2 f-14">-Triplicate for Supplier</p>
+          
         </div>
         <div class="details" style="text-align:end">
           <p><span class="label">Date:</span> {{ invoice.date|date:"d/m/Y" }}</p>
           <p><span class="label">Project Name:</span> {{ invoice.project_name }}</p>
           <p><span class="label">Place of Testing:</span> {{ invoice.place_of_testing }}</p>
+          <p><span class="label">GSTIN:</span> {{ customer.gstin_no }}</p>
         </div>
       </div>
 
-      <!-- Table Section -->
+
       <table>
         <thead>
           <tr>
@@ -264,7 +270,7 @@
         <div class="bank-details">
           <p><b>Name:</b>  Covai Civil Lab Private Limited.</p>
           <p><b>Account No:</b> 923020070722530</p>
-          <p><b>Bank Name:</b> Axis Bank, Vadavalli</p>
+          <p><b>Bank Name:</b> Axis Bank, Vadavalli, Coimbatore</p>
           <p><b>IFSC Code:</b> UTIB0003080</p>
         </div>
         <div class="total">
@@ -351,8 +357,8 @@
         <p class="f-14 text-gray">
           <b>Website</b>:
           <a href="https://covaicivillab.com" class="f-14 text-gray"
-            >covaicivillab.com</a
-          >
+            >covaicivillab.com
+          </a>
         </p>
       </div>
       <div class="footer">
