@@ -184,7 +184,7 @@
 
       .signature {
         display: inline-block;
-        width: 48%;
+        width: 50%;
         text-align: end;
         margin-top: 20px;
       }
@@ -231,25 +231,36 @@
           <p class="text-gray mb-2 f-14" style="color: #808080">-Triplicate for Supplier</p>          
         </div>
         <div class="details" style="text-align:end">
-          <p><span class="label">Date:</span> {{ invoice.date|date:"d/m/Y" }}</p>
-          <p><span class="label">Project Name:</span> {{ invoice.project_name }}</p>
+          <div style='display: flex;justify-content: space-between;'>
+            <p><span class="label">Date:</span> </p>
+            <p>{{ invoice.date|date:"d/m/Y" }}</p>
+          </div>
+          <div style='display: flex;justify-content: space-between;'>
+          <p><span class="label">Project Name:</span></p>
+          <p>{{ invoice.project_name }}</p>
+          </div>
+
           {% if invoice.place_of_testing %}
-          <p>
-            <span class="label">Place of Testing:</span> {{ invoice.place_of_testing }}
-          </p>
+          <div style='display: flex;justify-content: space-between;'>
+            <p><span class="label">Place of Testing:</span></p>
+            <p>{{ invoice.place_of_testing }} </p>
+          </div>
           {% else  %}
-          <p>
-            <span class="label">Place of Testing:</span>
-          </p>
+          <div style='display: flex;justify-content: space-between;'>
+            <p><span class="label">Place of Testing:</span></p>
+            <p></p>
+          </div>
           {% endif %}
           {% if customer.gstin_no %}
-          <p>
-            <span class="label">GSTIN:</span> {{ customer.gstin_no }}
-          </p>
+          <div style='display: flex;justify-content: space-between;'>
+            <p><span class="label">GSTIN:</span></p>
+            <p>{{ customer.gstin_no }}</p>
+          </div>
           {% else  %}
-          <p>
-            <span class="label">GSTIN:</span>
-          </p>
+          <div style='display: flex;justify-content: space-between;'>
+            <p><span class="label">GSTIN:</span></p>
+            <p></p>
+          </div>
           {% endif %}
         </div>
       </div>
