@@ -234,8 +234,8 @@
         <div class="details" style="text-align:end">
           <p><span class="label">Date:</span> {{ invoice.date|date:"d/m/Y" }}</p>
           <p><span class="label">Project Name:</span> {{ invoice.project_name }}</p>
-          <p><span class="label">Place of Testing:</span> {{ invoice.place_of_testing }}</p>
-          <p><span class="label">GSTIN:</span> {{ customer.gstin_no }}</p>
+          {% if invoice.place_of_testing %}<p><span class="label">Place of Testing:</span> {{ invoice.place_of_testing }}</p>{% endif %}
+          {% if customer.gstin_no %}<p><span class="label">GSTIN:</span> {{ customer.gstin_no }}</p>{% endif %}
         </div>
       </div>
 
