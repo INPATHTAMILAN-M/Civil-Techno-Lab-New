@@ -212,7 +212,7 @@
           />
           <div class="company-details">
             <p>An ISO/IEC 17025:2017 CERTIFIED LAB</p>
-            <p>411/4, Vijayalakshmi Nagar, Neelikonampalayam Po, Coimbatore</p>
+            <p>411/4, Vijayalakshmi Nagar, Neelikonampalayam Po, Coimbatore.</p>
             <p>GSTIN: 33AALCC7761L1Z7</p>
           </div>
         </div>
@@ -224,21 +224,35 @@
           <p class="label">Issued For:</p>
           <p>{{ customer.customer_name }}</p>
           <p>{{ customer.address1 }}</p>
-          <p class="text-gray mb-2 f-14">-Original for Recipient</p>
-          <p class="text-gray mb-2 f-14">
+          <p class="text-gray mb-2 f-14" style="color: #808080">-Original for Recipient</p>
+          <p class="text-gray mb-2 f-14" style="color: #808080">
             -Duplicate for Supplier Transporter
           </p>
-          <p class="text-gray mb-2 f-14">-Triplicate for Supplier</p>
-          
+          <p class="text-gray mb-2 f-14" style="color: #808080">-Triplicate for Supplier</p>          
         </div>
         <div class="details" style="text-align:end">
           <p><span class="label">Date:</span> {{ invoice.date|date:"d/m/Y" }}</p>
           <p><span class="label">Project Name:</span> {{ invoice.project_name }}</p>
-          {% if invoice.place_of_testing %}<p><span class="label">Place of Testing:</span> {{ invoice.place_of_testing }}</p>{% endif %}
-          {% if customer.gstin_no %}<p><span class="label">GSTIN:</span> {{ customer.gstin_no }}</p>{% endif %}
+          {% if invoice.place_of_testing %}
+          <p>
+            <span class="label">Place of Testing:</span> {{ invoice.place_of_testing }}
+          </p>
+          {% else  %}
+          <p>
+            <span class="label">Place of Testing:</span>
+          </p>
+          {% endif %}
+          {% if customer.gstin_no %}
+          <p>
+            <span class="label">GSTIN:</span> {{ customer.gstin_no }}
+          </p>
+          {% else  %}
+          <p>
+            <span class="label">GSTIN:</span>
+          </p>
+          {% endif %}
         </div>
       </div>
-
 
       <table>
         <thead>
@@ -270,15 +284,17 @@
         <div class="bank-details">
           <p><b>Name:</b>  Covai Civil Lab Private Limited.</p>
           <p><b>Account No:</b> 923020070722530</p>
-          <p><b>Bank Name:</b> Axis Bank, Vadavalli, Coimbatore</p>
+          <p><b>Bank Name & Branch:</b> Axis Bank, Vadavalli, Coimbatore</p>
           <p><b>IFSC Code:</b> UTIB0003080</p>
         </div>
         <div class="total">
           <table>
+            {% if discount %}
             <tr>
               <td class="label">Discount {{discount}}%:</td>
               <td class="align-right">{{ discount_amount|floatformat:2 }}</td>
             </tr>
+            {% endif %}            
             <tr>
               <td class="label">Subtotal:</td>
               <td class="align-right">{{ total_amount|floatformat:2 }}</td>
