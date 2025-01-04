@@ -47,7 +47,7 @@ class QuotationItemGetSerializer(serializers.ModelSerializer):
 class QuotationItemUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationItem
-        fields = ['test', 'quantity']
+        fields = ['test', 'quantity', 'price_per_sample']
         
 
 class QuotationItemDeleteSerializer(serializers.ModelSerializer):
