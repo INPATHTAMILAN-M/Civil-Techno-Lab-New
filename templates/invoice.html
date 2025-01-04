@@ -214,6 +214,7 @@
             <p>An ISO/IEC 17025:2017 CERTIFIED LAB</p>
             <p>411/4, Vijayalakshmi Nagar, Neelikonampalayam Po, Coimbatore.</p>
             <p>GSTIN: 33AALCC7761L1Z7</p>
+            <p>CIN: U71200TZ2024PTC031215</p>
           </div>
         </div>
       </div>
@@ -280,7 +281,7 @@
           {% for item in invoice_items %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ item.test.test_name }}</td>
+            <td>{{ item.test.test_name }} - <strong>{{item.test.material_name.material_name}}</strong> </td>
             <td>998346</td>
             <td>{{ item.quantity }}</td>
             <td class="align-right">{{ item.price_per_sample|floatformat:2 }}</td>
