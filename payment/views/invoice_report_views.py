@@ -7,7 +7,7 @@ from ..serializers import InvoiceReportListSerializer, InvoiceReportDetailSerial
 
 
 class InvoiceReportListView(generics.ListAPIView):
-    queryset = InvoiceReport.objects.all().order_by('-id')
+    queryset = InvoiceReport.objects.all().order_by('-invoice__id')
     serializer_class = InvoiceReportListSerializer    
     filter_backends = [DjangoFilterBackend]
     filterset_class = InvoiceReportFilter
