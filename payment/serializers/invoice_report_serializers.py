@@ -50,7 +50,6 @@ class InvoiceTestSerializer(serializers.ModelSerializer):
 class InvoiceListSerializer(serializers.ModelSerializer):
     customer = serializers.StringRelatedField()
     invoice_file = serializers.SerializerMethodField()
-    invoice_report_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Invoice
@@ -58,7 +57,7 @@ class InvoiceListSerializer(serializers.ModelSerializer):
                  'advance', 'balance', 'total_amount', 'tds_amount', 'fully_paid',
                  'date', 'invoice_no', 'payment_mode', 'cheque_number', 'upi',
                  'bank', 'amount_paid_date', 'invoice_image', 'place_of_testing',
-                 'completed', 'is_old_invoice_format', "invoice_tests",'invoice_file','invoice_report_date')
+                 'completed', 'is_old_invoice_format', "invoice_tests",'invoice_file')
         
     def get_invoice_file(self, obj):
         # Fetch the most recent QuotationReport using the related_name
@@ -70,13 +69,7 @@ class InvoiceListSerializer(serializers.ModelSerializer):
             return full_url
         
         return None
-    
-    def get_invoice_report_date(self, obj):
-        # Fetch the most recent QuotationReport using the related_name
-        recent_report = obj.invoice_reports.order_by('-id').first()
 
-        if recent_report:
-            return recent_report.created_date
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
