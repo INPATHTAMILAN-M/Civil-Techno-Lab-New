@@ -28,7 +28,8 @@ class QuotationCreateView(CreateAPIView):
     def perform_create(self, serializer):
         instance = serializer.save(created_by=self.request.user)
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-        qr_url = f"{settings.QR_DOMAIN}/quotation/viewquotationreport?id={instance.id}"
+        # qr_url = f"{settings.QR_DOMAIN}/quotation/viewquotationreport?id={instance.id}"
+        qr_url = f'{settings.QR_DOMAIN}/invoice/viewQuotationPreview?id={instance.id}'
         qr.add_data(qr_url)
         qr.make(fit=True)
         qr_image = qr.make_image(fill_color="black", back_color="white")
