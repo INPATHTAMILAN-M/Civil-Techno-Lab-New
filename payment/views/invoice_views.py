@@ -714,7 +714,7 @@ class Edit_Invoice_Test_Template(APIView):
         invoice_test = Invoice_Test_Serializer(invoice_test_object)
         invoice = Invoice.objects.get(id=invoice_test_object.invoice.id)
         invoice_serializer = Invoice_Serializer_For_Print(invoice)
-        employees = Employee.objects.filter(role__isnull=False,signature__isnull=False)
+        employees = Employee.objects.filter(role__isnull=False,signature__isnull=False,is_active=True)
         signatures = Employee_Serializer(employees,many=True)
         context = {
                     'invoice': invoice_serializer.data,                

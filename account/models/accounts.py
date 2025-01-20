@@ -21,6 +21,7 @@ class Employee(models.Model):
     branch_email =  models.EmailField(null=True)
     signature = models.ImageField(null=True,blank=True,upload_to="signature")
     role = models.TextField(null=True,blank=True)
+    is_active = models.BooleanField(default=True)
     
     def __str__(self):
         return self.employee_name

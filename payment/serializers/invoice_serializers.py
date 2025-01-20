@@ -15,12 +15,14 @@ from bs4 import BeautifulSoup
 class Receipt_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Receipt
-        fields = ['invoice_no','payment_mode','cheque_number','upi','date','amount','neft','tds']
+        fields = ['invoice_no','payment_mode','cheque_number',
+                  'upi','date','amount','neft','tds']
 
 class Receipt_Serializer_List(serializers.ModelSerializer):
     class Meta:
         model = Receipt
-        fields = ['id','invoice_no','payment_mode','cheque_number','upi','date','amount','neft','tds']
+        fields = ['id','invoice_no','payment_mode','cheque_number',
+                  'upi','date','amount','neft','tds']
 
 
 class Invoice_File_Category_Serializer(serializers.ModelSerializer):
@@ -51,8 +53,6 @@ class Expense_Serializer1(serializers.ModelSerializer):
         model = Expense
         fields = ['id', 'expense_name']
 
-
-
 class Customer_Serializer1(serializers.ModelSerializer):
     class Meta:
         model = Customer
@@ -71,21 +71,27 @@ class Tax_Serializer1(serializers.ModelSerializer):
 class Create_Invoice_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
-        fields = ['id','customer','sales_mode','project_name','discount','tax','advance','balance']
+        fields = ['id','customer','sales_mode','project_name',
+                  'discount','tax','advance','balance']
 
 class Edit_Invoice_Serializer(serializers.ModelSerializer):
     #date = serializers.DateField(input_formats=['%d-%m-%Y',])
 
     class Meta:
         model = Invoice
-        fields = ['id','customer','sales_mode','project_name','discount','tax','total_amount','tds_amount','advance','balance','amount_paid_date','bank','cheque_number','payment_mode','date','place_of_testing','upi','completed']
+        fields = ['id','customer','sales_mode','project_name',
+                  'discount','tax','total_amount','tds_amount',
+                  'advance','balance','amount_paid_date','bank',
+                  'cheque_number','payment_mode','date','place_of_testing','upi','completed']
 
 class Invoice_Serializer(serializers.ModelSerializer):
     customer = serializers.StringRelatedField()
     incompleted_test = serializers.SerializerMethodField()
     class Meta:
         model = Invoice
-        fields = ['id','invoice_no','date','customer','sales_mode','project_name','discount','tax','advance','balance','place_of_testing','total_amount','incompleted_test']
+        fields = ['id','invoice_no','date','customer','sales_mode',
+                  'project_name','discount','tax','advance','balance',
+                  'place_of_testing','total_amount','incompleted_test']
 
     def get_incompleted_test(self,obj):
         return str(obj.incompleted_test)

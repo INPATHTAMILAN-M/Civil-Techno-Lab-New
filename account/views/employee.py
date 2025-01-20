@@ -2,6 +2,11 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User, Group
 
+from rest_framework.generics import (
+    CreateAPIView, RetrieveAPIView, 
+    UpdateAPIView, ListAPIView, DestroyAPIView
+)
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,7 +18,8 @@ from account.serializers import (
                 Employee_List_Serializer,
                 Employee_Serializer,
                 Group_Serializer,
-                UserSerializer
+                UserSerializer,
+                EmployeeUpdateSerializer
 )
 
 class Manage_Employee(APIView):
@@ -79,3 +85,17 @@ class Manage_Employee(APIView):
         employee.delete()
         data['deleted'] = True
         return Response(data)
+    
+class EmployeeUpdateView(UpdateAPIView,RetrieveAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeUpdateSerializer
+    lookup_field = 'id'
+
+class EmployeeDeleteView(DestroyAPIView):
+    queryset = Employee.objects.all()
+    lookup_field = 'id'
+    http_method_names = ['delete']
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()        
