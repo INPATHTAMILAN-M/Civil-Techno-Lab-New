@@ -1,5 +1,11 @@
+import io
+import zipfile
+from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 from ..models import InvoiceReport
 from ..filters import InvoiceReportFilter
@@ -17,3 +23,45 @@ class InvoiceReportGetView(generics.RetrieveAPIView):
     queryset = InvoiceReport.objects.all().order_by('-id')
     serializer_class = InvoiceReportDetailSerializer 
     permission_classes = [permissions.IsAuthenticated]
+
+
+
+class InvoiceReportZipAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Get month and year from query parameters
+        month = request.query_params.get('month')
+        year = request.query_params.get('year')
+
+        if not month or not year:
+            return Response(
+                {"error": "Month and year parameters are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Filter InvoiceReports based on the month and year
+        filtered_reports = InvoiceReport.objects.filter(
+            created_date__year=year,
+            created_date__month=month
+        )
+
+        if not filtered_reports.exists():
+            return Response(
+                {"error": "No reports found for the given month and year."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Create an in-memory ZIP file
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+            for report in filtered_reports:
+                if report.invoice_file:  # Ensure file exists
+                    # Add the file to the ZIP archive
+                    file_name = report.invoice_file.name.split("/")[-1]  # Get the file name
+                    with report.invoice_file.open('rb') as file:
+                        zip_file.writestr(file_name, file.read())
+
+        zip_buffer.seek(0)
+
+        # Create and return the ZIP file response
+        response = FileResponse(zip_buffer, as_attachment=True, filename="invoice_reports.zip")
+        return response

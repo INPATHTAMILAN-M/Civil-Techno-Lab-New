@@ -13,6 +13,7 @@ from .views import (
     QuotationItemDeleteView,
     QuotationReportList,
     QuotationReportCreate,
+    InvoiceReportZipAPIView,
     QuotationReportDetail,
     QuotationReportUpdate,
     InvoiceReportListView,
@@ -55,6 +56,8 @@ urlpatterns = [
     path('invoice_file_report/', views.Invoice_File_Report.as_view(), name='invoice_file_report'),
     path('test-list/', views.Test_List.as_view(), name='test-list'),
 
+    path('invoice-reports/zip/', InvoiceReportZipAPIView.as_view(), name='invoice_reports_zip'),
+
     path('quotations/', QuotationListView.as_view(), name='quotation-list'),          # List all quotations
     path('quotations/create/', QuotationCreateView.as_view(), name='quotation-create'), # Create a new quotation
     path('quotations/<int:pk>/', QuotationRetrieveView.as_view(), name='quotation-retrieve'), # Retrieve a single quotation
@@ -68,9 +71,7 @@ urlpatterns = [
 
    
     path('quotation-reports/', QuotationReportList.as_view(), name='quotation-report-list'),
-    # path('quotation-reports/create/', QuotationReportCreate.as_view(), name='quotation-report-create'),
     path('quotation-reports/<int:pk>/', QuotationReportDetail.as_view(), name='quotation-report-detail'),
-    # path('quotation-reports/<int:pk>/update/', QuotationReportUpdate.as_view(), name='quotation-report-update'),
 
     path('invoice-reports/', InvoiceReportListView.as_view(), name='quotation-report-list'),
     path('invoice-reports/<int:pk>/', InvoiceReportGetView.as_view(), name='quotation-report-list'),

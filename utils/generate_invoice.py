@@ -49,7 +49,7 @@ def generate_invoice_report(invoice, request):
     # Update or create the InvoiceReport model with the generated PDF file
     invoice_report, created = InvoiceReport.objects.update_or_create(
         invoice=invoice, 
-        defaults={'invoice_file': f"/invoice_report/invoice_report_{invoice.id}.pdf"}
+        defaults={'invoice_file': f"invoice_report/invoice_report_{invoice.id}.pdf"}
     )
     invoice_report.created_by = request.user
     invoice_report.save()
