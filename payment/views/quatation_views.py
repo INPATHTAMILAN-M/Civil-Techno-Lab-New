@@ -7,6 +7,7 @@ from rest_framework.generics import (
     RetrieveAPIView,
     UpdateAPIView,
 )
+from rest_framework.permissions import AllowAny
 import qrcode
 from ..models import Quotation
 from ..filters import QuotationFilter
@@ -39,7 +40,8 @@ class QuotationCreateView(CreateAPIView):
 class QuotationRetrieveView(RetrieveAPIView):
     queryset = Quotation.objects.all().order_by('-id')
     serializer_class = QuotationRetrieveSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = []  # Disable authentication
+    permission_classes = [AllowAny] 
 
 class QuotationListView(ListAPIView):
     queryset = Quotation.objects.all().order_by('-id')
