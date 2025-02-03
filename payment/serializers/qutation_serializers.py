@@ -56,7 +56,7 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
     quotation_items = QuotationItemSerializer(many=True, read_only=True)
     class Meta:
         model = Quotation
-        fields = ['id', 'tax', 'completed','customer','quotation_items']
+        fields = ['id', 'tax', 'completed','customer','quotation_items','date_created']
 
 
     def update(self, instance, validated_data):
