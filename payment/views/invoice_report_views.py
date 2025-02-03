@@ -40,8 +40,8 @@ class InvoiceReportZipAPIView(APIView):
 
         # Filter InvoiceReports based on the month and year
         filtered_reports = InvoiceReport.objects.filter(
-            created_date__year=year,
-            created_date__month=month
+            invoice__created_date__year=year,
+            invoice__created_date__month=month
         )
 
         if not filtered_reports.exists():

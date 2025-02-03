@@ -334,8 +334,6 @@ class Invoice_File(models.Model):
         return str(self.invoice.date)
 
 
-
-
 class InvoiceReport(models.Model):
     invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE, related_name='invoice_reports')
     invoice_file = models.FileField(upload_to='invoice_report/', null=True, blank=True)
