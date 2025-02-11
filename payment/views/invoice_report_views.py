@@ -56,9 +56,9 @@ class InvoiceReportZipAPIView(APIView):
             for report in filtered_reports:
                 if report.invoice_file:  # Ensure file exists
                     # Add the file to the ZIP archive
-                    file_name = report.invoice_file.name.split("/")[-1]  # Get the file name
+                    # file_name = report.invoice_file.name.split("/")[-1]  # Get the file name
                     with report.invoice_file.open('rb') as file:
-                        zip_file.writestr(file_name, file.read())
+                        zip_file.writestr(f"invoice__{report.invoice_no}", file.read())
 
         zip_buffer.seek(0)
 
