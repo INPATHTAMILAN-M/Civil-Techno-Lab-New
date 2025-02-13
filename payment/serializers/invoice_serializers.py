@@ -160,6 +160,10 @@ class Invoice_Test_Serializer(serializers.ModelSerializer):
             if img_tag:
                 img_tag.extract()
 
+            img_tag = soup.find('img', {'src': 'http://app.covaicivillab.com/static/header.gif'})
+            if img_tag:
+                img_tag.extract()
+
             # Convert back to string after modification
             data = str(soup)
             data = data.replace(f'<img src="{settings.BACKEND_DOMAIN}/static/header.gif" alt="Logo">','')  
@@ -205,6 +209,10 @@ class Invoice_Test_Serializer(serializers.ModelSerializer):
                 img_tag.extract()
 
             img_tag = soup.find('img', {'src': 'https://files.covaiciviltechlab.com/static/header.gif'})
+            if img_tag:
+                img_tag.extract()
+
+            img_tag = soup.find('img', {'src': 'http://app.covaicivillab.com/static/header.gif'})
             if img_tag:
                 img_tag.extract()
 
