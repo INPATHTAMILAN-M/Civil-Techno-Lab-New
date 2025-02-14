@@ -401,7 +401,7 @@ class Create_Invoice_Test(APIView):
                 )
 
                 # Add data to the QR code
-                qr_code = "https://app.covaiciviltechlab.com/invoice/viewtestreport?id="+str(i_test.id)
+                qr_code = f"{settings.QR_DOMAIN}/invoice/viewtestreport?id="+str(i_test.id)
                 qr.add_data(qr_code)
                 qr.make(fit=True)
 
