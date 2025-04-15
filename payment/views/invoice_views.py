@@ -6,6 +6,8 @@ from django.db.models import Sum, Q
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime, timedelta 
+from rest_framework.pagination import PageNumberPagination
 
 import os
 from django.template.loader import render_to_string
@@ -210,12 +212,14 @@ class Create_Invoice(APIView):
 class List_Invoice(APIView):
     def get(self, request, *args, **kwargs):
         invoices = Invoice.objects.all().order_by('-id')
-        serializer = Invoice_Serializer(invoices, many=True)
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        paginator.page_size = 10  # Set the number of items per page
+        result_page = paginator.paginate_queryset(invoices, request)
+        serializer = Invoice_Serializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
     
 
     def post(self, request):
-        #invoice_no = request.data['invoice_no']
         from_date = request.data['from_date']
         to_date = request.data['to_date']
         customer = request.data['customer']
@@ -236,10 +240,11 @@ class List_Invoice(APIView):
             filters['completed'] = completed
 
         invoices = Invoice.objects.filter(**filters).order_by('-id')
-
-        serializer = Invoice_Serializer(invoices, many=True)
-        return Response(serializer.data)
-    
+        paginator = PageNumberPagination()
+        paginator.page_size = 10  # Set the number of items per page
+        result_page = paginator.paginate_queryset(invoices, request)
+        serializer = Invoice_Serializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 
@@ -821,7 +826,7 @@ class Print_Invoice(APIView):
         return Response(context)
 
 
-from datetime import datetime, timedelta 
+
 
 class Dashboard(APIView):
 
