@@ -9,6 +9,7 @@ from ..models import (
 from general.models import Material,Expense,Test,Tax
 from account.models import Customer
 from num2words import num2words
+from ..models.invoice_models import CustomerDiscount
 from bs4 import BeautifulSoup
 
 
@@ -53,10 +54,17 @@ class Expense_Serializer1(serializers.ModelSerializer):
         model = Expense
         fields = ['id', 'expense_name']
 
+class CustomerDiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerDiscount
+        fields = '__all__'
+
+
 class Customer_Serializer1(serializers.ModelSerializer):
+    customer_discount = CustomerDiscountSerializer()
     class Meta:
         model = Customer
-        fields = ['id','customer_name','address1','phone_no']
+        fields = ['id','customer_name','address1','phone_no','customer_discount']
 
 class Sales_mode_Serializer1(serializers.ModelSerializer):
     class Meta:

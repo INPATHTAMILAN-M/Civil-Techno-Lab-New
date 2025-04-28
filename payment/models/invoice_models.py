@@ -342,3 +342,10 @@ class InvoiceReport(models.Model):
 
 
 
+class CustomerDiscount(models.Model):
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name='customer_discount')
+    discount = models.FloatField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="customer_discount_created_by",null=True)
+    created_date = models.DateField(auto_now_add=True,null=True)
+    modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    modified_date = models.DateTimeField(auto_now=True,null=True)

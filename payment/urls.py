@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 from .views import (
@@ -17,8 +17,17 @@ from .views import (
     QuotationReportDetail,
     QuotationReportUpdate,
     InvoiceReportListView,
-    InvoiceReportGetView
+    InvoiceReportGetView,
+    CustomerDiscountViewSet
 )
+
+from rest_framework.routers import DefaultRouter
+from django.conf import settings
+from django.conf.urls.static import static
+
+router = DefaultRouter()
+router.register(r'customer-discount', CustomerDiscountViewSet, basename='customer-discount')
+
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
     path('expense_entry_list/', views.List_Expense_Entry.as_view(), name='expense_entry_list'),
@@ -36,10 +45,10 @@ urlpatterns = [
     path('edit_invoice_test_template/<int:id>/', views.Edit_Invoice_Test_Template.as_view(), name='edit_invoice_test_template'),
     path('preview_invoice_test_template/<int:id>/', views.Preview_Invoice_Test_Template.as_view(), name='preview_invoice_test_template'),
 
-    #madhan
+    # madhan
     path('pending_payment/', views.Pending_Payment.as_view(), name='pending payment'),
 
-    #invoice file upload
+    # invoice file upload
     path('create_invoice_file_upload/', views.Create_Invoice_File_Upload.as_view(), name='create_invoice_file_upload'),
     path('invoice_file_upload_list/', views.Manage_Invoice_File_Upload.as_view(), name='invoice_file_upload_list'),
     path('edit_invoice_file_upload/<int:id>/', views.Update_Invoice_File_Upload.as_view(), name='edit_invoice_file_upload'),
@@ -69,13 +78,12 @@ urlpatterns = [
     path('quotation-items/<int:pk>/delete/', QuotationItemDeleteView.as_view(), name='quotation-item-delete'),
     path('quotation-items/<int:pk>/update/', QuotationItemUpdateView.as_view(), name='quotation-item-update'),  # Update QuotationItem
 
-   
     path('quotation-reports/', QuotationReportList.as_view(), name='quotation-report-list'),
     path('quotation-reports/<int:pk>/', QuotationReportDetail.as_view(), name='quotation-report-detail'),
 
     path('invoice-reports/', InvoiceReportListView.as_view(), name='quotation-report-list'),
     path('invoice-reports/<int:pk>/', InvoiceReportGetView.as_view(), name='quotation-report-list'),
-    
-           
-]
 
+    # Include router URLs
+    path('', include(router.urls)),
+]

@@ -1,3 +1,4 @@
 from .quotation_filter import QuotationFilter
 from .quotation_report_filter import QuotationReportFilter
 from .invoice_report_filter import InvoiceReportFilter
+from .customer_discount_filter import CustomerDiscountFilter

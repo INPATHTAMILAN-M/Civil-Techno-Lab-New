@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-g%jt_%rdjp@-y1myr94lmv71l^z01i8u%i4#u3avx#o#7jhofv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+USE_X_FORWARDED_HOST = True
+
+ALLOWED_HOSTS = ['127.0.0.1','bfclps4z-8000.inc1.devtunnels.ms']
 
 
 # Application definition
@@ -125,11 +127,11 @@ WSGI_APPLICATION = 'civiltech.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-        'NAME': 'civil_new',                 # The name of the MySQL database
+        'NAME': 'civil',                 # The name of the MySQL database
         'USER': 'root',                        # MySQL username
-        'PASSWORD': 'civil',           # MySQL password
-        'HOST': '127.0.0.1',  # The name of the MySQL container or its IP address
-        'PORT': '3307',                        # Default MySQL port
+        'PASSWORD': 'root',           # MySQL password
+        'HOST': '127.0.0.1', 
+        # 'PORT': '3306',                        # Default MySQL port
     }
 }
 
@@ -185,7 +187,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
-BACKEND_DOMAIN = 'https://vqbv6q92-8000.inc1.devtunnels.ms'
+BACKEND_DOMAIN = 'https://bfclps4z-8000.inc1.devtunnels.ms/'
 QR_DOMAIN = 'http://localhost:3010'
 
 CKEDITOR_CONFIGS = {
