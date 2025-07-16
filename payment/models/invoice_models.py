@@ -293,7 +293,6 @@ def wrapper(instance, filename):
 class Invoice_File(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE,null=True,blank=True)
     expense = models.ForeignKey(Expense_Entry, on_delete=models.CASCADE,null=True,blank=True)
-
     file = models.FileField(upload_to=wrapper)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="invoice_file_created_by",null=True)
     created_date = models.DateTimeField(auto_now_add=True,null=True)

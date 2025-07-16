@@ -4,3 +4,5 @@ from .quatation_item_serializers import *
 from .quotation_report_serializers import *
 from .invoice_report_serializers import *
 from .customer_discount_serializers import *
+from .receipt_serializers import *
+from .test_serializers import *

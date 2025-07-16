@@ -18,8 +18,8 @@ from .views import (
     QuotationReportUpdate,
     InvoiceReportListView,
     InvoiceReportGetView,
-    CustomerDiscountViewSet
 )
+from .viewsets import CustomerDiscountViewSet, ReceiptViewSet, TestViewSet
 
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
@@ -27,6 +27,8 @@ from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r'customer-discount', CustomerDiscountViewSet, basename='customer-discount')
+router.register(r'receipt', ReceiptViewSet, basename='receipt')
+router.register(r'test', TestViewSet, basename='test')
 
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
@@ -64,6 +66,8 @@ urlpatterns = [
     path('expense_file_report/', views.Expense_File_Report.as_view(), name='expense_file_report'),
     path('invoice_file_report/', views.Invoice_File_Report.as_view(), name='invoice_file_report'),
     path('test-list/', views.Test_List.as_view(), name='test-list'),
+
+
 
     path('invoice-reports/zip/', InvoiceReportZipAPIView.as_view(), name='invoice_reports_zip'),
 

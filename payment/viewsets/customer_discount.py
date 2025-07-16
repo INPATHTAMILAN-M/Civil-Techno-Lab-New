@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.pagination import PageNumberPagination
+from payment.pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import CustomerDiscount
 from ..filters.customer_discount_filter import CustomerDiscountFilter
@@ -11,16 +11,13 @@ from ..serializers import (
     CustomerDiscountListSerializer,
 )
 
-class CustomerDiscountPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+
 
 class CustomerDiscountViewSet(viewsets.ModelViewSet):
     queryset = CustomerDiscount.objects.all().order_by('-id')
     filterset_class = CustomerDiscountFilter
     permission_classes = [IsAuthenticated]
-    pagination_class = CustomerDiscountPagination
+    pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend]
     http_method_names = ['get', 'post', 'patch', 'delete']
 
