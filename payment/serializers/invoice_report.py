@@ -72,7 +72,7 @@ class InvoiceListSerializer(serializers.ModelSerializer):
 
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
+class InvoiceOldSerializer(serializers.ModelSerializer):
     invoice_tests = InvoiceTestSerializer(many=True)
     tax = TaxSerializer(many=True)
     customer = CustomerSerializer()
@@ -117,7 +117,7 @@ class InvoiceReportListSerializer(serializers.ModelSerializer):
 
 
 class InvoiceReportDetailSerializer(serializers.ModelSerializer):
-    invoice = InvoiceSerializer()
+    invoice = InvoiceOldSerializer()
     class Meta:
         model = InvoiceReport
         fields = ('id', 'invoice', 'created_by', 'created_date','invoice_file')

@@ -4,7 +4,7 @@ from rest_framework.generics import (
 )
 from rest_framework import permissions
 from payment.models import QuotationItem
-from payment.serializers.quatation_item_serializers import (
+from payment.serializers.quatation_item import (
     QuotationItemBulkCreateSerializer, 
     QuotationItemUnifiedSerializer,
     QuotationItemDeleteSerializer

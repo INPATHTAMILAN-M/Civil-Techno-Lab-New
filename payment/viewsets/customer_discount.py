@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from payment.pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import CustomerDiscount
-from ..filters.customer_discount_filter import CustomerDiscountFilter
+from ..filters.customer_discount import CustomerDiscountFilter
 from ..serializers import (
     CustomerDiscountCreateSerializer,
     CustomerDiscountUpdateSerializer,

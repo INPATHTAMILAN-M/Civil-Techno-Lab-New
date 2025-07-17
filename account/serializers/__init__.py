@@ -4,3 +4,7 @@ from .quotation_customer import *
 from .employee import *
 from .address import *
 from .useractivity import *
+from .country import *
+from .city import *
+from .state import *
+from .customer import *

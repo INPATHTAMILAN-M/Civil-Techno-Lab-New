@@ -19,7 +19,15 @@ from .views import (
     InvoiceReportListView,
     InvoiceReportGetView,
 )
-from .viewsets import CustomerDiscountViewSet, ReceiptViewSet, TestViewSet
+from .viewsets import (
+    CustomerDiscountViewSet, 
+    ReceiptViewSet, 
+    TestViewSet,
+    InvoiceTestViewSet,
+    InvoiceViewSet,
+    MaterialViewSet
+)
+from account.viewset import CityViewSet, StateViewSet, CountryViewSet, CustomerViewSet
 
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
@@ -29,6 +37,13 @@ router = DefaultRouter()
 router.register(r'customer-discount', CustomerDiscountViewSet, basename='customer-discount')
 router.register(r'receipt', ReceiptViewSet, basename='receipt')
 router.register(r'test', TestViewSet, basename='test')
+router.register(r'invoice-test', InvoiceTestViewSet, basename='invoice-test')
+router.register(r'invoice', InvoiceViewSet, basename='invoice')
+router.register(r'country', CountryViewSet, basename='country')
+router.register(r'state', StateViewSet, basename='state')
+router.register(r'city', CityViewSet, basename='city')
+router.register(r'customer', CustomerViewSet, basename='customer')
+router.register(r'material', MaterialViewSet, basename='material')
 
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
