@@ -21,6 +21,7 @@ from account.serializers import (
                 UserSerializer,
                 EmployeeUpdateSerializer
 )
+from payment.pagination import CustomPagination
 
 class Manage_Employee(APIView):
     def post(self, request, *args, **kwargs):
@@ -43,11 +44,13 @@ class Manage_Employee(APIView):
 
     def get(self, request, *args,**kwargs):
         employees = Employee.objects.all().order_by('-id')
-        serializer = Employee_List_Serializer(employees, many=True)
+        paginator = CustomPagination()
+        result_page = paginator.paginate_queryset(employees, request)
+        serializer = Employee_List_Serializer(result_page, many=True)
         groups = Group.objects.filter(name__in=('Admin',"Employee"))
         groups = Group_Serializer(groups,many=True)
 
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
 
     def put(self, request, id):
         employee = Employee.objects.get(id=id)

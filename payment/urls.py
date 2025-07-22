@@ -1,5 +1,11 @@
 from django.urls import path, include
 
+from account.viewset.employee import EmployeeViewSet
+from general.viewsets.expence_viewset import ExpenseViewSet
+from payment.viewsets.expense_entry import Expense_Entry_ViewSet
+from payment.viewsets.invoice_file import InvoiceFileViewSet
+from payment.viewsets.quotation import QuotationViewSet
+
 from . import views
 from .views import (
     QuotationCreateView,
@@ -12,10 +18,8 @@ from .views import (
     QuotationItemUpdateView,
     QuotationItemDeleteView,
     QuotationReportList,
-    QuotationReportCreate,
     InvoiceReportZipAPIView,
     QuotationReportDetail,
-    QuotationReportUpdate,
     InvoiceReportListView,
     InvoiceReportGetView,
 )
@@ -25,13 +29,15 @@ from .viewsets import (
     TestViewSet,
     InvoiceTestViewSet,
     InvoiceViewSet,
-    MaterialViewSet
+    MaterialViewSet,
+    InvoiceDiscountViewSet
+
 )
 from account.viewset import CityViewSet, StateViewSet, CountryViewSet, CustomerViewSet
+from general.viewsets.tax import TaxViewSet
 
 from rest_framework.routers import DefaultRouter
-from django.conf import settings
-from django.conf.urls.static import static
+
 
 router = DefaultRouter()
 router.register(r'customer-discount', CustomerDiscountViewSet, basename='customer-discount')
@@ -44,6 +50,13 @@ router.register(r'state', StateViewSet, basename='state')
 router.register(r'city', CityViewSet, basename='city')
 router.register(r'customer', CustomerViewSet, basename='customer')
 router.register(r'material', MaterialViewSet, basename='material')
+router.register(r'tax', TaxViewSet, basename='tax')
+router.register(r'employee', EmployeeViewSet, basename='employee')
+router.register(r'expense', ExpenseViewSet, basename='expense')
+router.register(r'quotation', QuotationViewSet, basename='quotation')
+router.register(r'expense_entry', Expense_Entry_ViewSet, basename='expense-entry')
+router.register(r'invoice_file', InvoiceFileViewSet, basename='invoice-file')
+router.register(r'invoice-discount', InvoiceDiscountViewSet, basename='invoice-discount')
 
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
@@ -80,7 +93,7 @@ urlpatterns = [
     path('delete_payment/<int:id>/', views.Delete_Payment.as_view(), name='delete_payment'),
     path('expense_file_report/', views.Expense_File_Report.as_view(), name='expense_file_report'),
     path('invoice_file_report/', views.Invoice_File_Report.as_view(), name='invoice_file_report'),
-    path('test-list/', views.Test_List.as_view(), name='test-list'),
+    # path('test-list/', views.Test_List.as_view(), name='test-list'),
 
 
 

@@ -41,7 +41,7 @@ from ..serializers import (
     Invoice_Serializer_For_Dashboard, Receipt_Serializer,
     Receipt_Serializer_List, Invoice_Report,
     Expense_File_Report_Serializer, Invoice_File_Report_Serializer,
-    Test_List_Serializer
+    # Test_List_Serializer
 )
 
 
@@ -203,6 +203,8 @@ class Create_Invoice(APIView):
             invoice.invoice_image = invoice_img_path
             if invoice.customer.place_of_testing:
                 invoice.place_of_testing = invoice.customer.place_of_testing
+            
+            invoice.date = datetime.now()
             invoice.save()
             generate_invoice_report(invoice,request)
 
@@ -1131,56 +1133,56 @@ class Invoice_File_Report(APIView):
     
 
 
-class Test_List(APIView):
+# class Test_List(APIView):
 
-    def get(self, request):
-        materials = Material.objects.all()
-        tests = Test.objects.all()
-        materials = Create_Material_Serializer(materials,many=True)
-        test_data = Test_Serializer1(tests,many=True)
+#     def get(self, request):
+#         materials = Material.objects.all()
+#         tests = Test.objects.all()
+#         materials = Create_Material_Serializer(materials,many=True)
+#         test_data = Test_Serializer1(tests,many=True)
 
-        tests = Invoice_Test.objects.all()
-        serializer = Test_List_Serializer(tests,many=True)
-        customers = Customer.objects.all()
-        customers = Customer_Serializer1(customers,many=True)
+#         tests = Invoice_Test.objects.all()
+#         serializer = Test_List_Serializer(tests,many=True)
+#         customers = Customer.objects.all()
+#         customers = Customer_Serializer1(customers,many=True)
 
-        context  = {
-            'reports':serializer.data,
-            'materials':materials.data,
-            'tests':test_data.data,
-            'customers':customers.data,
-        }
-        return Response(context)
+#         context  = {
+#             'reports':serializer.data,
+#             'materials':materials.data,
+#             'tests':test_data.data,
+#             'customers':customers.data,
+#         }
+#         return Response(context)
     
-    def post(self, request):
-        from_date = request.data['from_date']
-        to_date = request.data['to_date']
-        material = request.data['material']
-        test = request.data['test']
-        customer =  request.data['customer']
+#     def post(self, request):
+#         from_date = request.data['from_date']
+#         to_date = request.data['to_date']
+#         material = request.data['material']
+#         test = request.data['test']
+#         customer =  request.data['customer']
 
 
 
-        filters = {}
+#         filters = {}
 
-        if customer:
-            filters['invoice__customer__id'] = customer
-        if test:
-            filters['test__id'] = test
-        if material:
-            filters['test__material_name__id'] = material
-        if from_date:
-            filters['created_date__gte'] = datetime.strptime(from_date, '%Y-%m-%d').date()
-        if to_date:
-            filters['created_date__lte'] = datetime.strptime(to_date, '%Y-%m-%d').date()
+#         if customer:
+#             filters['invoice__customer__id'] = customer
+#         if test:
+#             filters['test__id'] = test
+#         if material:
+#             filters['test__material_name__id'] = material
+#         if from_date:
+#             filters['created_date__gte'] = datetime.strptime(from_date, '%Y-%m-%d').date()
+#         if to_date:
+#             filters['created_date__lte'] = datetime.strptime(to_date, '%Y-%m-%d').date()
 
-        tests = Invoice_Test.objects.filter(**filters).order_by('-id')
-        serializer = Test_List_Serializer(tests,many=True)
-        context  = {
-            'reports':serializer.data,
+#         tests = Invoice_Test.objects.filter(**filters).order_by('-id')
+#         # serializer = Test_List_Serializer(tests,many=True)
+#         context  = {
+#             'reports':serializer.data,
         
-        }
-        return Response(context)
+#         }
+#         return Response(context)
         
 
 def modify(requst):

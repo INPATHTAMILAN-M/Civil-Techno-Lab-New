@@ -30,18 +30,6 @@ def calculate_total_amount(quotation):
     print("Tax Amount:", tax_amount)
     return sub_total + tax_amount , sub_total
 
-# @receiver([post_save,pre_save,post_delete], sender=QuotationItem)
-# def update_quotation_total(sender, instance, **kwargs):
-#     print("QuotationItem updated....................................")
-#     if instance:
-#         new_total, sub_total = calculate_total_amount(instance.quotation)
-#         instance.quotation.total_amount = int(new_total)
-#         instance.quotation.sub_total = int(sub_total)
-#         instance.quotation.save()
-#         print("Quotation total amount updated:", new_total)
-#     else:
-#         print("Quotation not set for QuotationItem")
-
 
 @receiver([post_save, post_delete], sender=QuotationItem)
 def update_quotation_totals(sender, instance, **kwargs):

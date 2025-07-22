@@ -400,7 +400,9 @@ class Invoice_File_Serializer(serializers.ModelSerializer):
     
     class Meta:
         model =  Invoice_File
-        fields = ['id','invoice','file_url','category','invoice_no','category_name','created_by','modified_by','modified_date','created_date','expense','expense_category','expense_user']
+        fields = ['id','invoice','file_url','category','invoice_no','category_name',
+                  'created_by','modified_by','modified_date','created_date','expense',
+                  'expense_category','expense_user']
         
     def get_invoice_no(self,obj):
         try:
@@ -670,26 +672,3 @@ class Invoice_File_Report_Serializer(serializers.ModelSerializer):
         return obj.created_date.strftime('%d-%m-%Y')
 
 
-
-class Test_List_Serializer(serializers.ModelSerializer):
-    test_name = serializers.SerializerMethodField()
-    material_name = serializers.SerializerMethodField()
-    qty = serializers.SerializerMethodField()
-
-    
-    
-
-    class Meta:
-        model = Invoice_Test
-        fields = ['id','invoice','invoice_no','material_name','test','test_name','qty','price_per_sample','total','invoice_image','customer','created_date','completed']   
-
-    def get_test_name(self,obj):
-        return str(obj.test)
-    
-
-    def get_material_name(self,obj):
-        return str(obj.test.material_name)
-    
-    def get_qty(self,obj):
-        return str(int(obj.quantity))
-    

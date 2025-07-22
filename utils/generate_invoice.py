@@ -16,19 +16,19 @@ def generate_invoice_report(invoice, request):
         'IGST': 'IGST'
     }
     
-    tax_display = "+".join(f"{tax_mapping[tax.tax_name]} ({tax.tax_percentage}%)" for tax in invoice.tax.all())
+    tax_display = "+".join(f"{tax_mapping[tax.tax_name]} ({round(tax.tax_percentage)}%)" for tax in invoice.tax.all())
 
     context = {
         'invoice': invoice,
         'customer': invoice.customer,
         'invoice_items': invoice.invoice_tests.all(),
-        "total_amount": invoice.amount - (invoice.amount * (invoice.discount or 0) / 100) if invoice.amount else 0,   
-        "discount_amount": (invoice.amount * (invoice.discount or 0) / 100) if invoice.amount else 0,
-        "discount": invoice.discount or 0, 
-        "advance_amount": invoice.advance or 0,
-        "pending_amount": invoice.balance or 0,   
+        "total_amount": invoice.before_tax_amount if invoice.before_tax_amount else 0,  
+        "before_tax_amount": invoice.before_tax_amount or 0,
+        "after_tax_amount": invoice.after_tax_amount or 0,
+        "discount_amount": invoice.discount or 0,
+        "discount": invoice.invoice_discounts.first().discount or 0, 
         'tax': invoice.tax.all(),
-        "tax_total": invoice.tax.all().aggregate(Sum('tax_percentage'))['tax_percentage__sum'] or 0,
+        "tax_total": invoice.after_tax_amount - invoice.before_tax_amount ,
         "tax_display": tax_display,
         "settings": settings,
     }

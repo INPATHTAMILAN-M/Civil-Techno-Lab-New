@@ -4,3 +4,4 @@ from .test import TestViewSet
 from .invoice_test import InvoiceTestViewSet
 from .invoice import InvoiceViewSet
 from .material import MaterialViewSet
+from .invoice_discount import InvoiceDiscountViewSet

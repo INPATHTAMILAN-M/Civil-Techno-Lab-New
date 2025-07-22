@@ -39,9 +39,9 @@ class Letter_Pad_Logo(models.Model):
 
 class Material(models.Model):
     material_name = models.CharField(max_length=255, unique=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="material_created_by")
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="material_created_by",null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True, blank=True)
     modified_date = models.DateTimeField(auto_now=True)
 
     template = models.TextField(null=True)
@@ -67,9 +67,9 @@ class Test(models.Model):
     material_name = models.ForeignKey(Material, on_delete=models.CASCADE)
     test_name = models.CharField(max_length=255)
     price_per_piece = models.DecimalField(max_digits=10, decimal_places=2)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="test_created_by")
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="test_created_by",null=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):

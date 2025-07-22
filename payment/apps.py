@@ -6,3 +6,4 @@ class PaymentConfig(AppConfig):
 
     def ready(self):
         import payment.signals.quatation_signals
+        import payment.signals.invoice_signals

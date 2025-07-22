@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from payment.pagination import CustomPagination
+
 from ..models import InvoiceReport
 from ..filters import InvoiceReportFilter
 from ..serializers import InvoiceReportListSerializer, InvoiceReportDetailSerializer
@@ -16,7 +18,8 @@ class InvoiceReportListView(generics.ListAPIView):
     queryset = InvoiceReport.objects.all().order_by('-invoice__id')
     serializer_class = InvoiceReportListSerializer    
     filter_backends = [DjangoFilterBackend]
-    filterset_class = InvoiceReportFilter
+    filterset_class = InvoiceReportFilter    
+    pagination_class = CustomPagination
     permission_classes = [permissions.IsAuthenticated]
 
 class InvoiceReportGetView(generics.RetrieveAPIView):

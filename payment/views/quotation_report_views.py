@@ -2,6 +2,8 @@ from rest_framework import generics, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
 
+from payment.pagination import CustomPagination
+
 from ..models import QuotationReport
 from ..filters import QuotationReportFilter
 from ..serializers import (
@@ -17,6 +19,7 @@ class QuotationReportList(generics.ListAPIView):
     serializer_class = QuotationReportListSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = QuotationReportFilter
+    pagination_class = CustomPagination
     permission_classes = [permissions.IsAuthenticated]
 
 class QuotationReportCreate(generics.CreateAPIView):

@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from account.models import Customer
 from django.contrib.auth.models import User
 from general.models import Expense,Test,Report_Template,Tax
@@ -21,7 +22,7 @@ class Invoice(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     sales_mode = models.ForeignKey(SalesMode, on_delete=models.CASCADE,null=True,blank=True)
     project_name = models.CharField(max_length=255)
-    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    discount = models.FloatField(null=True,blank=True)
     tax = models.ManyToManyField(Tax,null=True,blank=True)
     advance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -31,6 +32,8 @@ class Invoice(models.Model):
     fully_paid = models.BooleanField(default=False)
     date  = models.DateField(null=True)
     invoice_no = models.CharField(null=True,max_length=20)
+    before_tax_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    after_tax_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     payment_mode = models.CharField(max_length=6, choices= payment_mode_choices,null=True)
     cheque_number = models.CharField(max_length=50, null=True, blank=True)
@@ -269,8 +272,7 @@ class Expense_Entry(models.Model):
 
 class Invoice_File_Category(models.Model):
     name =  models.CharField(max_length=250)
-
-
+    
     def __str__(self):
         return self.name
    
@@ -348,3 +350,23 @@ class CustomerDiscount(models.Model):
     created_date = models.DateField(auto_now_add=True,null=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True,null=True)
+
+
+class InvoiceDiscount(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='invoice_discounts')
+    discount = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2,
+        default=0,
+        validators=[
+            MinValueValidator(0),   # Minimum 0%
+            MaxValueValidator(100)  # Maximum 100%
+        ]
+    )
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="invoice_discount_created_by",null=True)
+    created_date = models.DateField(auto_now_add=True,null=True)
+    modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    modified_date = models.DateTimeField(auto_now=True,null=True)
+
+    def __str__(self):
+        return f"Discount for Invoice {self.invoice.invoice_no}: {self.discount}%"

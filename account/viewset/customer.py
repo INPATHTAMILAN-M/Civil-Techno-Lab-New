@@ -12,4 +12,3 @@ class CustomerViewSet(viewsets.ModelViewSet):
     filterset_class = CustomerFilter
     pagination_class = CustomPagination
     search_fields = ['customer_name', 'phone_no']
-

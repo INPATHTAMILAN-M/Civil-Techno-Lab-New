@@ -1,21 +1,40 @@
 from rest_framework import viewsets, filters
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from payment.pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models import Test
-from payment.serializers import TestSerializer
+from payment.serializers import (
+    TestCreateSerializer,
+    TestUpdateSerializer,
+    TestDetailSerializer,
+    TestListSerializer
+
+)
 from payment.filters import TestFilter
 
 class TestViewSet(viewsets.ModelViewSet):
     queryset = Test.objects.all().order_by('-created_date')
-    serializer_class = TestSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = TestFilter
     search_fields = ['test_name', 'material_name__material_name']  # adjust based on Material model
+
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return TestCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return TestUpdateSerializer
+        elif self.action == 'retrieve':
+            return TestDetailSerializer
+        elif self.action == 'list':
+            return TestListSerializer
+        return TestDetailSerializer
+
 
     def list(self, request, *args, **kwargs):
         pagination_param = request.query_params.get('pagination', 'true').lower()

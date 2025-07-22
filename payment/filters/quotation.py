@@ -4,6 +4,7 @@ from django_filters import DateFilter, CharFilter
 from django.db import models
 
 from ..models import Quotation
+from django.db.models import Q
 
 
 class QuotationFilter(django_filters.FilterSet):
@@ -12,11 +13,16 @@ class QuotationFilter(django_filters.FilterSet):
     quotation_number = CharFilter(field_name='quotation_number', lookup_expr='icontains')
     customer_name = CharFilter(method='filter_customer_name')
     customer = CharFilter(field_name='customer', lookup_expr='exact')
+    search = CharFilter(method='filter_by_all')
 
+    def filter_by_all(self, queryset, name, value):
+        return queryset.filter(
+            Q(quotation_number__icontains=value) |
+            Q(customer__customer_name__icontains=value)
+        )
     def filter_customer_name(self, queryset, name, value):
         return queryset.filter(
-            models.Q(customer__first_name__icontains=value) |
-            models.Q(customer__last_name__icontains=value)
+            models.Q(customer__customer_name__icontains=value)
         )
 
     class Meta:

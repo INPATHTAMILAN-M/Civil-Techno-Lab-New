@@ -8,11 +8,28 @@ class TestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class InvoiceTestListSerializer(serializers.ModelSerializer):
-    test = TestSerializer(read_only=True)
+    test_name = serializers.SerializerMethodField()
+    material_name = serializers.SerializerMethodField()
+    qty = serializers.SerializerMethodField()
+
+    
+    
 
     class Meta:
         model = Invoice_Test
-        fields = '__all__'
+        fields = ['id','invoice','invoice_no','material_name','test','test_name','qty','price_per_sample','total','invoice_image','customer','created_date','completed']   
+
+    def get_test_name(self,obj):
+        return str(obj.test)
+    
+
+    def get_material_name(self,obj):
+        return str(obj.test.material_name)
+    
+    def get_qty(self,obj):
+        return str(int(obj.quantity))
+    
+
 
 class InvoiceTestDetailSerializer(serializers.ModelSerializer):
     test = TestSerializer(read_only=True)

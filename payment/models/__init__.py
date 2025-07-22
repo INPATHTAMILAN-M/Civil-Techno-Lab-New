@@ -4,5 +4,5 @@ from .invoice_models import (
     Test_Report,Receipt,
     Expense_Entry,Invoice_File_Category,
     Invoice_File,SalesMode,wrapper,InvoiceReport,
-    CustomerDiscount,
+    CustomerDiscount,InvoiceDiscount
 )
