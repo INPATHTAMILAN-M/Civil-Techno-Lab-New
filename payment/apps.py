@@ -5,6 +5,5 @@ class PaymentConfig(AppConfig):
     name = 'payment'
 
     def ready(self):
-        import payment.audit
         import payment.signals.quatation_signals
         import payment.signals.invoice_signals

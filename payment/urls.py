@@ -35,7 +35,7 @@ from .viewsets import (
 )
 from account.viewset import CityViewSet, StateViewSet, CountryViewSet, CustomerViewSet
 from general.viewsets.tax import TaxViewSet
-from account.viewset import LogEntryViewSet,UserlogsViewSet
+from account.viewset import UserlogsViewSet
 
 from rest_framework.routers import DefaultRouter
 
@@ -58,7 +58,6 @@ router.register(r'quotation', QuotationViewSet, basename='quotation')
 router.register(r'expense_entry', Expense_Entry_ViewSet, basename='expense-entry')
 router.register(r'invoice_file', InvoiceFileViewSet, basename='invoice-file')
 router.register(r'invoice-discount', InvoiceDiscountViewSet, basename='invoice-discount')
-router.register(r'audit-logs', LogEntryViewSet, basename='auditlog')
 router.register(r'user-logs',UserlogsViewSet,basename='authlog')
 
 urlpatterns = [
