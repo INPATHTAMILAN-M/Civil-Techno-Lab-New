@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication,BasicAuthentication
 from payment.pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models import Test
@@ -17,6 +18,7 @@ from payment.filters import TestFilter
 
 class TestViewSet(viewsets.ModelViewSet):
     queryset = Test.objects.all().order_by('-created_date')
+    # authentication_classes = [TokenAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

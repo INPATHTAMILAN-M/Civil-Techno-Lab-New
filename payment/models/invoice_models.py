@@ -162,7 +162,7 @@ class Invoice(models.Model):
 class Invoice_Test(models.Model):    
     invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE,null=True,blank=True,related_name='invoice_tests')
     customer =  models.ForeignKey(Customer,on_delete=models.CASCADE,null=True,blank=True)
-    test = models.ForeignKey(Test,on_delete=models.CASCADE)
+    test = models.ForeignKey(Test,on_delete=models.CASCADE,related_name='test_invoice')
     quantity = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     price_per_sample  = models.DecimalField(max_digits=20, decimal_places=2, default=0)
@@ -233,7 +233,7 @@ class Test_Report(models.Model):
 
 
 class Receipt(models.Model):
-    invoice_no = models.ForeignKey(Invoice,on_delete=models.CASCADE,null=True)
+    invoice_no = models.ForeignKey(Invoice,on_delete=models.CASCADE,null=True,related_name='invoice_receipts')
     payment_mode = models.CharField(max_length=6, choices= payment_mode_choices)
     cheque_number = models.CharField(max_length=50, null=True, blank=True)
     upi = models.CharField(max_length=150, null=True, blank=True)
@@ -293,7 +293,7 @@ def wrapper(instance, filename):
 
 
 class Invoice_File(models.Model):
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE,null=True,blank=True)
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE,null=True,blank=True,related_name='invoice_files')
     expense = models.ForeignKey(Expense_Entry, on_delete=models.CASCADE,null=True,blank=True)
     file = models.FileField(upload_to=wrapper)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="invoice_file_created_by",null=True)

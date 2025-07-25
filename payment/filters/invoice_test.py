@@ -17,6 +17,11 @@ class InvoiceTestFilter(django_filters.FilterSet):
     to_date = django_filters.DateFilter(
         field_name='created_date', lookup_expr='lte'
     )
+    material = django_filters.BaseInFilter(field_name='test__material_name', lookup_expr='in')
+    customer = django_filters.BaseInFilter(field_name='invoice__customer', lookup_expr='in')
+    invoice_no = django_filters.CharFilter(field_name='invoice__invoice_no', lookup_expr='exact')
+
+
     class Meta:
         model = Invoice_Test
         fields = "__all__"

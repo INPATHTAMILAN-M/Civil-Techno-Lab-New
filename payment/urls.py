@@ -35,6 +35,7 @@ from .viewsets import (
 )
 from account.viewset import CityViewSet, StateViewSet, CountryViewSet, CustomerViewSet
 from general.viewsets.tax import TaxViewSet
+from account.viewset import LogEntryViewSet,UserlogsViewSet
 
 from rest_framework.routers import DefaultRouter
 
@@ -57,6 +58,8 @@ router.register(r'quotation', QuotationViewSet, basename='quotation')
 router.register(r'expense_entry', Expense_Entry_ViewSet, basename='expense-entry')
 router.register(r'invoice_file', InvoiceFileViewSet, basename='invoice-file')
 router.register(r'invoice-discount', InvoiceDiscountViewSet, basename='invoice-discount')
+router.register(r'audit-logs', LogEntryViewSet, basename='auditlog')
+router.register(r'user-logs',UserlogsViewSet,basename='authlog')
 
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),
@@ -75,8 +78,8 @@ urlpatterns = [
     path('edit_invoice_test_template/<int:id>/', views.Edit_Invoice_Test_Template.as_view(), name='edit_invoice_test_template'),
     path('preview_invoice_test_template/<int:id>/', views.Preview_Invoice_Test_Template.as_view(), name='preview_invoice_test_template'),
 
-    # madhan
-    path('pending_payment/', views.Pending_Payment.as_view(), name='pending payment'),
+    # # madhan
+    # path('pending_payment/', views.Pending_Payment.as_view(), name='pending payment'),
 
     # invoice file upload
     path('create_invoice_file_upload/', views.Create_Invoice_File_Upload.as_view(), name='create_invoice_file_upload'),

@@ -4,7 +4,9 @@ from django.db.models import Q
 
 class InvoiceFileFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='filter_by_all')
-
+    invoice_isnull = django_filters.BooleanFilter(
+        field_name='invoice', lookup_expr='isnull'
+    )
     def filter_by_all(self, queryset, name, value):
         return queryset.filter(
             Q(invoice__invoice_no__icontains=value) |
@@ -17,7 +19,12 @@ class InvoiceFileFilter(django_filters.FilterSet):
     to_date = django_filters.DateFilter(
         field_name='created_date', lookup_expr='lte'
     )
+    customer = django_filters.BaseInFilter(field_name='invoice__customer')
+    project_name = django_filters.CharFilter(
+        field_name='invoice__project_name', lookup_expr='icontains'
+    )
     
     class Meta:
         model = Invoice_File
-        fields = ['search', 'from_date', 'to_date', 'invoice_no', 'expense', 'category']
+        fields = ['search', 'from_date', 'to_date', 'invoice_no', 'expense', 
+                  'category', 'invoice_isnull', 'customer', 'project_name']

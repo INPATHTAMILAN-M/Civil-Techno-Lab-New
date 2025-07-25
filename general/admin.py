@@ -9,3 +9,5 @@ admin.site.register(Print_Format)
 admin.site.register(Letter_Pad_Logo)
 admin.site.register(Test)
 admin.site.register(Expense)
+
+

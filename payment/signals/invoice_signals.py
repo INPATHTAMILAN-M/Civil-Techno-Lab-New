@@ -53,7 +53,7 @@ def apply_invoice_calculation(invoice: Invoice):
     tax_total = 0
     if invoice.tax.exists():
         for tax in invoice.tax.all():
-            tax_total += (tax.tax_percentage / 100) * total_amount
+            tax_total += (tax.tax_percentage / 100) * (total_amount - discount_amount)
 
     # 4. Receipts
     receipts = Receipt.objects.filter(invoice_no=invoice)

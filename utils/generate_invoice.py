@@ -26,7 +26,7 @@ def generate_invoice_report(invoice, request):
         "before_tax_amount": invoice.before_tax_amount or 0,
         "after_tax_amount": invoice.after_tax_amount or 0,
         "discount_amount": invoice.discount or 0,
-        "discount": invoice.invoice_discounts.first().discount or 0, 
+        "discount": invoice.invoice_discounts.first().discount if invoice.invoice_discounts.first() else 0, 
         'tax': invoice.tax.all(),
         "tax_total": invoice.after_tax_amount - invoice.before_tax_amount ,
         "tax_display": tax_display,

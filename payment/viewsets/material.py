@@ -1,4 +1,6 @@
 from rest_framework import viewsets, filters
+from rest_framework.permissions import IsAuthenticated
+# from rest_framework.authentication import TokenAuthentication,BasicAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models import Material
 from rest_framework.response import Response
@@ -14,6 +16,8 @@ class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all().order_by('-created_date')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     pagination_class = CustomPagination
+    # authentication_classes = [TokenAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     search_fields = ['material_name']
     ordering_fields = ['created_date', 'material_name']
     filterset_fields = ['print_format', 'letter_pad_logo', 'created_by']

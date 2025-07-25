@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication,BaseAuthentication
 from payment.pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import CustomerDiscount
@@ -16,6 +17,7 @@ from ..serializers import (
 class CustomerDiscountViewSet(viewsets.ModelViewSet):
     queryset = CustomerDiscount.objects.all().order_by('-id')
     filterset_class = CustomerDiscountFilter
+    # authentication_classes = [TokenAuthentication,BaseAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend]

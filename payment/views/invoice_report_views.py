@@ -40,12 +40,20 @@ class InvoiceReportZipAPIView(APIView):
                 {"error": "Month and year parameters are required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        from django.utils import timezone
+        from datetime import timedelta
+        today = timezone.now().date()
+        seven_days_ago = today - timedelta(days=7)
 
-        # Filter InvoiceReports based on the month and year
+        # # Filter InvoiceReports based on the month and year
+        # filtered_reports = InvoiceReport.objects.filter(
+        #     invoice__created_date__year=year,
+        #     invoice__created_date__month=month
+        # )
         filtered_reports = InvoiceReport.objects.filter(
-            invoice__created_date__year=year,
-            invoice__created_date__month=month
-        )
+        invoice__created_date__date__gte=seven_days_ago,
+        invoice__created_date__date__lte=today
+    )
 
         if not filtered_reports.exists():
             return Response(

@@ -28,7 +28,7 @@ class Employee_List_Serializer(serializers.ModelSerializer):
         fields = ['id','username','employee_name','address','mobile_number',
                   'email','dob','gender','qualification','joining_date','salary','signature'
                   ,'created_by','created_date','modified_by','modified_date','branch_email'
-                  ,'gender_name','role','is_active']
+                  ,'gender_name','role','is_active','user']
 
     def get_username(self,obj):
         return str(obj.user.username)

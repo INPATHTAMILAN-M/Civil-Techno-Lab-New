@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from account.models import City
 from account.serializers import CitySerializer
 from payment.pagination import CustomPagination
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -11,6 +12,7 @@ class CityViewSet(viewsets.ModelViewSet):
     serializer_class = CitySerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticated]
     search_fields = ['name']
     ordering_fields = ['created_date', 'name']
     filterset_fields = ['created_by', 'modified_by']

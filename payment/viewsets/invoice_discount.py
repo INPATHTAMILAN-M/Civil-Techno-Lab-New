@@ -1,6 +1,8 @@
 # views/invoice_discount_viewset.py
 
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication, BaseAuthentication
 from payment.models import InvoiceDiscount
 from payment.serializers import (
     InvoiceDiscountCreateSerializer,
@@ -11,6 +13,8 @@ from payment.serializers import (
 
 class InvoiceDiscountViewSet(viewsets.ModelViewSet):
     queryset = InvoiceDiscount.objects.all()
+    # authentication_classes = [TokenAuthentication,BaseAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'create':

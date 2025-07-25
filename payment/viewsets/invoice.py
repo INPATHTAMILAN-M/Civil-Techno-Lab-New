@@ -2,6 +2,7 @@ from rest_framework import viewsets, filters
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication,BasicAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from payment.pagination import CustomPagination
 from payment.models import Invoice
@@ -20,6 +21,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all().order_by('-created_date')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     pagination_class = CustomPagination
+    # authentication_classes = [TokenAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
     filterset_class = InvoiceFilter
     search_fields = ['invoice_no', 'project_name', 'customer__customer_name']

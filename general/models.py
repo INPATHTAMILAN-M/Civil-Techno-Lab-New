@@ -77,9 +77,9 @@ class Test(models.Model):
 
 class Expense(models.Model):
     expense_name = models.CharField(max_length=255, unique=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="expense_created_by")
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="expense_created_by",null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="expense_modified_by")
+    modified_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="expense_modified_by",null=True, blank=True)
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):

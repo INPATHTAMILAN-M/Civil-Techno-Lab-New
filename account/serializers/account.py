@@ -54,7 +54,12 @@ class Customer_Serializer(serializers.ModelSerializer):
         model = Customer
         fields = '__all__'
 
-class ChangePasswordSerializer(serializers.Serializer):
+class EmployeeChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)
+
+class AdminChangePasswordSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
     new_password = serializers.CharField(required=True)
     confirm_new_password = serializers.CharField(required=True)

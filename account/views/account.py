@@ -1,4 +1,8 @@
-from django.contrib.auth import authenticate, update_session_auth_hash
+from django.contrib.auth import (
+    authenticate, 
+    update_session_auth_hash, 
+    login
+)
 from django.contrib.auth.models import User
 
 from rest_framework import status
@@ -9,14 +13,15 @@ from rest_framework.views import APIView
 from utils.log_user_action import log_user_activity
 
 from account.serializers import (
-                ChangePasswordSerializer,
+                EmployeeChangePasswordSerializer,
+                AdminChangePasswordSerializer,
                 LoginSerializer
                 )
 
 class ChangePasswordView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
-        serializer = ChangePasswordSerializer(data=request.data)
+        serializer = EmployeeChangePasswordSerializer(data=request.data)
 
         if serializer.is_valid():
             old_password = serializer.validated_data.get('old_password')
@@ -42,6 +47,32 @@ class ChangePasswordView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+class AdminChangePasswordView(ChangePasswordView):
+    def post(self, request, *args, **kwargs):
+        serializer = AdminChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            new_password = serializer.validated_data.get('new_password')
+            confirm_new_password = serializer.validated_data.get('confirm_new_password')
+            user_id= serializer.validated_data.get('user_id')
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Check if the new passwords match
+            if new_password != confirm_new_password:
+                return Response({'detail': 'New passwords do not match.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Update the user's password
+            user.set_password(new_password)
+            user.save()
+
+            return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class Login_View(APIView):
     authentication_classes = ()
@@ -53,6 +84,7 @@ class Login_View(APIView):
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
             user = authenticate(username=username, password=password)
+            login(request, user)  # Log the user in
             if user is not None:
                 token, created = Token.objects.get_or_create(user=user)
                 log_user_activity(user=user, action="LOGIN",

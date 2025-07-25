@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from payment.models.invoice_models import InvoiceDiscount
+from payment.models.invoice_models import InvoiceDiscount, Receipt
 from payment.models import Invoice, SalesMode, CustomerDiscount
 from general.models import Tax
 from account.models import Customer
@@ -38,6 +38,11 @@ class TaxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tax
         fields = "__all__"
+
+class InvoiceReceiptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Receipt
+        fields = '__all__'
 
 class InvoiceCreateSerializer(serializers.ModelSerializer):
     invoice_discounts = InvoiceDiscountSerializer(many=True, read_only=True)
@@ -145,10 +150,23 @@ class InvoiceRetrieveSerializer(serializers.ModelSerializer):
     sales_mode_id = serializers.PrimaryKeyRelatedField(queryset=SalesMode.objects.all(), write_only=True, source='sales_mode')
     tax_ids = serializers.PrimaryKeyRelatedField(queryset=Tax.objects.all(), many=True, write_only=True, source='tax')
     invoice_discounts = InvoiceDiscountSerializer(many=True, read_only=True)
+    invoice_file = serializers.SerializerMethodField()
+    invoice_receipts = InvoiceReceiptSerializer(many=True, read_only=True)
 
     class Meta:
         model = Invoice
         fields = '__all__'
+
+    def get_invoice_file(self, obj):
+        # Fetch the most recent QuotationReport using the related_name
+        recent_report = obj.invoice_reports.order_by('-id').first()
+        
+        if recent_report and recent_report.invoice_file:
+            # Build the full URL using BACKEND_DOMAIN
+            full_url = f"{settings.BACKEND_DOMAIN}{recent_report.invoice_file.url}"
+            return full_url
+        
+        return None
 
 class InvoiceListSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(read_only=True)
@@ -158,7 +176,35 @@ class InvoiceListSerializer(serializers.ModelSerializer):
     customer_id = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all(), write_only=True, source='customer')
     sales_mode_id = serializers.PrimaryKeyRelatedField(queryset=SalesMode.objects.all(), write_only=True, source='sales_mode')
     tax_ids = serializers.PrimaryKeyRelatedField(queryset=Tax.objects.all(), many=True, write_only=True, source='tax')
+    invoice_file = serializers.SerializerMethodField()
+    invoice_receipt = serializers.SerializerMethodField()
     
     class Meta:
         model = Invoice
         fields = '__all__'
+
+    def get_invoice_file(self, obj):
+        recent_report = obj.invoice_reports.order_by('-id').first()
+        
+        if recent_report and recent_report.invoice_file:
+            full_url = f"{settings.BACKEND_DOMAIN}{recent_report.invoice_file.url}"
+            return full_url
+        
+        return None
+    
+    def get_invoice_receipt(self, obj):
+        last_receipt = Receipt.objects.filter(invoice_no=obj).order_by('-created_date').first()
+        
+        if last_receipt:
+            return InvoiceReceiptSerializer(last_receipt).data
+
+        return None
+
+    
+
+
+
+
+    
+
+    

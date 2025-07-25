@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'drf_spectacular_sidecar',
     'mathfilters',
+    'auditlog',
 
     # Local Apps
     'account',
@@ -67,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -126,12 +128,12 @@ WSGI_APPLICATION = 'civiltech.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-        'NAME': 'civil',                 # The name of the MySQL database
-        'USER': 'root',                        # MySQL username
-        'PASSWORD': 'root',           # MySQL password
-        'HOST': '127.0.0.1', 
-        # 'PORT': '3306',                        # Default MySQL port
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'civil',
+        'USER': 'root',
+        'PASSWORD': 'StrongPassword123',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
@@ -169,7 +171,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
- 
+STATIC_ROOT = os.path.join(BASE_DIR, "static_collect")
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
@@ -187,8 +190,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
-BACKEND_DOMAIN = 'https://bfclps4z-8000.inc1.devtunnels.ms/'
-QR_DOMAIN = 'http://localhost:3010'
+BACKEND_DOMAIN = 'http://31.97.206.165'
+QR_DOMAIN = 'http://31.97.206.165'
 
 CKEDITOR_CONFIGS = {
     'default': {
