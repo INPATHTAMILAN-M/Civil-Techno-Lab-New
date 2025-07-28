@@ -9,7 +9,7 @@ from rest_framework import status
 
 from payment.pagination import CustomPagination
 
-from ..models import InvoiceReport
+from ..models import InvoiceReport,Invoice
 from ..filters import InvoiceReportFilter
 from ..serializers import InvoiceReportListSerializer, InvoiceReportDetailSerializer
 
@@ -45,17 +45,18 @@ class InvoiceReportZipAPIView(APIView):
         today = timezone.now().date()
         seven_days_ago = today - timedelta(days=7)
 
-        # # Filter InvoiceReports based on the month and year
-        # filtered_reports = InvoiceReport.objects.filter(
-        #     invoice__created_date__year=year,
-        #     invoice__created_date__month=month
+        # Filter InvoiceReports based on the month and year
+        # print(f"Filtering reports for month: {month}, year: {year}")
+        # filtered_invoice = Invoice.objects.filter(
+        #     date__year=year,
+        #     date__month=month
         # )
-        filtered_reports = InvoiceReport.objects.filter(
-        invoice__created_date__date__gte=seven_days_ago,
-        invoice__created_date__date__lte=today
-    )
+        filtered_invoice = Invoice.objects.filter(
+            date__gte=seven_days_ago,
+            date__lte=today
+        )
 
-        if not filtered_reports.exists():
+        if not filtered_invoice.exists():
             return Response(
                 {"error": "No reports found for the given month and year."},
                 status=status.HTTP_404_NOT_FOUND
@@ -64,11 +65,13 @@ class InvoiceReportZipAPIView(APIView):
         # Create an in-memory ZIP file
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-            for report in filtered_reports:
-                if report.invoice_file:  # Ensure file exists
-                    with report.invoice_file.open('rb') as file:
-                        safe_invoice_no = str(report.invoice.invoice_no).replace("/", "_")
-                        zip_file.writestr(f"invoice__{safe_invoice_no}.pdf", file.read())
+            for invoice in filtered_invoice:
+                for report in invoice.invoice_reports.all():
+                    if report.invoice_file:  # Ensure file exists
+                        with report.invoice_file.open('rb') as file:
+                            safe_invoice_no = str(invoice.invoice_no).replace("/", "_")
+                            file_name = f"invoice__{safe_invoice_no}.pdf"
+                            zip_file.writestr(file_name, file.read())
 
         zip_buffer.seek(0)
 

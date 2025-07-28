@@ -33,11 +33,27 @@ from .viewsets import (
     InvoiceDiscountViewSet
 
 )
-from account.viewset import CityViewSet, StateViewSet, CountryViewSet, CustomerViewSet
+from account.viewset import (
+    CityViewSet, StateViewSet, 
+    CountryViewSet, CustomerViewSet,
+    GenericHistoryViewSet
+)
 from general.viewsets.tax import TaxViewSet
 from account.viewset import UserlogsViewSet
 
 from rest_framework.routers import DefaultRouter
+from django.contrib.auth.models import User
+from account.models import State, City, Country, Employee, Customer
+from payment.models import (
+    Quotation, QuotationItem, QuotationReport,
+    Invoice, Invoice_Test, 
+    Test_Report,Receipt,
+    Expense_Entry,Invoice_File_Category,
+    Invoice_File,SalesMode,InvoiceReport,
+    CustomerDiscount,InvoiceDiscount
+)
+from general.models import Material,Test,Expense,Tax
+
 
 
 router = DefaultRouter()
@@ -59,6 +75,34 @@ router.register(r'expense_entry', Expense_Entry_ViewSet, basename='expense-entry
 router.register(r'invoice_file', InvoiceFileViewSet, basename='invoice-file')
 router.register(r'invoice-discount', InvoiceDiscountViewSet, basename='invoice-discount')
 router.register(r'user-logs',UserlogsViewSet,basename='authlog')
+
+# History Routers
+router.register(r'country-history', GenericHistoryViewSet.as_viewset(Country), basename='country-history')
+router.register(r'city-history', GenericHistoryViewSet.as_viewset(City), basename='city-history')
+router.register(r'state-history', GenericHistoryViewSet.as_viewset(State), basename='state-history')
+router.register(r'customer-history', GenericHistoryViewSet.as_viewset(Customer), basename='customer-history')
+router.register(r'employee-history', GenericHistoryViewSet.as_viewset(Employee), basename='employee-history')
+router.register(r'quotation-history', GenericHistoryViewSet.as_viewset(Quotation), basename='quotation-history')
+router.register(r'quotation-report-history', GenericHistoryViewSet.as_viewset(QuotationReport), basename='quotation-report-history')
+router.register(r'quotation-item-history', GenericHistoryViewSet.as_viewset(QuotationItem), basename='quotation-item-history')
+router.register(r'invoice-history', GenericHistoryViewSet.as_viewset(Invoice), basename='invoice-history')
+router.register(r'invoice-test-history', GenericHistoryViewSet.as_viewset(Invoice_Test), basename='invoice-test-history')
+router.register(r'test-report-history', GenericHistoryViewSet.as_viewset(Test_Report), basename='test-report-history')
+router.register(r'receipt-history', GenericHistoryViewSet.as_viewset(Receipt), basename='receipt-history')
+router.register(r'expense-entry-history', GenericHistoryViewSet.as_viewset(Expense_Entry), basename='expense-entry-history')
+router.register(r'invoice-file-category-history', GenericHistoryViewSet.as_viewset(Invoice_File_Category), basename='invoice-file-category-history')
+router.register(r'invoice-file-history', GenericHistoryViewSet.as_viewset(Invoice_File), basename='invoice-file-history')
+router.register(r'sales-mode', GenericHistoryViewSet.as_viewset(SalesMode), basename='sales-mode-history')
+router.register(r'invoice-report-history', GenericHistoryViewSet.as_viewset(InvoiceReport), basename='invoice-report-history')
+router.register(r'customer-discount-history', GenericHistoryViewSet.as_viewset(CustomerDiscount), basename='customer-discount-history')
+router.register(r'invoice-discount-history', GenericHistoryViewSet.as_viewset(InvoiceDiscount), basename='invoice-discount-history') 
+router.register(r'invoice-history', GenericHistoryViewSet.as_viewset(Invoice), basename='invoice-history')
+
+router.register(r'material-history', GenericHistoryViewSet.as_viewset(Material), basename='material-history')
+router.register(r'test-history', GenericHistoryViewSet.as_viewset(Test), basename='test-history')
+router.register(r'expense-history', GenericHistoryViewSet.as_viewset(Expense), basename='expense-history')
+router.register(r'tax-history', GenericHistoryViewSet.as_viewset(Tax), basename='tax-history')
+router.register(r'user-history', GenericHistoryViewSet.as_viewset(User), basename='user-history')
 
 urlpatterns = [
     path('create_expense_entry/', views.Create_Expense_Entry.as_view(), name='create_expense_entry'),

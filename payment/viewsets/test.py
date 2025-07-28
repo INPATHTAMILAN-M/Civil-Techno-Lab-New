@@ -18,7 +18,6 @@ from payment.filters import TestFilter
 
 class TestViewSet(viewsets.ModelViewSet):
     queryset = Test.objects.all().order_by('-created_date')
-    # authentication_classes = [TokenAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

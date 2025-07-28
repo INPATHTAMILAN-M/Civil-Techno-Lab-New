@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from simple_history.models import HistoricalRecords
 
 tax_status_choices= [('E','Enable'),('D','Disable'),]
 
@@ -11,6 +12,7 @@ class Tax(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE)
     modified_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.tax_name
@@ -47,6 +49,7 @@ class Material(models.Model):
     template = models.TextField(null=True)
     print_format = models.ForeignKey(Print_Format, on_delete=models.CASCADE,null=True)
     letter_pad_logo = models.ForeignKey(Letter_Pad_Logo, on_delete=models.CASCADE,null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.material_name
@@ -71,6 +74,7 @@ class Test(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.test_name
@@ -81,6 +85,7 @@ class Expense(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="expense_modified_by",null=True, blank=True)
     modified_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.expense_name

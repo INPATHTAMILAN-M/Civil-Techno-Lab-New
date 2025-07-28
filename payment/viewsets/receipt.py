@@ -20,7 +20,6 @@ from payment.filters import ReceiptFilter
 class ReceiptViewSet(viewsets.ModelViewSet):
     queryset = Receipt.objects.all().order_by('-created_date')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    # authentication_classes = [TokenAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filterset_class = ReceiptFilter

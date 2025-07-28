@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Tax ,Material,Report_Template,Print_Format,Letter_Pad_Logo,Test,Expense
-#from import_export.admin import ImportExportModelAdmin
+from simple_history.admin import SimpleHistoryAdmin
 
 admin.site.register(Tax)
 admin.site.register(Material)

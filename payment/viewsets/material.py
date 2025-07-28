@@ -16,7 +16,6 @@ class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all().order_by('-created_date')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     pagination_class = CustomPagination
-    # authentication_classes = [TokenAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
     search_fields = ['material_name']
     ordering_fields = ['created_date', 'material_name']

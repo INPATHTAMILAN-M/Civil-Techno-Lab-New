@@ -12,7 +12,6 @@ class QuotationViewSet(viewsets.ModelViewSet):
     serializer_class = QuotationListSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     pagination_class = CustomPagination
-    # authentication_classes = [TokenAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
     filterset_fields = ['print_format', 'letter_pad_logo', 'created_by']
     filterset_class = QuotationFilter

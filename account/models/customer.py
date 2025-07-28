@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import  date
 from account.models import *
+from simple_history.models import HistoricalRecords
 
 
 class Customer(models.Model):
@@ -31,6 +32,7 @@ class Customer(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="cus_modified_by")
     modified_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
 
     def __str__(self):

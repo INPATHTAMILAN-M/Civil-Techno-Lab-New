@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from general.models import Expense,Test,Report_Template,Tax
 from django.db.models import Sum
 from account.models import Employee
+from simple_history.models import HistoricalRecords
 import os
 from uuid import uuid4
 
@@ -15,6 +16,7 @@ invoice_test_choices = [('Yes','Yes'),('No','No'),]
 
 class SalesMode(models.Model):
     sales_mode = models.CharField(max_length=55)
+    history = HistoricalRecords()
     def __str__(self):
         return self.sales_mode
 
@@ -50,6 +52,7 @@ class Invoice(models.Model):
     place_of_testing = models.CharField(max_length=255, null=True, blank=True)
     completed = models.CharField(max_length=6, choices= invoice_test_choices,default="No")
     is_old_invoice_format = models.BooleanField(default=False)
+    history = HistoricalRecords()
 
 
     '''material = models.ForeignKey(Material, on_delete=models.CASCADE)
@@ -176,7 +179,7 @@ class Invoice_Test(models.Model):
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True,null=True)
     ulr = models.CharField(max_length=255, null=True, blank=True)
-
+    history = HistoricalRecords()
 
     @property
     def count(self):
@@ -230,6 +233,8 @@ class Test_Report(models.Model):
     invoice_test = models.ForeignKey(Invoice_Test,on_delete=models.CASCADE)
     test = models.ForeignKey(Test,on_delete=models.CASCADE)
     report_template = models.ForeignKey(Report_Template,on_delete=models.CASCADE)
+    history = HistoricalRecords()
+
 
 
 class Receipt(models.Model):
@@ -248,6 +253,7 @@ class Receipt(models.Model):
     created_date = models.DateField(auto_now_add=True,null=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True,null=True)
+    history = HistoricalRecords()
 
 
     #def __str__(self):
@@ -268,10 +274,12 @@ class Expense_Entry(models.Model):
     created_date = models.DateTimeField(auto_now_add=True,null=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True,null=True)
+    history = HistoricalRecords()
     
 
 class Invoice_File_Category(models.Model):
     name =  models.CharField(max_length=250)
+    history = HistoricalRecords()
     
     def __str__(self):
         return self.name
@@ -301,6 +309,7 @@ class Invoice_File(models.Model):
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True,null=True)
     category = models.ForeignKey(Invoice_File_Category, on_delete=models.CASCADE,null=True)
+    history = HistoricalRecords()
 
 
     @property
@@ -340,6 +349,7 @@ class InvoiceReport(models.Model):
     invoice_file = models.FileField(upload_to='invoice_report/', null=True, blank=True)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='invoice_reports_created')
     created_date = models.DateField(auto_now_add=True, null=True)
+    history = HistoricalRecords()
 
 
 
@@ -350,6 +360,7 @@ class CustomerDiscount(models.Model):
     created_date = models.DateField(auto_now_add=True,null=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True,null=True)
+    history = HistoricalRecords()
 
 
 class InvoiceDiscount(models.Model):
@@ -367,6 +378,7 @@ class InvoiceDiscount(models.Model):
     created_date = models.DateField(auto_now_add=True,null=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     modified_date = models.DateTimeField(auto_now=True,null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"Discount for Invoice {self.invoice.invoice_no}: {self.discount}%"

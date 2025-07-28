@@ -9,7 +9,6 @@ class StateViewSet(viewsets.ModelViewSet):
     queryset = State.objects.all().order_by('name')
     serializer_class = StateSerializer
     permission_classes = [IsAuthenticated]
-    authentication_classes = [BasicAuthentication]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['name']

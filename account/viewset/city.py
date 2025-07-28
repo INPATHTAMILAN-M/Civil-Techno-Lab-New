@@ -12,7 +12,7 @@ class CityViewSet(viewsets.ModelViewSet):
     queryset = City.objects.all().order_by('-created_date')
     serializer_class = CitySerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     pagination_class = CustomPagination
     permission_classes = [IsAuthenticated]
     search_fields = ['name']

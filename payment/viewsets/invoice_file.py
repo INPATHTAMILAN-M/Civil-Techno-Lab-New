@@ -17,7 +17,6 @@ from payment.serializers import (
 class InvoiceFileViewSet(viewsets.ModelViewSet):
     queryset = Invoice_File.objects.all().order_by('-created_date')
     filter_backends = [DjangoFilterBackend,]
-    # authentication_classes = [TokenAuthentication,BaseAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filterset_class = InvoiceFileFilter

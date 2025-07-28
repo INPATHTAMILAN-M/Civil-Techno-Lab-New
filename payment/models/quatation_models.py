@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from account.models import Customer
+from simple_history.models import HistoricalRecords
 
 class Quotation(models.Model):
     QUOTATION_FORMAT = "QUO-{number}/{year}"
@@ -16,6 +17,7 @@ class Quotation(models.Model):
     created_date = models.DateField(auto_now_add=True, null=True)
     modified_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_modified')
     modified_date = models.DateTimeField(auto_now=True, null=True)
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         if not self.quotation_number:
@@ -47,6 +49,7 @@ class QuotationItem(models.Model):
     created_date = models.DateField(auto_now_add=True, null=True)
     modified_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_items_modified')
     modified_date = models.DateTimeField(auto_now=True, null=True)
+    history = HistoricalRecords()
 
     def total_price(self):
         if self.price_per_sample:
@@ -62,3 +65,4 @@ class QuotationReport(models.Model):
     quotation_file = models.FileField(upload_to='quotation/', null=True, blank=True)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_reports_created')
     created_date = models.DateField(auto_now_add=True, null=True)
+    history = HistoricalRecords()

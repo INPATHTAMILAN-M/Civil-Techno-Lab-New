@@ -17,7 +17,6 @@ from ..serializers import (
 class CustomerDiscountViewSet(viewsets.ModelViewSet):
     queryset = CustomerDiscount.objects.all().order_by('-id')
     filterset_class = CustomerDiscountFilter
-    # authentication_classes = [TokenAuthentication,BaseAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend]

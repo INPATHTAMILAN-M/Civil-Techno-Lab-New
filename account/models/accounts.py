@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import  date
+from simple_history.models import HistoricalRecords
 
 class Employee(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,6 +23,7 @@ class Employee(models.Model):
     signature = models.ImageField(null=True,blank=True,upload_to="signature")
     role = models.TextField(null=True,blank=True)
     is_active = models.BooleanField(default=True)
+    history = HistoricalRecords()
     
     def __str__(self):
         return self.employee_name

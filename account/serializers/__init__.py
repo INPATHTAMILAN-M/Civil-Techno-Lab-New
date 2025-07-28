@@ -9,3 +9,4 @@ from .city import *
 from .state import *
 from .customer import *
 from .log import *
+from .history import *

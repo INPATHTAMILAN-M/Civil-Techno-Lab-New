@@ -17,7 +17,6 @@ from payment.filters import InvoiceTestFilter
 
 class InvoiceTestViewSet(viewsets.ModelViewSet):
     queryset = Invoice_Test.objects.all()
-    # authentication_classes = [TokenAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = InvoiceTestFilter

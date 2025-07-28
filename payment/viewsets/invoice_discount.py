@@ -13,7 +13,6 @@ from payment.serializers import (
 
 class InvoiceDiscountViewSet(viewsets.ModelViewSet):
     queryset = InvoiceDiscount.objects.all()
-    # authentication_classes = [TokenAuthentication,BaseAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):

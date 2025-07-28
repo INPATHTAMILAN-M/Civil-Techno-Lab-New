@@ -13,7 +13,6 @@ class Expense_Entry_ViewSet(viewsets.ModelViewSet):
     queryset = Expense_Entry.objects.all().order_by('-created_date')
     serializer_class = Expense_Entry_Serializer
     filter_backends = [DjangoFilterBackend,]
-    # authentication_classes = [TokenAuthentication,BaseAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
     filterset_class = ExpenseEntryFilter
