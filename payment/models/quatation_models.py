@@ -10,6 +10,8 @@ class Quotation(models.Model):
     quotation_qr = models.ImageField(upload_to='quotations/', blank=True, null=True)
     date_created = models.DateField(default=now)
     tax = models.ManyToManyField('general.Tax', blank=True)
+    before_tax = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
+    after_tax = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     sub_total = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     completed = models.BooleanField(default=False)
@@ -18,20 +20,6 @@ class Quotation(models.Model):
     modified_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_modified')
     modified_date = models.DateTimeField(auto_now=True, null=True)
     history = HistoricalRecords()
-
-    def save(self, *args, **kwargs):
-        if not self.quotation_number:
-            current_date = now()
-            year = (
-                f"{current_date.year-1}-{str(current_date.year)[2:]}"
-                if current_date.month < 4
-                else f"{current_date.year}-{str(current_date.year + 1)[2:]}"
-            )
-            start_date = f"{current_date.year-1}-04-01" if current_date.month < 4 else f"{current_date.year}-04-01"
-            count = Quotation.objects.filter(date_created__gte=start_date).count() + 1
-            self.quotation_number = self.QUOTATION_FORMAT.format(number=count, year=year)
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.id} - {self.quotation_number}"
@@ -47,6 +35,7 @@ class QuotationItem(models.Model):
     signature = models.ForeignKey('account.Employee', on_delete=models.CASCADE, null=True, blank=True)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_items_created')
     created_date = models.DateField(auto_now_add=True, null=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     modified_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_items_modified')
     modified_date = models.DateTimeField(auto_now=True, null=True)
     history = HistoricalRecords()
@@ -58,6 +47,9 @@ class QuotationItem(models.Model):
     
     def __str__(self):
         return f" {self.test.test_name} - {self.quotation.quotation_number}"
+
+    
+
 
 
 class QuotationReport(models.Model):

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..models import QuotationItem
 from general.models import Test
+from payment.models import Quotation
 
 
 class TestSerializer(serializers.ModelSerializer):
@@ -12,6 +13,11 @@ class TestSerializer(serializers.ModelSerializer):
         model = Test
         fields = ['id', 'material_name', 'test_name', 'price_per_piece', 'created_by', 
                  'created_date', 'modified_by', 'modified_date']
+        
+class QuotationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quotation
+        fields = '__all__'
         
 class QuotationItemUnifiedSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,10 +44,10 @@ class QuotationItemListSerializer(serializers.ModelSerializer):
         
 class QuotationItemGetSerializer(serializers.ModelSerializer):
     test = TestSerializer()
+    quotation = QuotationSerializer()
     class Meta:
         model = QuotationItem
-        fields = ['id', 'test', 'quantity', 'signature', 
-                  'created_by', 'created_date', 'modified_by', 'modified_date']
+        fields = '__all__'
         
 
 class QuotationItemUpdateSerializer(serializers.ModelSerializer):

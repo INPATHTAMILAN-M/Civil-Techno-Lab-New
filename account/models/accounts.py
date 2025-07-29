@@ -4,7 +4,7 @@ from datetime import  date
 from simple_history.models import HistoricalRecords
 
 class Employee(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee_user')
     employee_name = models.CharField(max_length=255)
     address = models.TextField()
     mobile_number = models.CharField(max_length=10)

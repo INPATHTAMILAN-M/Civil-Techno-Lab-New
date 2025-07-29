@@ -10,3 +10,4 @@ class PaymentConfig(AppConfig):
         import payment.signals.quatation_signals
         import payment.signals.invoice_signals
         import payment.history_register
+        

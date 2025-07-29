@@ -60,9 +60,6 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
-        
-        
-
         # Refresh the instance to get the most recent data
         instance.refresh_from_db()
 
@@ -107,44 +104,41 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
 
 class QuotationListSerializer(serializers.ModelSerializer):
     customer = serializers.CharField(source='customer.customer_name', read_only=True)
-
     class Meta:
         model = Quotation
-        fields = ['id', 'quotation_number', 'customer', 'date_created', 'completed',
-                  'total_amount', 'quotation_qr']
+        fields = "__all__"
         
 class CustomerListSerializer(serializers.ModelSerializer):
-    # customer_name = serializers.CharField(source='name')  # Assuming 'name' is the field in Customer model
-
     class Meta:
         model = Customer
         fields = ['id', 'customer_name', 'address1', 'phone_no']
 
+from rest_framework import serializers
+from general.models import Tax
+
+        
+class TaxListSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tax
+        fields = ['id','tax_name','tax_percentage', 'tax_status', 'status', 'created_by', 'created_date', 'modified_by', 'modified_date']
+
+    def get_status(self, obj):
+        return "Enable" if obj.tax_status == 'E' else "Disable"
+    
+
 class QuotationRetrieveSerializer(serializers.ModelSerializer):
-    tax = serializers.SerializerMethodField() 
     quotation_items = QuotationItemSerializer(many=True, read_only=True)
     customer = CustomerSerializer()
-    customer_list = serializers.SerializerMethodField()
     total_amount = serializers.SerializerMethodField()
-    tax_list = serializers.SerializerMethodField()
+    tax = TaxListSerializer(many=True)
 
     class Meta:
         model = Quotation
-        fields = ['id', 'quotation_number', 'customer', 'date_created', 'tax', 
-                  'completed','total_amount', 'quotation_items', 'quotation_qr','customer_list','tax_list']
-        
-
-    def get_tax(self, obj):
-        tax_list = []
-        for tax in obj.tax.all():
-            tax_list.append(tax.id)
-        return tax_list
-    
-
-    def get_customer_list(self, obj):
-        # Get all customers and serialize them using CustomerListSerializer
-        customers = Customer.objects.all()
-        return CustomerListSerializer(customers, many=True).data
+        fields = ['id', 'quotation_number', 'customer', 'date_created', 'tax', 'completed',
+                  'total_amount', 'quotation_items', 'quotation_qr','before_tax','after_tax',
+                  'customer_list','total_amount']
     
     def get_total_amount(self, obj):
         # Calculate the base total amount for all quotation items (without tax)

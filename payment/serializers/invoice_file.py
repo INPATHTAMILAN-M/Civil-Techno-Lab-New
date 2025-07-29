@@ -9,7 +9,8 @@ class InvoiceFileBaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice_File
-        fields = ['id', 'invoice', 'category', 'created_by', 'modified_by', 'created_date', 'modified_date', 'expense']
+        fields = ['id', 'invoice', 'category', 'created_by', 'modified_by', 
+                  'created_date', 'modified_date', 'expense']
 
 
 class InvoiceFileCreateSerializer(InvoiceFileBaseSerializer):
@@ -32,12 +33,13 @@ class InvoiceFileRetrieveSerializer(InvoiceFileBaseSerializer):
     expence_amount = serializers.IntegerField(source='expense.amount', read_only=True)
     invoice_amount = serializers.IntegerField(source='invoice.total_amount', read_only=True)
     customer = serializers.CharField(source='invoice.customer.customer_name', read_only=True)
+    customer_number = serializers.CharField(source='invoice.customer.phone_no', read_only=True)
     project_name = serializers.CharField(source='invoice.project_name', read_only=True)
 
     class Meta(InvoiceFileBaseSerializer.Meta):
         fields = InvoiceFileBaseSerializer.Meta.fields + [
             'file_url', 'invoice_no', 'category_name', 'expense_category', 
-            'expense_user','expence_amount','invoice_amount', 'customer', 'project_name'
+            'expense_user','expence_amount','invoice_amount', 'customer', 'project_name','customer_number'
         ]
 
     def get_invoice_no(self, obj):
@@ -72,12 +74,13 @@ class InvoiceFileListSerializer(InvoiceFileBaseSerializer):
     invoice_amount = serializers.IntegerField(source='invoice.total_amount', read_only=True)
     customer = serializers.CharField(source='invoice.customer.customer_name', read_only=True)
     project_name = serializers.CharField(source='invoice.project_name', read_only=True)
-
+    customer_number = serializers.CharField(source='invoice.customer.phone_no', read_only=True)
 
     class Meta(InvoiceFileBaseSerializer.Meta):
         fields = InvoiceFileBaseSerializer.Meta.fields + [
             'file_url', 'invoice_no', 'category_name', 'expense_category', 
-            'expense_user','expence_amount','invoice_amount','customer', 'project_name'
+            'expense_user','expence_amount','invoice_amount','customer', 'project_name',
+            'customer_number'
         ]
 
     def get_invoice_no(self, obj):
