@@ -60,45 +60,69 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
-        # Refresh the instance to get the most recent data
-        instance.refresh_from_db()
+
+        # Extract and remove tax from validated_data (handle M2M separately)
+        tax_data = validated_data.pop('tax', None)
+
+        # Update simple fields only if changed
+        has_changes = False
+        for attr, value in validated_data.items():
+            old_value = getattr(instance, attr)
+            if old_value != value:
+                setattr(instance, attr, value)
+                has_changes = True
+
+        # Handle tax M2M
+        if tax_data is not None:
+            old_tax_ids = set(instance.tax.values_list('id', flat=True))
+            new_tax_ids = set([t.id if hasattr(t, 'id') else t for t in tax_data])
+            if old_tax_ids != new_tax_ids:
+                instance.tax.set(tax_data)
+                has_changes = True
+
+        # Only save if anything changed
+        if has_changes:
+            instance.save()
+
+        # Generate PDF regardless of whether fields changed
+        tax_set = instance.tax.all()
+        sub_total = instance.sub_total or 0
+        tax_total = sum(t.tax_percentage for t in tax_set)
+        tax_display = " + ".join(f"{t.tax_name} ({t.tax_percentage}%)" for t in tax_set)
 
         context = {
-            'quotation': validated_data.get('quotation', instance),                
+            'quotation': instance,
             'customer': instance.customer,
             'quotation_items': instance.quotation_items.all(),
-            'sub_total': instance.sub_total,
-            'tax': validated_data.get('tax', []),
-            'tax_total': sum(tax.tax_percentage for tax in validated_data.get('tax', [])) or 0,  # Sum tax percentages using dot notation
-            'tax_display': "+".join(f"{tax.tax_name} ({tax.tax_percentage}%)" for tax in validated_data.get('tax', [])),
-            "settings": settings
+            'sub_total': sub_total,
+            'tax': tax_set,
+            'tax_total': tax_total,
+            'tax_display': tax_display,
+            'settings': settings,
         }
 
         html_content = render_to_string('quotation.html', context)
         pdf_file = HTML(string=html_content).write_pdf()
-        
-        # Set up the file path and save the PDF file
+
+        # Save PDF file
         pdf_dir = os.path.join(settings.MEDIA_ROOT, 'quotations')
         os.makedirs(pdf_dir, exist_ok=True)
-        file_path = os.path.join(pdf_dir, f"quotation_{instance.id}.pdf")
-        
+        pdf_filename = f"quotation_{instance.id}.pdf"
+        file_path = os.path.join(pdf_dir, pdf_filename)
+
         with open(file_path, 'wb') as f:
             f.write(pdf_file)
-        
-        # Update the instance's pdf_path and save it
-        instance.pdf_path = file_path
-        instance.save()
+
+        # Update PDF path if changed
+        relative_path = f"quotations/{pdf_filename}"
 
         # Update or create the QuotationReport entry
         QuotationReport.objects.update_or_create(
-            quotation=instance, 
-            defaults={
-                'quotation_file': f"/quotations/quotation_{instance.id}.pdf"
-            }
+            quotation=instance,
+            defaults={'quotation_file': f"/{relative_path}"}
         )
 
-        # Continue with the default update behavior
-        return super().update(instance, validated_data)
+        return instance
 
     
 

@@ -3,12 +3,15 @@ from django.utils.timezone import now
 from account.models import Customer
 from simple_history.models import HistoricalRecords
 
+def today():  # Safe helper
+    return now().date()
+
 class Quotation(models.Model):
     QUOTATION_FORMAT = "QUO-{number}/{year}"
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="quotations")
     quotation_number = models.CharField(max_length=20, unique=True, blank=True)  # Will be auto-generated
     quotation_qr = models.ImageField(upload_to='quotations/', blank=True, null=True)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(default=today)
     tax = models.ManyToManyField('general.Tax', blank=True)
     before_tax = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     after_tax = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)

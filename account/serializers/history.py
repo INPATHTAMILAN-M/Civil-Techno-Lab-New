@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.core.exceptions import ObjectDoesNotExist
 
 class HistorySerializer(serializers.Serializer):
     id = serializers.IntegerField(source='instance.id')
@@ -26,69 +27,66 @@ class HistorySerializer(serializers.Serializer):
         return False
 
     def get_changes(self, obj):
-        # Skip change detection for created or deleted records
-        if obj.history_type in ('+', '-'):
-            return None
+        prev = obj.prev_record
+        if not prev:
+            return {}
 
-        try:
-            previous = obj.instance.history.filter(history_date__lt=obj.history_date).order_by('-history_date').first()
-        except:
-            previous = None
+        delta = obj.diff_against(prev, foreign_keys_are_objs=True)
 
-        if not previous:
-            return None
+        def safe_value(value):
+            # Convert FK objects to strings (e.g., __str__) or IDs
+            if hasattr(value, '__str__'):
+                return str(value)
+            return value
 
-        omiting_fields = ['id', 'history_id', 'history_date', 'modified_by', 'created_by', 'report_template',
-                         'history_change_reason', 'created_at', 'modified_date', 'history_user']
-
-        changes = {}
-        model_fields = [f.name for f in obj.instance._meta.fields if f.name not in omiting_fields]
-        
-        for field in model_fields:
-            old = getattr(previous, field, None)
-            new = getattr(obj.instance, field, None)
-            if old != new:
-                changes[field] = {
-                    'from': str(old),
-                    'to': str(new),
-                }
-
-        return changes or None
+        return {
+            change.field: {
+                'from': safe_value(change.old),
+                'to': safe_value(change.new)
+            }
+            for change in delta.changes
+        }
 
     def get_custom_info(self, obj):
+        
         model_name = obj.instance._meta.model_name
         if model_name == "invoice_test":
-            invoice = getattr(obj.instance, "invoice", None)
-            return {
-                "invoice_id": getattr(invoice, "id", None) if invoice else None
-            }
-        elif model_name == "receipt":
-            invoice = getattr(obj.instance, "invoice_no", None)
-            return {
-                "invoice_id": getattr(invoice, "id", None) if invoice else None
-            }
-        elif model_name == "invoicediscount":
-            invoice = getattr(obj.instance, "invoice", None)
-            return {
-                "invoice_id": getattr(invoice, "id", None) if invoice else None
-            }
-        elif model_name == "quotationitem":
-            quotation = getattr(obj.instance, "quotation", None)
-            return {
-                "quotation_id": getattr(quotation, "id", None) if quotation else None
-            }
-        elif model_name == 'user':
-            employee = getattr(obj.instance, "employee_user", None)
-            return {
-                "employee_id": getattr(employee, "id", None) if employee else None
-            }
-        return None
+            try:
+                invoice = obj.instance.invoice
+                invoice_id = invoice.id if invoice else None
+            except ObjectDoesNotExist:
+                invoice_id = None
+            return {"invoice_id": invoice_id}
 
-    # def to_representation(self, instance):
-    #     data = super().to_representation(instance)
-        
-    #     # Skip unchanged updates
-    #     if instance.history_type == '~' and not data.get('changes'):
-    #         return None
-            
-    #     return data
+        elif model_name == "receipt":
+            try:
+                invoice = obj.instance.invoice_no
+                invoice_id = invoice.id if invoice else None
+            except ObjectDoesNotExist:
+                invoice_id = None
+            return {"invoice_id": invoice_id}
+
+        elif model_name == "invoicediscount":
+            try:
+                invoice = obj.instance.invoice
+                invoice_id = invoice.id if invoice else None
+            except ObjectDoesNotExist:
+                invoice_id = None
+            return {"invoice_id": invoice_id}
+
+        elif model_name == "quotationitem":
+            try:
+                quotation = obj.instance.quotation
+                quotation_id = quotation.id if quotation else None
+            except ObjectDoesNotExist:
+                quotation_id = None
+            return {"quotation_id": quotation_id}
+
+        elif model_name == "user":
+            try:
+                employee = obj.instance.employee_user
+                employee_id = employee.id if employee else None
+            except ObjectDoesNotExist:
+                employee_id = None
+            return {"employee_id": employee_id}
+        return None

@@ -14,6 +14,7 @@ class GenericHistoryViewSet(viewsets.ReadOnlyModelViewSet):
             raise ValueError("Model not specified for history viewset")
         
         queryset = self.model.history.all()
+
         params = self.request.query_params
 
         # Date range filtering

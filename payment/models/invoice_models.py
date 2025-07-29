@@ -71,7 +71,6 @@ class Invoice(models.Model):
         return count
     
 
-
     @property
     def customer_name(self):
         return str(self.customer.customer_name)
@@ -112,11 +111,7 @@ class Invoice(models.Model):
             
         else:
             return 0
-            
-
-        
-
-    
+                
     @property
     def get_after_discount(self):
         try:
@@ -124,10 +119,6 @@ class Invoice(models.Model):
         except:
             return 0
 
-    
-
-    
-    
     @property
     def sgst_tax(self):
         taxes = self.tax.all()
@@ -139,8 +130,6 @@ class Invoice(models.Model):
         else:
             return 0
 
-        
-
     @property
     def cheque_neft(self):
         return self.cheque_number
@@ -149,12 +138,10 @@ class Invoice(models.Model):
     def tax_deduction(self):
         return 0
     
-
     @property
     def cash(self):
         return 0
     
-
     @property
     def incompleted_test(self):
         count  = Invoice_Test.objects.filter(invoice=self,completed="No").count()

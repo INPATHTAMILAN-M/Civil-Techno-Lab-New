@@ -51,44 +51,44 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
         model = Invoice
         fields = '__all__'
 
-
     def create(self, validated_data):
         request = self.context['request']
-        validated_data['created_by'] = request.user
-        validated_data['modified_by'] = request.user
+        validated_data.update({
+            'created_by': request.user,
+            'modified_by': request.user,
+            'date': timezone.now().date(),
+        })
 
-        # Save initial invoice to get an ID
-        invoice = super().create(validated_data)
+        # Set place of testing if available
+        if 'customer' in validated_data and validated_data['customer'].place_of_testing:
+            validated_data['place_of_testing'] = validated_data['customer'].place_of_testing
 
-        # 1. Generate invoice number based on financial year
+        # Generate invoice number
         financial_year = self.get_financial_year()
-        last_invoice = Invoice.objects.filter(invoice_no__endswith=f"/{financial_year}", invoice_no__isnull=False).last()
+        last_invoice = Invoice.objects.filter(
+            invoice_no__endswith=f"/{financial_year}", 
+            invoice_no__isnull=False
+        ).last()
+        
         last_invoice_no = 0
         if last_invoice:
             try:
                 last_invoice_no = int(last_invoice.invoice_no.split('/')[0])
             except (ValueError, IndexError):
-                last_invoice_no = 0
+                pass
 
         next_number = last_invoice_no + 1
         prefix = f"{next_number:03d}"
-        invoice_no = f"{prefix}/{financial_year}"
-        invoice.invoice_no = invoice_no
+        validated_data['invoice_no'] = f"{prefix}/{financial_year}"
 
-        # 2. Set optional fields
-        if invoice.customer.place_of_testing:
-            invoice.place_of_testing = invoice.customer.place_of_testing
-
-        invoice.date = timezone.now().date()
-
-        # 3. Generate QR code image
+        # Generate QR code
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
             box_size=10,
             border=4,
         )
-        qr.add_data(f"{settings.QR_DOMAIN}/invoice/viewinvoicereport?id={invoice.id}")
+        qr.add_data(f"{settings.QR_DOMAIN}/invoice/viewinvoicereport?id={validated_data.get('id', '')}")
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
 
@@ -97,11 +97,12 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
         invoice_img_filename = f"invoice_{prefix}-{financial_year}.png"
         invoice_img_path = os.path.join(invoice_img_dir, invoice_img_filename)
         img.save(invoice_img_path)
+        validated_data['invoice_image'] = invoice_img_path
 
-        invoice.invoice_image = invoice_img_path
-        invoice.save()
+        # Create invoice with all data at once
+        invoice = super().create(validated_data)
 
-        # 4. Generate the invoice report (PDF, HTML, etc.)
+        # Generate invoice report after creation
         generate_invoice_report(invoice, request)
 
         return invoice
@@ -128,17 +129,29 @@ class InvoiceUpdateSerializer(serializers.ModelSerializer):
         request = self.context['request']
         validated_data['modified_by'] = request.user
 
-        # Handle tax ManyToMany field separately
         tax_data = validated_data.pop('tax', None)
+        updated_fields = []
 
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
+        # Check and update only changed fields
+        for attr, new_value in validated_data.items():
+            old_value = getattr(instance, attr)
+            if old_value != new_value:
+                setattr(instance, attr, new_value)
+                updated_fields.append(attr)
 
+        if updated_fields:
+            instance.save(update_fields=updated_fields)
+
+        # Handle ManyToMany (tax)
         if tax_data is not None:
-            instance.tax.set(tax_data)
+            old_tax_ids = set(instance.tax.values_list('id', flat=True))
+            new_tax_ids = set([t.id if hasattr(t, 'id') else t for t in tax_data])
+            if old_tax_ids != new_tax_ids:
+                instance.tax.set(tax_data)
 
+        # Always regenerate report (if needed for preview update)
         generate_invoice_report(instance, request)
+
         return instance
 
 class InvoiceRetrieveSerializer(serializers.ModelSerializer):

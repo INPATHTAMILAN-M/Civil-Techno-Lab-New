@@ -36,12 +36,16 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True) 
+        serializer.is_valid(raise_exception=True)
+        
+        instance = serializer.save()
+    
         first_two_taxes = Tax.objects.all()[:2]
-        instance = serializer.save(created_by=request.user)
         instance.tax.set(first_two_taxes)
-        instance.save()
+
+        # Return with retrieve serializer
         serializer = InvoiceRetrieveSerializer(instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
     

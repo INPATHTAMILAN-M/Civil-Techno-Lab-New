@@ -6,9 +6,6 @@ from payment.models import Invoice, InvoiceReport  # Adjust import paths as nece
 from django.conf import settings
 
 def generate_invoice_report(invoice, request):
-    invoice.modified_by=request.user
-    invoice.fully_paid = int(invoice.total_amount) == int(invoice.advance)
-    invoice.save()
 
     tax_mapping = {
         'SGST': 'SGST',
