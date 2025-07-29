@@ -37,17 +37,31 @@ class QuotationItemBulkCreateSerializer(serializers.Serializer):
         return QuotationItem.objects.bulk_create(quotation_items)
 
 class QuotationItemListSerializer(serializers.ModelSerializer):
+    total_price = serializers.SerializerMethodField()
+    test_name = serializers.CharField(source="test.test_name", read_only=True)
     class Meta:
         model = QuotationItem
-        fields = ['id', 'test', 'quantity', 'signature',
-                  'created_by', 'created_date', 'modified_by', 'modified_date']
+        fields = "__all__"
+
+    def get_total_price(self, obj):
+        """Calculate the total price for this line item"""
+        if obj.price_per_sample is not None:
+            return obj.quantity * obj.price_per_sample
+        return obj.quantity * obj.test.price_per_piece
         
 class QuotationItemGetSerializer(serializers.ModelSerializer):
     test = TestSerializer()
     quotation = QuotationSerializer()
+    total_price = serializers.SerializerMethodField()
     class Meta:
         model = QuotationItem
         fields = '__all__'
+
+    def get_total_price(self, obj):
+        """Calculate the total price for this line item"""
+        if obj.price_per_sample is not None:
+            return obj.quantity * obj.price_per_sample
+        return obj.quantity * obj.test.price_per_piece
         
 
 class QuotationItemUpdateSerializer(serializers.ModelSerializer):

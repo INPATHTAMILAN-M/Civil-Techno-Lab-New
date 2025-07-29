@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 class HistorySerializer(serializers.Serializer):
-
     id = serializers.IntegerField(source='instance.id')
     history_id = serializers.IntegerField()
     history_date = serializers.DateTimeField()
@@ -12,7 +11,6 @@ class HistorySerializer(serializers.Serializer):
     history_action = serializers.SerializerMethodField()
     changes = serializers.SerializerMethodField()
     custom_info = serializers.SerializerMethodField()
-
 
     def get_history_action(self, obj):
         return {
@@ -28,6 +26,10 @@ class HistorySerializer(serializers.Serializer):
         return False
 
     def get_changes(self, obj):
+        # Skip change detection for created or deleted records
+        if obj.history_type in ('+', '-'):
+            return None
+
         try:
             previous = obj.instance.history.filter(history_date__lt=obj.history_date).order_by('-history_date').first()
         except:
@@ -36,14 +38,15 @@ class HistorySerializer(serializers.Serializer):
         if not previous:
             return None
 
-        omiting_fileds = ['id', 'history_id','history_date','modified_by','created_by','report_template',
-                           'history_change_reason','created_at','modified_date','history_user']
+        omiting_fields = ['id', 'history_id', 'history_date', 'modified_by', 'created_by', 'report_template',
+                         'history_change_reason', 'created_at', 'modified_date', 'history_user']
 
         changes = {}
-        model_fields = [f.name for f in obj._meta.fields if f.name not in omiting_fileds]
+        model_fields = [f.name for f in obj.instance._meta.fields if f.name not in omiting_fields]
+        
         for field in model_fields:
             old = getattr(previous, field, None)
-            new = getattr(obj, field, None)
+            new = getattr(obj.instance, field, None)
             if old != new:
                 changes[field] = {
                     'from': str(old),
@@ -51,7 +54,7 @@ class HistorySerializer(serializers.Serializer):
                 }
 
         return changes or None
-    
+
     def get_custom_info(self, obj):
         model_name = obj.instance._meta.model_name
         if model_name == "invoice_test":
@@ -69,5 +72,23 @@ class HistorySerializer(serializers.Serializer):
             return {
                 "invoice_id": getattr(invoice, "id", None) if invoice else None
             }
-        print(model_name)
+        elif model_name == "quotationitem":
+            quotation = getattr(obj.instance, "quotation", None)
+            return {
+                "quotation_id": getattr(quotation, "id", None) if quotation else None
+            }
+        elif model_name == 'user':
+            employee = getattr(obj.instance, "employee_user", None)
+            return {
+                "employee_id": getattr(employee, "id", None) if employee else None
+            }
         return None
+
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+        
+    #     # Skip unchanged updates
+    #     if instance.history_type == '~' and not data.get('changes'):
+    #         return None
+            
+    #     return data

@@ -138,7 +138,7 @@ class QuotationRetrieveSerializer(serializers.ModelSerializer):
         model = Quotation
         fields = ['id', 'quotation_number', 'customer', 'date_created', 'tax', 'completed',
                   'total_amount', 'quotation_items', 'quotation_qr','before_tax','after_tax',
-                  'customer_list','total_amount']
+                  'total_amount']
     
     def get_total_amount(self, obj):
         # Calculate the base total amount for all quotation items (without tax)

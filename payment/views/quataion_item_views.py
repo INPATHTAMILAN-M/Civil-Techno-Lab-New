@@ -3,7 +3,9 @@ from rest_framework.generics import (
     UpdateAPIView, ListAPIView, DestroyAPIView
 )
 from rest_framework import permissions
+from django_filters.rest_framework import DjangoFilterBackend
 from payment.models import QuotationItem
+from payment.filters.quotation_item import QuotationItemFilter
 from payment.serializers.quatation_item import (
     QuotationItemBulkCreateSerializer, 
     QuotationItemUnifiedSerializer,
@@ -57,6 +59,8 @@ class QuotationItemListView(ListAPIView):
     queryset = QuotationItem.objects.all()
     serializer_class = QuotationItemListSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = QuotationItemFilter
 
 
 # Retrieve API View for Getting a Single Quotation Item
