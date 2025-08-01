@@ -81,6 +81,9 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
         prefix = f"{next_number:03d}"
         validated_data['invoice_no'] = f"{prefix}/{financial_year}"
 
+        # Create invoice with all data at once
+        invoice = super().create(validated_data)
+
         # Generate QR code
         qr = qrcode.QRCode(
             version=1,
@@ -88,7 +91,7 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
             box_size=10,
             border=4,
         )
-        qr.add_data(f"{settings.QR_DOMAIN}/invoice/viewinvoicereport?id={validated_data.get('id', '')}")
+        qr.add_data(f"{settings.QR_DOMAIN}/invoice/viewinvoicereport?id={invoice.id}")
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
 
@@ -97,10 +100,8 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
         invoice_img_filename = f"invoice_{prefix}-{financial_year}.png"
         invoice_img_path = os.path.join(invoice_img_dir, invoice_img_filename)
         img.save(invoice_img_path)
-        validated_data['invoice_image'] = invoice_img_path
 
-        # Create invoice with all data at once
-        invoice = super().create(validated_data)
+        invoice.invoice_image = invoice_img_path
 
         # Generate invoice report after creation
         generate_invoice_report(invoice, request)
