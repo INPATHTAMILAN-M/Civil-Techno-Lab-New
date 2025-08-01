@@ -82,7 +82,7 @@ class InvoiceTestViewSet(viewsets.ModelViewSet):
         replacements = {
             'Test Order': f'Test Order: {invoice.invoice_no}',
             'CUSTOMERDETAILS': f'<p>{customer.customer_name}</p><p>{customer.address1}</p>',
-            'Date :': f'Date : {instance.created_date.strftime("%d-%m-%Y")}',
+            'Date :': f'Date : {invoice.date.strftime("%d-%m-%Y")}',
             'Place of Testing Name': str(invoice.place_of_testing),
             'Project Name': str(invoice.project_name),
         }

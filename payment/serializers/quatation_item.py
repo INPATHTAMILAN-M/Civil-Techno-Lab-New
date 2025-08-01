@@ -2,6 +2,7 @@ from rest_framework import serializers
 from ..models import QuotationItem
 from general.models import Test
 from payment.models import Quotation
+from payment.signals.quatation_signals import update_quotation_totals
 
 
 class TestSerializer(serializers.ModelSerializer):
@@ -30,11 +31,15 @@ class QuotationItemBulkCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         request_user = self.context['request'].user
         items_data = validated_data.get('items', [])
-        for item in items_data:
-            item['created_by'] = request_user
+        created_items = []
 
-        quotation_items = [QuotationItem(**item) for item in items_data]
-        return QuotationItem.objects.bulk_create(quotation_items)
+        for item_data in items_data:
+            item_data['created_by'] = request_user  # Ensure required field is set
+            item = QuotationItem(**item_data)
+            item.save()  # ✅ Triggers signals and django-simple-history
+            created_items.append(item)
+
+        return created_items
 
 class QuotationItemListSerializer(serializers.ModelSerializer):
     total_price = serializers.SerializerMethodField()

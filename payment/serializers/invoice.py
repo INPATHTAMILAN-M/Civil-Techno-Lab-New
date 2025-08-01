@@ -49,7 +49,7 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
-        fields = '__all__'
+        fields = ['customer','project_name','invoice_discounts']
 
     def create(self, validated_data):
         request = self.context['request']
@@ -100,12 +100,10 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
         invoice_img_filename = f"invoice_{prefix}-{financial_year}.png"
         invoice_img_path = os.path.join(invoice_img_dir, invoice_img_filename)
         img.save(invoice_img_path)
-
         invoice.invoice_image = invoice_img_path
-
+        invoice.save()
         # Generate invoice report after creation
         generate_invoice_report(invoice, request)
-
         return invoice
 
     def get_financial_year(self):
