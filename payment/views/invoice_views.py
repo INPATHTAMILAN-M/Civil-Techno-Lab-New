@@ -830,165 +830,142 @@ class Print_Invoice(APIView):
 
 
 
+from datetime import datetime
+from django.db.models import Sum, DateField
+from django.db.models.functions import ExtractMonth, ExtractYear, Cast
+from django.utils.timezone import now, make_aware, localtime
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 class Dashboard(APIView):
 
     def get(self, request):
-        year = datetime.now().year
-        month = datetime.now().month
-        this_month_name = datetime.now().strftime('%B')
-        this_month = datetime.now().month
+        today = now()
+        month = today.month
+        year = today.year
+        this_month_name = localtime(today).strftime('%B')
+        this_month = localtime(today).month
+
+        # Core counts
         pending_payment_count = Invoice.objects.filter(fully_paid=False).count()
+        all_invoice = Invoice.objects.count()
+        customer_count = Customer.objects.count()
+        total_expense_count = Expense_Entry.objects.count()
 
-        this_month_generated_invoice  = Invoice.objects.filter(created_date__year=year,created_date__month=month).count()
-        all_invoice  = Invoice.objects.filter().count()
+        # Annotated queries for this month
+        def count_monthly(model, field):
+            return model.objects.annotate(
+                date_cast=Cast(field, output_field=DateField())
+            ).annotate(
+                month=ExtractMonth('date_cast'),
+                year=ExtractYear('date_cast')
+            ).filter(month=month, year=year).count()
 
-        this_month_generated_incompleted_invoice  = Invoice.objects.filter(completed="No",created_date__year=year,created_date__month=month).count()
-        incompleted_invoice_count  = Invoice.objects.filter(completed="No").count()
-        this_month_generated_incompleted_test  = Invoice_Test.objects.filter(completed="No",created_date__year=year,created_date__month=month).count()
-        incompleted_test_count  = Invoice_Test.objects.filter(completed="No").count()
+        this_month_generated_invoice = count_monthly(Invoice, 'date')
+        this_month_expense_entry_count = count_monthly(Expense_Entry, 'created_date')
+        this_month_customer_count = count_monthly(Customer, 'created_date')
+        this_month_expense_count = count_monthly(Expense_Entry, 'created_date')
 
-        this_month_pending_payment_count = invoices = Invoice.objects.filter(fully_paid=False,created_date__year=year,created_date__month=month).count()
-        this_month_expense_total = Expense_Entry.objects.filter(created_date__year=year,created_date__month=month).aggregate(Sum('amount'))
-        this_month_expense_entry_count = Expense_Entry.objects.filter(created_date__year=year,created_date__month=month).count()
-        customer_count = Customer.objects.all().count()
-        this_month_customer_count = Customer.objects.filter(created_date__year=year,created_date__month=month).count()
-        category_wise_amounts = Expense_Entry.objects.values('expense_category__expense_name').annotate(total_amount=Sum('amount'))
-        this_month_expense_count = Expense_Entry.objects.filter(created_date__year=year,created_date__month=month).count()
-        total_expense_count = Expense_Entry.objects.filter().count()
+        # Incompleted and pending payment counts
+        this_month_generated_incompleted_invoice = Invoice.objects.filter(completed="No", date__year=year, date__month=month).count()
+        incompleted_invoice_count = Invoice.objects.filter(completed="No").count()
+        this_month_generated_incompleted_test = Invoice_Test.objects.filter(completed="No", created_date__year=year, created_date__month=month).count()
+        incompleted_test_count = Invoice_Test.objects.filter(completed="No").count()
+        this_month_pending_payment_count = Invoice.objects.filter(fully_paid=False, date__year=year, date__month=month).count()
 
-        pending_payment = Invoice.objects.filter(fully_paid=False).aggregate(Sum('balance'))
+        # Aggregates
+        this_month_expense_total = Expense_Entry.objects.filter(
+            created_date__year=year, created_date__month=month
+        ).aggregate(Sum('amount'))['amount__sum'] or 0
 
-        pending_payment_this_month = Invoice.objects.filter(created_date__year=year,created_date__month=month,fully_paid=False).aggregate(Sum('balance'))
-        
-        invoices = Invoice.objects.all().order_by('-id')[:10]
-        invoices = Invoice_Serializer_For_Dashboard(invoices, many=True)
-                
+        pending_payment = Invoice.objects.filter(fully_paid=False).aggregate(Sum('balance'))['balance__sum'] or 0
+        pending_payment_this_month = Invoice.objects.filter(
+            fully_paid=False, date__year=year, date__month=month
+        ).aggregate(Sum('balance'))['balance__sum'] or 0
 
+        invoices = Invoice_Serializer_For_Dashboard(
+            Invoice.objects.all().order_by('-id')[:10], many=True
+        )
+        expenses = Expense_Entry_Serializer(
+            Expense_Entry.objects.all().order_by('-id')[:10], many=True
+        )
 
-
-        today = datetime.today()
-
-        # Adjust the current month for financial year
-        if today.month in [1, 2, 3]:
-            current_month = today.month + 9
-            current_year = today.year - 1
-        else:
-            current_month = today.month - 3
-            current_year = today.year
-
-        # Generate dates for the last 12 months in financial year month format
+        # Financial year logic
+        today_dt = datetime.today()
+        current_month = today_dt.month - 3 if today_dt.month > 3 else today_dt.month + 9
+        current_year = today_dt.year if today_dt.month > 3 else today_dt.year - 1
         last_12_months = [datetime(current_year, (current_month - i) % 12 + 1, 1) for i in range(12)]
 
+        months_name, total_amount, paid_amount, banlance_amount, expense_amount_list, month_list = [], [], [], [], [], []
 
+        for month_obj in last_12_months:
+            months_name.append(month_obj.strftime('%B'))
+            month_list.append(month_obj.month)
 
+            start = make_aware(datetime(month_obj.year, month_obj.month, 1))
+            end = make_aware(datetime(month_obj.year + 1, 1, 1)) if month_obj.month == 12 else make_aware(datetime(month_obj.year, month_obj.month + 1, 1))
+
+            total_amount.append(Invoice.objects.filter(date__gte=start, date__lt=end).aggregate(Sum('total_amount'))['total_amount__sum'] or 0)
+            paid_amount.append(Invoice.objects.filter(date__gte=start, date__lt=end).aggregate(Sum('advance'))['advance__sum'] or 0)
+            banlance_amount.append(Invoice.objects.filter(date__gte=start, date__lt=end).aggregate(Sum('balance'))['balance__sum'] or 0)
+            expense_amount_list.append(Expense_Entry.objects.filter(date__gte=start, date__lt=end).aggregate(Sum('amount'))['amount__sum'] or 0)
+
+        expense_amount_sum = sum(expense_amount_list)
+
+        # This month's payments
+        tis_month_amount = Invoice.objects.filter(date__year=year, date__month=month).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        tis_month_advance = Invoice.objects.filter(date__year=year, date__month=month).aggregate(Sum('advance'))['advance__sum'] or 0
+        tis_month_balance = Invoice.objects.filter(date__year=year, date__month=month).aggregate(Sum('balance'))['balance__sum'] or 0
         
-        months_name = []
-        total_amount = []
-        paid_amount = []
-        banlance_amount = []
-        expense_amount_list = []
+        payments = [tis_month_amount, tis_month_advance, tis_month_balance]
 
-        expenses = Expense_Entry.objects.all().order_by('-id')[:10]
-        expenses = Expense_Entry_Serializer(expenses, many=True)
-        month_list = []
-
-        for month in last_12_months:
-            months_name.append(month.strftime('%B'))
-            month_list.append(month.month)
-            amount = Invoice.objects.filter(created_date__year=year,created_date__month=month.month).aggregate(Sum('total_amount'))
-            if amount['total_amount__sum']:                
-                total_amount.append(amount['total_amount__sum'])
-            else:
-                total_amount.append(0)
-            advance = Invoice.objects.filter(created_date__year=year,created_date__month=month.month).aggregate(Sum('advance'))
-            if advance['advance__sum']:                
-                paid_amount.append(advance['advance__sum'])
-            else:
-                paid_amount.append(0)                
-
-            balance = Invoice.objects.filter(created_date__year=year,created_date__month=month.month).aggregate(Sum('balance'))
-            if balance['balance__sum']:
-                banlance_amount.append(balance['balance__sum'])
-            else:
-                banlance_amount.append(0)
-
-            expense_amount = Expense_Entry.objects.filter(created_date__year=year,created_date__month=month.month).aggregate(Sum('amount'))
-            if expense_amount['amount__sum']:
-                expense_amount_list.append(expense_amount['amount__sum'])
-            else:
-                expense_amount_list.append(0)
-        
-        expense_amount_sum  = sum(expense_amount_list)
- 
-        tis_month_amount = Invoice.objects.filter(created_date__year=year,created_date__month=this_month).aggregate(Sum('total_amount'))
-        if tis_month_amount['total_amount__sum']:                
-            tis_month_amount = tis_month_amount['total_amount__sum']
-        else:
-            tis_month_amount = 0
-        tis_month_advance = Invoice.objects.filter(created_date__year=year,created_date__month=this_month).aggregate(Sum('advance'))
-        if tis_month_advance['advance__sum']:                
-            tis_month_advance = tis_month_advance['advance__sum']
-        else:
-            tis_month_advance = 0              
-
-        tis_month_balance = Invoice.objects.filter(created_date__year=year,created_date__month=this_month).aggregate(Sum('balance'))
-        if tis_month_balance['balance__sum']:
-            tis_month_balance = tis_month_balance['balance__sum']
-        else:
-            tis_month_balance = 0
-        
-        payments  = [tis_month_amount,tis_month_advance,tis_month_balance]
-        payments_sum = sum(payments)
-
-        expenses_list = Expense.objects.all()
-
+        # Expense by category across 12 months
         expenses_name = []
         expenses_data = []
-
-        for expense in expenses_list:
+        for expense in Expense.objects.all():
             expenses_name.append(str(expense))
-            total = Expense_Entry.objects.filter(expense_category=expense,created_date__month__in=month_list).aggregate(Sum('amount'))
-            if total['amount__sum']:
-                expenses_data.append(total['amount__sum'])
-            else:
-                expenses_data.append(0)
+            monthly_sum = Expense_Entry.objects.filter(expense_category=expense).annotate(
+                date_cast=Cast('created_date', output_field=DateField()),
+                month=ExtractMonth(Cast('created_date', output_field=DateField()))
+            ).filter(month__in=month_list).aggregate(Sum('amount'))['amount__sum']
+            expenses_data.append(monthly_sum or 0)
 
-
-
+        # Final context
         context = {
-            'this_month_generated_incompleted_invoice':this_month_generated_incompleted_invoice,
-            'incompleted_invoice_count':incompleted_invoice_count,
-            'this_month_generated_incompleted_test':this_month_generated_incompleted_test,
-            'incompleted_test_count':incompleted_test_count,
-            'pending_payment_count':pending_payment_count,
-            'this_month_generated_invoice':this_month_generated_invoice,
-            'this_month_pending_payment_count':this_month_pending_payment_count,
-            'this_month_expense_total':this_month_expense_total['amount__sum'],
-            'this_month_expense_entry_count':this_month_expense_entry_count,
-            'customer_count':customer_count,
-            'this_month_customer_count':this_month_customer_count,
-            'category_wise_amounts':category_wise_amounts,
-            'all_invoice':all_invoice,
-            'this_month_expense_count':this_month_expense_count,
-            'total_expense_count':total_expense_count,
-            'pending_payment':pending_payment['balance__sum'],
-            'pending_payment_this_month':pending_payment_this_month['balance__sum'],
-            'months_name':months_name,
-            'total_amount':total_amount,
-            'paid_amount':paid_amount,
-            'banlance_amount':banlance_amount,
-            'payments':payments,
-            'this_month_name':this_month_name,
-            'invoices':invoices.data,
-            'expenses':expenses.data,
-            'expense_amount_list':expense_amount_list,
-            'expense_amount_sum':expense_amount_sum,
-            'payments_sum':tis_month_amount,
-            'expenses_name':expenses_name,
-            'expenses_data':expenses_data,
-
+            'this_month_generated_incompleted_invoice': this_month_generated_incompleted_invoice,
+            'incompleted_invoice_count': incompleted_invoice_count,
+            'this_month_generated_incompleted_test': this_month_generated_incompleted_test,
+            'incompleted_test_count': incompleted_test_count,
+            'pending_payment_count': pending_payment_count,
+            'this_month_generated_invoice': this_month_generated_invoice,
+            'this_month_pending_payment_count': this_month_pending_payment_count,
+            'this_month_expense_total': this_month_expense_total,
+            'this_month_expense_entry_count': this_month_expense_entry_count,
+            'customer_count': customer_count,
+            'this_month_customer_count': this_month_customer_count,
+            'category_wise_amounts': Expense_Entry.objects.values('expense_category__expense_name').annotate(total_amount=Sum('amount')),
+            'all_invoice': all_invoice,
+            'this_month_expense_count': this_month_expense_count,
+            'total_expense_count': total_expense_count,
+            'pending_payment': pending_payment,
+            'pending_payment_this_month': pending_payment_this_month,
+            'months_name': months_name,
+            'total_amount': total_amount,
+            'paid_amount': paid_amount,
+            'banlance_amount': banlance_amount,
+            'payments': payments,
+            'this_month_name': this_month_name,
+            'invoices': invoices.data,
+            'expenses': expenses.data,
+            'expense_amount_list': expense_amount_list,
+            'expense_amount_sum': expense_amount_sum,
+            'payments_sum': tis_month_amount,
+            'expenses_name': expenses_name,
+            'expenses_data': expenses_data,
         }
+
         return Response(context)
+
     
 
 class Add_Payment(APIView):

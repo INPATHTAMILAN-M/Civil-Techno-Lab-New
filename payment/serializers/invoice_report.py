@@ -55,8 +55,8 @@ class InvoiceListSerializer(serializers.ModelSerializer):
         model = Invoice
         fields = ('id','customer', 'sales_mode', 'project_name', 'discount', 'tax', 
                  'advance', 'balance', 'total_amount', 'tds_amount', 'fully_paid',
-                 'date', 'invoice_no', 'payment_mode', 'cheque_number', 'upi',
-                 'bank', 'amount_paid_date', 'invoice_image', 'place_of_testing',
+                 'date', 'invoice_no', 'payment_mode', 'cheque_number', 'upi','after_tax_amount',
+                 'bank', 'amount_paid_date', 'invoice_image', 'place_of_testing','before_tax_amount',
                  'completed', 'is_old_invoice_format', "invoice_tests",'invoice_file')
         
     def get_invoice_file(self, obj):

@@ -72,7 +72,7 @@ router.register(r'employee', EmployeeViewSet, basename='employee')
 router.register(r'expense', ExpenseViewSet, basename='expense')
 router.register(r'quotation', QuotationViewSet, basename='quotation')
 router.register(r'expense-entry', Expense_Entry_ViewSet, basename='expense-entry')
-router.register(r'invoice_file', InvoiceFileViewSet, basename='invoice-file')
+router.register(r'invoice-file', InvoiceFileViewSet, basename='invoice-file')
 router.register(r'invoice-discount', InvoiceDiscountViewSet, basename='invoice-discount')
 router.register(r'user-logs',UserlogsViewSet,basename='authlog')
 

@@ -45,84 +45,71 @@ class InvoiceTestViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        many = isinstance(request.data, list)
+        serializer = self.get_serializer(data=request.data, many=many)
         serializer.is_valid(raise_exception=True)
 
-        validated_data = serializer.validated_data
-        validated_data['created_by'] = request.user
-        validated_data['modified_by'] = request.user
+        instances = serializer.save(created_by=request.user, modified_by=request.user)
 
-        # Manually build the instance (without saving yet)
-        instance = Invoice_Test(**validated_data)
+        # If only one object is created, wrap it in a list for consistency
+        if not isinstance(instances, list):
+            instances = [instances]
 
-        # Generate report template and QR image path
-        report_template, invoice_img_path = self._build_invoice_template(instance)
-        instance.report_template = report_template
-        instance.invoice_image = invoice_img_path
+        for i_test in instances:
+            template = i_test.test.material_name.template or ''
+            invoice = i_test.invoice
+            customer = invoice.customer
 
-        # Save only once
-        instance.save()
+            # Replace placeholders
+            template = template.replace('Test Order', f'Test Order: {invoice.invoice_no}')
+            template = template.replace('CUSTOMERDETAILS', f'<p>{customer.customer_name}</p><p>{customer.address1}</p>')
+            template = template.replace('Date :', f'Date : {i_test.created_date.strftime("%d-%m-%Y")}')
+            template = template.replace('Place of Testing Name', str(invoice.place_of_testing))
+            template = template.replace('Project Name', str(invoice.project_name))
 
-        # Return response
-        output_serializer = InvoiceTestDetailSerializer(instance)
+            # Header image and ULR logic
+            if i_test.test.material_name.material_name == 'Rebound Hammer':
+                template = template.replace(
+                    '<td colspan="2">&nbsp;</td>',
+                    f'<td colspan="2"><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/header-hammer.png" style="width:100%" /></td>',
+                    1
+                )
+                template = template.replace('ULR:', f'ULR: {i_test.ulr}')
+            else:
+                template = template.replace(
+                    '<td colspan="2">&nbsp;</td>',
+                    f'<td colspan="2"><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/header.gif" style="width:100%" /></td>',
+                    1
+                )
+
+            # QR code generation
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr_url = f"{settings.QR_DOMAIN}/invoice/viewtestreport?id={i_test.id}"
+            qr.add_data(qr_url)
+            qr.make(fit=True)
+            qr_img = qr.make_image(fill_color="black", back_color="white")
+
+            qr_dir = os.path.join(settings.MEDIA_ROOT, "invoice_test")
+            os.makedirs(qr_dir, exist_ok=True)
+            qr_filename = f"invoice_{i_test.id}.png"
+            qr_path = os.path.join(qr_dir, qr_filename)
+            qr_img.save(qr_path)
+
+            qr_relative = f"media/invoice_test/{qr_filename}"
+            i_test.invoice_image = qr_relative
+
+            # Embed QR image in HTML
+            qr_img_tag = f'<img height="120" width="120" src="{settings.BACKEND_DOMAIN}/{qr_relative}">'
+            template = template.replace('qr code', qr_img_tag)
+
+            # Final save
+            i_test.report_template = template
+            i_test.save()
+
+        output_serializer = InvoiceTestDetailSerializer(instances, many=True)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
-
-    def _build_invoice_template(self, instance):
-        """Builds the updated HTML template and returns image path."""
-        template = instance.test.material_name.template or ""
-        template = self._replace_basic_fields(template, instance)
-        template = self._add_header_image(template, instance)
-        template, qr_path = self._add_qr_code(template, instance)
-        return template, qr_path
-
-    def _replace_basic_fields(self, template, instance):
-        invoice = instance.invoice
-        customer = invoice.customer
-
-        replacements = {
-            'Test Order': f'Test Order: {invoice.invoice_no}',
-            'CUSTOMERDETAILS': f'<p>{customer.customer_name}</p><p>{customer.address1}</p>',
-            'Date :': f'Date : {invoice.date.strftime("%d-%m-%Y")}',
-            'Place of Testing Name': str(invoice.place_of_testing),
-            'Project Name': str(invoice.project_name),
-        }
-
-        for key, value in replacements.items():
-            template = template.replace(key, value)
-
-        return template
-
-    def _add_header_image(self, template, instance):
-        material = instance.test.material_name.material_name
-        if material == 'Rebound Hammer':
-            header_img = f'<td colspan="2"><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/header-hammer.png" style="width:100%" /></td>'
-            template = template.replace('ULR:', f'ULR: {instance.ulr}')
-        else:
-            header_img = f'<td colspan="2"><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/header.gif" style="width:100%" /></td>'
-
-        return template.replace('<td colspan="2">&nbsp;</td>', header_img, 1)
-
-    def _add_qr_code(self, template, instance):
-        qr_url = f"{settings.QR_DOMAIN}/invoice/viewtestreport?id={instance.id}"
-
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(qr_url)
-        qr.make(fit=True)
-        qr_image = qr.make_image(fill_color="black", back_color="white")
-
-        qr_dir = os.path.join(settings.MEDIA_ROOT, "invoice_test")
-        os.makedirs(qr_dir, exist_ok=True)
-        qr_filename = f"invoice_{instance.id}.png"
-        qr_path = os.path.join(qr_dir, qr_filename)
-        qr_image.save(qr_path)
-
-        # Replace "qr code" placeholder in the HTML
-        qr_html = f'<img height="120" width="120" src="{settings.BACKEND_DOMAIN}/invoice_test/{qr_filename}">'
-        template = template.replace('qr code', qr_html)
-
-        return template, f"invoice_test/{qr_filename}"
