@@ -2,7 +2,7 @@ import os
 from django.conf import settings
 import qrcode
 from rest_framework import viewsets, filters
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from payment.pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
@@ -30,6 +30,11 @@ class InvoiceTestViewSet(viewsets.ModelViewSet):
         if self.action in ['update', 'partial_update']:
             return InvoiceTestUpdateSerializer
         return InvoiceTestDetailSerializer  
+    
+    def get_permissions(self):
+        if self.action in ['retrieve','list']:
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
     def list(self, request, *args, **kwargs):
         pagination_param = request.query_params.get('pagination', 'true').lower()

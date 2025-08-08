@@ -1,7 +1,7 @@
 from rest_framework import viewsets, filters
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication,BasicAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from payment.pagination import CustomPagination
@@ -33,6 +33,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return InvoiceListSerializer
         return InvoiceRetrieveSerializer
+    
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return [AllowAny()]
+        return [IsAuthenticated()]
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
