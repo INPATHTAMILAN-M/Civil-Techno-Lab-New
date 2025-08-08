@@ -1,373 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
-  {% load mathfilters %}
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="A4 Printable Invoice Template" />
-    <title>Invoice Preview - A4 Printable</title>
+{% load mathfilters %}
 
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A4 Printable Invoice Template" />
+  <title>Invoice Preview - A4 Printable</title>
 
-    <style>
-      /* General Styles */
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    @page {
+      size: A4;
+      margin: 10mm;
+
+      @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-size: 10px;
+        color: #000000;
+      }
+    }
+
+    body {
+      font-family: "Nunito", serif;
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+      color: #333;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p {
+      margin: 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: #333;
+    }
+
+    @media print {
       body {
-        font-family: "Nunito", serif;
         margin: 0;
         padding: 0;
-        font-size: 14px;
-        color: #333;
       }
 
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6,
-      p {
-        margin: 0;
+      .no-print {
+        display: none;
       }
+    }
 
-      a {
-        text-decoration: none;
-        color: #333;
-      }
+    .container {
+      max-width: 210mm;
+      min-height: 297mm;
+      padding: 10mm 5mm;
+      margin: auto;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-      /* Printable Area */
-      @page {
-        size: A4;
-        margin: 0mm;
-      }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #e0e6ed;
+      padding-bottom: 10px;
+    }
 
-      @media print {
-        body {
-          margin: 0;
-          padding: 0;
-        }
+    .header h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+    }
 
-        .no-print {
-          display: none;
-        }
-      }
+    .header img {
+      width: 150px;
+      height: auto;
+    }
 
-      /* A4 Container */
-      .container {
-        max-width: 210mm;
-        min-height: 297mm;
-        padding: 10mm 5mm;
-        margin: auto;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
+    .company-details {
+      text-align: right;
+      font-size: 12px;
+    }
 
-      /* Header Section */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #e0e6ed;
-        padding-bottom: 10px;
-      }
+    .customer-details,
+    .invoice-details {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
 
-      .header h3 {
-        font-size: 24px;
-        font-weight: 700;
-        color: #333;
-      }
+    .details {
+      width: 48%;
+    }
 
-      .header img {
-        width: 150px;
-        height: auto;
-      }
+    .details p {
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
 
-      .company-details {
-        text-align: right;
-        font-size: 12px;
-      }
+    .details .label {
+      font-weight: 700;
+      color: #555;
+    }
 
-      /* Customer Details */
-      .customer-details,
-      .invoice-details {
-        margin-top: 20px;
-        display: flex;
-        justify-content: space-between;
-      }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 12px;
+    }
 
-      .details {
-        width: 48%;
-      }
+    table th,
+    table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
 
-      .details p {
-        margin-bottom: 5px;
-        font-size: 12px;
-      }
+    table th {
+      background-color: #f9f9f9;
+      font-weight: 700;
+    }
 
-      .details .label {
-        font-weight: 700;
-        color: #555;
-      }
+    table td.align-right {
+      text-align: right;
+    }
 
-      /* Table Section */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        font-size: 12px;
-      }
+    .summary {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
 
-      table th,
-      table td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-      }
+    .bank-details {
+      width: 60%;
+      font-size: 12px;
+    }
 
-      table th {
-        background-color: #f9f9f9;
-        font-weight: 700;
-      }
+    .total {
+      width: 35%;
+      font-size: 12px;
+    }
 
-      table td.align-right {
-        text-align: right;
-      }
+    .total table {
+      border: none;
+    }
 
-      /* Summary Section */
-      .summary {
-        margin-top: 20px;
-        display: flex;
-        justify-content: space-between;
-      }
+    .total table td {
+      border: none;
+      padding: 5px 0;
+    }
 
-      .bank-details {
-        width: 60%;
-        font-size: 12px;
-      }
+    .total table td.label {
+      font-weight: 700;
+    }
 
-      .total {
-        width: 35%;
-        font-size: 12px;
-      }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #555;
+    }
 
-      .total table {
-        border: none;
-      }
+    .qr-code {
+      display: inline-block;
+      width: 48%;
+      margin-top: 20px;
+    }
 
-      .total table td {
-        border: none;
-        padding: 5px 0;
-      }
+    .signature {
+      display: inline-block;
+      width: 50%;
+      text-align: end;
+      margin-top: 20px;
+    }
 
-      .total table td.label {
-        font-weight: 700;
-      }
+    .qr-code img,
+    .signature img {
+      width: 100px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
 
-      /* Footer */
-      .footer {
-        margin-top: 20px;
-        text-align: center;
-        font-size: 12px;
-        color: #555;
-      }
-
-      .qr-code{
-        display: inline-block;
-        width: 48%;
-        /* text-align: center; */
-        margin-top: 20px;
-      }
-
-      .signature {
-        display: inline-block;
-        width: 50%;
-        text-align: end;
-        margin-top: 20px;
-      }
-
-      .qr-code img,
-      .signature img {
-        width: 100px;
-        height: auto;
-        margin-bottom: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <!-- Header Section -->
-      <div class="header">
-        <div>
-          <h3>Invoice</h3>
-          <p>Invoice No: {{ invoice.invoice_no }}</p>
-        </div>
-        <div style="text-align: end;">
-          <img
-            src="{{settings.BACKEND_DOMAIN}}/static/images/logo.png"
-            alt="Company Logo"
-          />
-          <div class="company-details">
-            <p>An ISO/IEC 17025:2017 CERTIFIED LAB</p>
-            <p>411/4, Vijayalakshmi Nagar, Neelikonampalayam Po, Coimbatore.</p>
-            <p>GSTIN: 33AALCC7761L1Z7</p>
-            <p>CIN: U71200TZ2024PTC031215</p>
-          </div>
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header">
+      <div>
+        <h3>Invoice</h3>
+        <p>Invoice No: {{ invoice.invoice_no }}</p>
+      </div>
+      <div style="text-align: end;">
+        <img src="{{settings.BACKEND_DOMAIN}}/static/images/logo.png" alt="Company Logo" />
+        <div class="company-details">
+          <p>An ISO/IEC 17025:2017 CERTIFIED LAB</p>
+          <p>411/4, Vijayalakshmi Nagar, Neelikonampalayam Po, Coimbatore.</p>
+          <p>GSTIN: 33AALCC7761L1Z7</p>
+          <p>CIN: U71200TZ2024PTC031215</p>
         </div>
       </div>
+    </div>
 
-      <!-- Customer and Invoice Details -->
-      <div class="customer-details" >
-        <div class="details">
-          <p class="label">Issued For:</p>
-          <p>{{ customer.customer_name }}</p>
-          <p>{{ customer.address1 }}</p>
-          <p class="text-gray mb-2 f-14" style="color: #808080">-Original for Recipient</p>
-          <p class="text-gray mb-2 f-14" style="color: #808080">
-            -Duplicate for Supplier Transporter
-          </p>
-          <p class="text-gray mb-2 f-14" style="color: #808080">-Triplicate for Supplier</p>          
+    <!-- Customer and Invoice Details -->
+    <div class="customer-details">
+      <div class="details">
+        <p class="label">Issued For:</p>
+        <p>{{ customer.customer_name }}</p>
+        <p>{{ customer.address1 }}</p>
+        <p class="text-gray mb-2 f-14" style="color: #808080">-Original for Recipient</p>
+        <p class="text-gray mb-2 f-14" style="color: #808080">
+          -Duplicate for Supplier Transporter
+        </p>
+        <p class="text-gray mb-2 f-14" style="color: #808080">-Triplicate for Supplier</p>
+      </div>
+      <div class="details" style="text-align:end">
+        <div style='display: flex;justify-content: space-between;'>
+          <p><span class="label">Date:</span> </p>
+          <p>{{ invoice.date|date:"d/m/Y" }}</p>
         </div>
-        <div class="details" style="text-align:end">
-          <div style='display: flex;justify-content: space-between;'>
-            <p><span class="label">Date:</span> </p>
-            <p>{{ invoice.date|date:"d/m/Y" }}</p>
-          </div>
-          <div style='display: flex;justify-content: space-between;'>
+        <div style='display: flex;justify-content: space-between;'>
           <p><span class="label">Project Name:</span></p>
           <p style="width:50%">{{ invoice.project_name }}</p>
-          </div>
-
-          {% if invoice.place_of_testing %}
-          <div style='display: flex;justify-content: space-between;'>
-            <p><span class="label">Place of Testing:</span></p>
-            <p>{{ invoice.place_of_testing }} </p>
-          </div>
-          {% else  %}
-          <div style='display: flex;justify-content: space-between;'>
-            <p><span class="label">Place of Testing:</span></p>
-            <p></p>
-          </div>
-          {% endif %}
-          {% if customer.gstin_no %}
-          <div style='display: flex;justify-content: space-between;'>
-            <p><span class="label">GSTIN:</span></p>
-            <p>{{ customer.gstin_no }}</p>
-          </div>
-          {% else  %}
-          <div style='display: flex;justify-content: space-between;'>
-            <p><span class="label">GSTIN:</span></p>
-            <p></p>
-          </div>
-          {% endif %}
         </div>
-      </div>
 
-      <table>
-        <thead>
+        {% if invoice.place_of_testing %}
+        <div style='display: flex;justify-content: space-between;'>
+          <p><span class="label">Place of Testing:</span></p>
+          <p>{{ invoice.place_of_testing }} </p>
+        </div>
+        {% else %}
+        <div style='display: flex;justify-content: space-between;'>
+          <p><span class="label">Place of Testing:</span></p>
+          <p></p>
+        </div>
+        {% endif %}
+        {% if customer.gstin_no %}
+        <div style='display: flex;justify-content: space-between;'>
+          <p><span class="label">GSTIN:</span></p>
+          <p>{{ customer.gstin_no }}</p>
+        </div>
+        {% else %}
+        <div style='display: flex;justify-content: space-between;'>
+          <p><span class="label">GSTIN:</span></p>
+          <p></p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Name of Test</th>
+          <th>HSN/SAC</th>
+          <th>Qty</th>
+          <th class="align-right">Rate/Sample (INR)</th>
+          <th class="align-right">Amount (INR)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in invoice_items %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ item.test.test_name }} - <strong>{{item.test.material_name.material_name}}</strong> </td>
+          <td>998346</td>
+          <td>{{ item.quantity |floatformat:0}}</td>
+          <td class="align-right">{{ item.price_per_sample|floatformat:0 }}</td>
+          <td class="align-right">{{ item.total |floatformat:0}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Summary and Bank Details -->
+    <div class="summary">
+      <div class="bank-details">
+        <p><b>Name:</b> Covai Civil Lab Private Limited.</p>
+        <p><b>Account No:</b> 923020070722530</p>
+        <p><b>Bank Name & Branch:</b> Axis Bank, Vadavalli, Coimbatore</p>
+        <p><b>IFSC Code:</b> UTIB0003080</p>
+      </div>
+      <div class="total">
+        <table>
+          {% if discount %}
           <tr>
-            <th>S.No</th>
-            <th>Name of Test</th>
-            <th>HSN/SAC</th>
-            <th>Qty</th>
-            <th class="align-right">Rate/Sample (INR)</th>
-            <th class="align-right">Amount (INR)</th>
+            <td class="label">Discount {{discount|floatformat:0}}%:</td>
+            <td class="align-right">{{ discount_amount|floatformat:0 }}</td>
           </tr>
-        </thead>
-        <tbody>
-          {% for item in invoice_items %}
+          {% endif %}
           <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ item.test.test_name }} - <strong>{{item.test.material_name.material_name}}</strong> </td>
-            <td>998346</td>
-            <td>{{ item.quantity |floatformat:0}}</td>
-            <td class="align-right">{{ item.price_per_sample|floatformat:0 }}</td>
-            <td class="align-right">{{ item.total |floatformat:0}}</td>
+            <td class="label">Subtotal:</td>
+            <td class="align-right">{{ total_amount |floatformat:0}}</td>
           </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          <tr>
+            <td class="label">{{tax_display}}</td>
+            <td class="align-right">
+              {{tax_total| floatformat:0}}
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Total:</td>
+            <td class="align-right">
+              {{ after_tax_amount | floatformat:0}}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
 
-      <!-- Summary and Bank Details -->
-      <div class="summary">
-        <div class="bank-details">
-          <p><b>Name:</b>  Covai Civil Lab Private Limited.</p>
-          <p><b>Account No:</b> 923020070722530</p>
-          <p><b>Bank Name & Branch:</b> Axis Bank, Vadavalli, Coimbatore</p>
-          <p><b>IFSC Code:</b> UTIB0003080</p>
-        </div>
-        <div class="total">
-          <table>
-            {% if discount %}
-            <tr>
-              <td class="label">Discount {{discount|floatformat:0}}%:</td>
-              <td class="align-right">{{ discount_amount|floatformat:0 }}</td>
-            </tr>
-            {% endif %}            
-            <tr>
-              <td class="label">Subtotal:</td>
-              <td class="align-right">{{ total_amount |floatformat:0}}</td>
-            </tr>
-            <tr>
-              <td class="label">{{tax_display}}</td>
-              <td class="align-right">
-                {{tax_total| floatformat:0}}
-              </td>
-            </tr>
-            <tr>
-              <td class="label">Total:</td>
-              <td class="align-right">
-                {{ after_tax_amount | floatformat:0}}
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
+    <!-- QR Code and Signature -->
+    <div class="qr-code">
+      <img src="{{settings.BACKEND_DOMAIN}}/{{invoice.invoice_image}}" alt="QR Code" />
+      <p></p>
+    </div>
+    <div class="signature">
+      <img src="{{settings.BACKEND_DOMAIN}}/static/images/sign.png" alt="Signature" />
+      <p class="text-gray ">Authorised Signatory,</p>
+      <p class="text-gray ">Covai Civil Lab Private Limited.</p>
+      <p>
+        <b>Phone</b>:
+        <a href="tel:9840014193" class="f-14 text-gray">9840014193 |</a>
+      </p>
+      <p class="f-14 text-gray ">
+        <b>Email</b>:
+        <a href="mailto:cbe@covaicivillab.com" class="f-14 text-gray">
+          cbe@covaicivillab.com |</a>
+      </p>
 
-      <!-- QR Code and Signature -->
-      <div class="qr-code">
-        <img
-          src="{{settings.BACKEND_DOMAIN}}/{{invoice.invoice_image}}"
-          alt="QR Code"
-        />
-        <p></p>
-      </div>
-      <div class="signature">
-        <img
-          src="{{settings.BACKEND_DOMAIN}}/static/images/sign.png"
-          alt="Signature"
-        />
-        <p class="text-gray ">Authorised Signatory,</p>
-        <p class="text-gray ">Covai Civil Lab Private Limited.</p>
-        <p >
-          <b>Phone</b>:
-          <a href="tel:9840014193" class="f-14 text-gray">9840014193 |</a>
-        </p>
-        <p class="f-14 text-gray ">
-          <b>Email</b>:
-          <a href="mailto:cbe@covaicivillab.com" class="f-14 text-gray">
-            cbe@covaicivillab.com |</a
-          >
-        </p>
+      <p class="f-14 text-gray">
+        <b>Website</b>:
+        <a href="https://covaicivillab.com" class="f-14 text-gray">covaicivillab.com
+        </a>
+      </p>
+    </div>
+    <div class="footer">
+      <p>
+        <b>Declaration:</b> We declare this invoice shows the actual price of
+        services described.
+      </p>
+      <p>SUBJECT TO COIMBATORE JURISDICTION</p>
+      <p>This is a computer-generated invoice.</p>
+    </div>
+  </div>
+</body>
 
-        <p class="f-14 text-gray">
-          <b>Website</b>:
-          <a href="https://covaicivillab.com" class="f-14 text-gray"
-            >covaicivillab.com
-          </a>
-        </p>
-      </div>
-      <div class="footer">
-        <p>
-          <b>Declaration:</b> We declare this invoice shows the actual price of
-          services described.
-        </p>
-        <p>SUBJECT TO COIMBATORE JURISDICTION</p>
-        <p>This is a computer-generated invoice.</p>
-      </div>
-      </div>
-  </body>
 </html>

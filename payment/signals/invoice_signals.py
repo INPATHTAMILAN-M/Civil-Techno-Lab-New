@@ -1,21 +1,16 @@
 import logging
 from decimal import Decimal
-from django.db.models.signals import post_save, post_delete, m2m_changed
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from payment.models import Invoice, Invoice_Test, InvoiceDiscount, Receipt
+from payment.models import Invoice, Invoice_Test, InvoiceDiscount, Receipt, InvoiceTax
 
 logger = logging.getLogger(__name__)
-
-
-@receiver(m2m_changed, sender=Invoice.tax.through)
-def update_invoice_on_tax_change(sender, instance, action, **kwargs):
-    if action in ["post_add", "post_remove", "post_clear"]:
-        apply_invoice_calculation(instance)
 
 
 @receiver([post_save, post_delete], sender=Invoice_Test)
 @receiver([post_save, post_delete], sender=Receipt)
 @receiver([post_save, post_delete], sender=InvoiceDiscount)
+@receiver([post_save, post_delete], sender=InvoiceTax)
 def update_invoice_totals(sender, instance, **kwargs):
     logger.info(f"[Signal Triggered] Sender: {sender.__name__}, Instance: {instance}")
 
@@ -25,6 +20,8 @@ def update_invoice_totals(sender, instance, **kwargs):
     elif isinstance(instance, Receipt):
         invoice = instance.invoice_no
     elif isinstance(instance, InvoiceDiscount):
+        invoice = instance.invoice
+    elif isinstance(instance, InvoiceTax):
         invoice = instance.invoice
 
     if invoice:
@@ -42,10 +39,10 @@ def apply_invoice_calculation(invoice: Invoice):
     discount_percent_total = sum(d.discount for d in invoice.invoice_discounts.all())
     discount_amount = (Decimal(discount_percent_total) / Decimal('100')) * total_amount
 
-    # 3. Tax
+    # 3. Tax calculation from related InvoiceTax
     tax_total = sum(
-        (tax.tax_percentage / 100) * (total_amount - discount_amount)
-        for tax in invoice.tax.all()
+        (tax.tax_percentage / Decimal('100')) * (total_amount - discount_amount)
+        for tax in invoice.invoice_taxes.filter(enabled=True)
     )
 
     # 4. Receipts
@@ -77,4 +74,3 @@ def apply_invoice_calculation(invoice: Invoice):
         logger.info(f"Updated Invoice {invoice.id}: fields changed: {updated_fields}")
     else:
         logger.info(f"No actual field changes for Invoice ID: {invoice.id}, skipped save.")
-

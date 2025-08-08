@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from payment.models.invoice_models import InvoiceDiscount, Receipt
-from payment.models import Invoice, SalesMode, CustomerDiscount
+from payment.models import Invoice, SalesMode, CustomerDiscount,InvoiceTax
 from general.models import Tax
 from account.models import Customer
 
@@ -50,13 +50,46 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = ['customer','project_name','invoice_discounts']
+    
+    def create_invoice_tax(self, invoice):
+        """
+        Fetch enabled taxes and create InvoiceTax entries for the given invoice.
+        """
+
+        # Get all enabled taxes
+        enabled_taxes = Tax.objects.filter(tax_status='E')
+
+        # Calculate subtotal from invoice tests (if needed)
+        subtotal = sum(
+            item.quantity * item.price_per_sample
+            for item in invoice.invoice_tests.all()
+        )
+
+        invoice_taxes = []
+        for tax in enabled_taxes:
+            tax_amount = (tax.tax_percentage / 100) * subtotal
+            invoice_taxes.append(
+                InvoiceTax(
+                    invoice=invoice,
+                    tax_name=tax.tax_name,
+                    tax_percentage=tax.tax_percentage,
+                    enabled = True if tax.id in [1,2] else False,
+                    tax_amount=tax_amount,
+                    created_by=invoice.created_by,
+                    modified_by=invoice.modified_by,
+                )
+            )
+
+        # Bulk insert all taxes
+        if invoice_taxes:
+            InvoiceTax.objects.bulk_create(invoice_taxes)
 
     def create(self, validated_data):
         request = self.context['request']
         validated_data.update({
             'created_by': request.user,
             'modified_by': request.user,
-            'date': timezone.now().date(),
+            'date': timezone.localtime().date(),
         })
 
         # Set place of testing if available
@@ -83,6 +116,8 @@ class InvoiceCreateSerializer(serializers.ModelSerializer):
 
         # Create invoice with all data at once
         invoice = super().create(validated_data)
+
+        self.create_invoice_tax(invoice)
 
         # Generate QR code
         qr = qrcode.QRCode(
@@ -128,7 +163,6 @@ class InvoiceUpdateSerializer(serializers.ModelSerializer):
         request = self.context['request']
         validated_data['modified_by'] = request.user
 
-        tax_data = validated_data.pop('tax', None)
         updated_fields = []
 
         # Check and update only changed fields
@@ -141,13 +175,6 @@ class InvoiceUpdateSerializer(serializers.ModelSerializer):
         if updated_fields:
             instance.save(update_fields=updated_fields)
 
-        # Handle ManyToMany (tax)
-        if tax_data is not None:
-            old_tax_ids = set(instance.tax.values_list('id', flat=True))
-            new_tax_ids = set([t.id if hasattr(t, 'id') else t for t in tax_data])
-            if old_tax_ids != new_tax_ids:
-                instance.tax.set(tax_data)
-
         # Always regenerate report (if needed for preview update)
         generate_invoice_report(instance, request)
 
@@ -156,11 +183,16 @@ class InvoiceUpdateSerializer(serializers.ModelSerializer):
 class InvoiceRetrieveSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(read_only=True)
     sales_mode = SalesModeSerializer(read_only=True)
-    tax = TaxSerializer(many=True, read_only=True)
     
-    customer_id = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all(), write_only=True, source='customer')
-    sales_mode_id = serializers.PrimaryKeyRelatedField(queryset=SalesMode.objects.all(), write_only=True, source='sales_mode')
-    tax_ids = serializers.PrimaryKeyRelatedField(queryset=Tax.objects.all(), many=True, write_only=True, source='tax')
+    # New: Show all invoice taxes
+    invoice_taxes = serializers.SerializerMethodField()
+    
+    customer_id = serializers.PrimaryKeyRelatedField(
+        queryset=Customer.objects.all(), write_only=True, source='customer'
+    )
+    sales_mode_id = serializers.PrimaryKeyRelatedField(
+        queryset=SalesMode.objects.all(), write_only=True, source='sales_mode'
+    )
     invoice_discounts = InvoiceDiscountSerializer(many=True, read_only=True)
     invoice_file = serializers.SerializerMethodField()
     invoice_receipts = InvoiceReceiptSerializer(many=True, read_only=True)
@@ -170,15 +202,21 @@ class InvoiceRetrieveSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_invoice_file(self, obj):
-        # Fetch the most recent QuotationReport using the related_name
         recent_report = obj.invoice_reports.order_by('-id').first()
-        
         if recent_report and recent_report.invoice_file:
-            # Build the full URL using BACKEND_DOMAIN
-            full_url = f"{settings.BACKEND_DOMAIN}{recent_report.invoice_file.url}"
-            return full_url
-        
+            return f"{settings.BACKEND_DOMAIN}{recent_report.invoice_file.url}"
         return None
+
+    def get_invoice_taxes(self, obj):
+        return [
+            {   "id":tax.id,
+                "tax_name": tax.tax_name,
+                "tax_percentage": float(tax.tax_percentage),
+                "tax_amount": float(tax.tax_amount),
+                "enabled":tax.enabled
+            }
+            for tax in obj.invoice_taxes.all()
+        ]
 
 class InvoiceListSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(read_only=True)

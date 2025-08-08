@@ -63,7 +63,7 @@ class InvoiceTestViewSet(viewsets.ModelViewSet):
             # Replace placeholders
             template = template.replace('Test Order', f'Test Order: {invoice.invoice_no}')
             template = template.replace('CUSTOMERDETAILS', f'<p>{customer.customer_name}</p><p>{customer.address1}</p>')
-            template = template.replace('Date :', f'Date : {i_test.created_date.strftime("%d-%m-%Y")}')
+            template = template.replace('Date :', f'Date : {i_test.created_date.strftime("%d/%m/%Y")}')
             template = template.replace('Place of Testing Name', str(invoice.place_of_testing))
             template = template.replace('Project Name', str(invoice.project_name))
 

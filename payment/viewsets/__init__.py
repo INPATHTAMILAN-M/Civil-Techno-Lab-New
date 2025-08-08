@@ -5,3 +5,6 @@ from .invoice_test import InvoiceTestViewSet
 from .invoice import InvoiceViewSet
 from .material import MaterialViewSet
 from .invoice_discount import InvoiceDiscountViewSet
+from .quotation_tax import QuotationTaxViewSet
+from .invoice_tax import InvoiceTaxViewSet
+

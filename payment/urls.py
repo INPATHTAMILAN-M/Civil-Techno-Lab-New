@@ -30,7 +30,9 @@ from .viewsets import (
     InvoiceTestViewSet,
     InvoiceViewSet,
     MaterialViewSet,
-    InvoiceDiscountViewSet
+    InvoiceDiscountViewSet,
+    InvoiceTaxViewSet,
+    QuotationTaxViewSet
 
 )
 from account.viewset import (
@@ -55,8 +57,10 @@ from payment.models import (
 from general.models import Material,Test,Expense,Tax
 
 
-
 router = DefaultRouter()
+
+router.register(r'invoice-taxes', InvoiceTaxViewSet, basename='invoice-tax')
+router.register(r'quotation-taxes', QuotationTaxViewSet, basename='quotation-tax')
 router.register(r'customer-discount', CustomerDiscountViewSet, basename='customer-discount')
 router.register(r'receipt', ReceiptViewSet, basename='receipt')
 router.register(r'test', TestViewSet, basename='test')

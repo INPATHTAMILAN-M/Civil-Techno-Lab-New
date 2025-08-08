@@ -7,7 +7,7 @@ from ..models import QuotationReport
 
 
 from rest_framework import serializers
-from payment.models import QuotationItem, Quotation, QuotationReport
+from payment.models import QuotationItem, Quotation, QuotationReport,QuotationTax
 from general.models import Tax
 from account.models import Customer
 from django.conf import settings
@@ -56,13 +56,9 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
     quotation_items = QuotationItemSerializer(many=True, read_only=True)
     class Meta:
         model = Quotation
-        fields = ['id', 'tax', 'completed','customer','quotation_items','date_created']
-
+        fields = ['id', 'completed','customer','quotation_items','date_created']
 
     def update(self, instance, validated_data):
-
-        # Extract and remove tax from validated_data (handle M2M separately)
-        tax_data = validated_data.pop('tax', None)
 
         # Update simple fields only if changed
         has_changes = False
@@ -72,20 +68,12 @@ class QuotationUpdateSerializer(serializers.ModelSerializer):
                 setattr(instance, attr, value)
                 has_changes = True
 
-        # Handle tax M2M
-        if tax_data is not None:
-            old_tax_ids = set(instance.tax.values_list('id', flat=True))
-            new_tax_ids = set([t.id if hasattr(t, 'id') else t for t in tax_data])
-            if old_tax_ids != new_tax_ids:
-                instance.tax.set(tax_data)
-                has_changes = True
-
         # Only save if anything changed
         if has_changes:
             instance.save()
 
         # Generate PDF regardless of whether fields changed
-        tax_set = instance.tax.all()
+        tax_set = instance.quotation_taxes.filter(enabled=True)
         sub_total = instance.sub_total or 0
         tax_total = sum(t.tax_percentage for t in tax_set)
         tax_display = " + ".join(f"{t.tax_name} ({t.tax_percentage}%)" for t in tax_set)
@@ -156,13 +144,13 @@ class QuotationRetrieveSerializer(serializers.ModelSerializer):
     quotation_items = QuotationItemSerializer(many=True, read_only=True)
     customer = CustomerSerializer()
     total_amount = serializers.SerializerMethodField()
-    tax = TaxListSerializer(many=True)
+    quotation_taxes = serializers.SerializerMethodField()
 
     class Meta:
         model = Quotation
-        fields = ['id', 'quotation_number', 'customer', 'date_created', 'tax', 'completed',
+        fields = ['id', 'quotation_number', 'customer', 'date_created', 'completed',
                   'total_amount', 'quotation_items', 'quotation_qr','before_tax','after_tax',
-                  'total_amount']
+                  'total_amount','quotation_taxes']
     
     def get_total_amount(self, obj):
         # Calculate the base total amount for all quotation items (without tax)
@@ -187,16 +175,27 @@ class QuotationRetrieveSerializer(serializers.ModelSerializer):
         # Gather all related tax objects
         taxes = Tax.objects.filter(tax_status="E") 
         return TaxSerializer(taxes, many=True).data
+
+    def get_quotation_taxes(self, obj):
+        return [
+            {   "id":tax.id,
+                "tax_name": tax.tax_name,
+                "tax_percentage": float(tax.tax_percentage),
+                "tax_amount": float(tax.tax_amount),
+                "enabled":tax.enabled
+            }
+            for tax in obj.quotation_taxes.all()
+        ]
         
 class QuotationCreateSerializer(serializers.ModelSerializer):
     quotation_qr = serializers.ImageField(read_only=True)
     class Meta:
         model = Quotation
-        fields = ['id','customer', 'tax', 'quotation_qr' ]
+        fields = ['id','customer', 'quotation_qr' ]
         
 class QuotationSerializer(serializers.ModelSerializer):
     quotation_items = QuotationItemSerializer(many=True, read_only=True)
     class Meta:
         model = Quotation
-        fields = ['id', 'customer', 'quotation_number', 'date_created', 'tax', 
+        fields = ['id', 'customer', 'quotation_number', 'date_created', 
                   'quotation_qr', 'completed', 'total_amount', 'quotation_items']

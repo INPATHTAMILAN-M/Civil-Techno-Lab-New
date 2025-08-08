@@ -53,7 +53,7 @@ class InvoiceListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
-        fields = ('id','customer', 'sales_mode', 'project_name', 'discount', 'tax', 
+        fields = ('id','customer', 'sales_mode', 'project_name', 'discount',
                  'advance', 'balance', 'total_amount', 'tds_amount', 'fully_paid',
                  'date', 'invoice_no', 'payment_mode', 'cheque_number', 'upi','after_tax_amount',
                  'bank', 'amount_paid_date', 'invoice_image', 'place_of_testing','before_tax_amount',
@@ -74,12 +74,11 @@ class InvoiceListSerializer(serializers.ModelSerializer):
 
 class InvoiceOldSerializer(serializers.ModelSerializer):
     invoice_tests = InvoiceTestSerializer(many=True)
-    tax = TaxSerializer(many=True)
     customer = CustomerSerializer()
 
     class Meta:
         model = Invoice
-        fields = ('customer', 'sales_mode', 'project_name', 'discount', 'tax', 
+        fields = ('customer', 'sales_mode', 'project_name', 'discount', 
                  'advance', 'balance', 'total_amount', 'tds_amount', 'fully_paid',
                  'date', 'invoice_no', 'payment_mode', 'cheque_number', 'upi',
                  'bank', 'amount_paid_date', 'invoice_image', 'place_of_testing',

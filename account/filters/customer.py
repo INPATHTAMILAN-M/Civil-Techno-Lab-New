@@ -7,7 +7,7 @@ class CustomerFilter(filters.FilterSet):
 
     class Meta:
         model = Customer
-        fields = []
+        fields = '__all__'
 
     def filter_by_all(self, queryset, name, value):
         return queryset.filter(

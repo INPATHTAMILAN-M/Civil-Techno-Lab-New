@@ -40,8 +40,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         
         instance = serializer.save()
     
-        first_two_taxes = Tax.objects.all()[:2]
-        instance.tax.set(first_two_taxes)
+        # first_two_taxes = Tax.objects.all()[:2]
+        # instance.tax.set(first_two_taxes)
 
         # Return with retrieve serializer
         serializer = InvoiceRetrieveSerializer(instance)

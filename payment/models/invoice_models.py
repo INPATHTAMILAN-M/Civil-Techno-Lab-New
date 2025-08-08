@@ -25,7 +25,6 @@ class Invoice(models.Model):
     sales_mode = models.ForeignKey(SalesMode, on_delete=models.CASCADE,null=True,blank=True)
     project_name = models.CharField(max_length=255)
     discount = models.FloatField(null=True,blank=True)
-    tax = models.ManyToManyField(Tax,null=True,blank=True)
     advance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -52,6 +51,7 @@ class Invoice(models.Model):
     place_of_testing = models.CharField(max_length=255, null=True, blank=True)
     completed = models.CharField(max_length=6, choices= invoice_test_choices,default="No")
     is_old_invoice_format = models.BooleanField(default=False)
+
     history = HistoricalRecords()
 
 
@@ -160,7 +160,22 @@ class Invoice_Test(models.Model):
     invoice_image = models.CharField(max_length=255, null=True, blank=True)
     completed = models.CharField(max_length=6, choices= invoice_test_choices,default="No")
     signature = models.ForeignKey(Employee,on_delete=models.CASCADE,null=True,blank=True)
+    primary_signature = models.ForeignKey(
+        Employee, on_delete=models.CASCADE,
+        null=True, blank=True,
+        related_name='invoice_tests_as_primary_signature'
+    )
+    secondary_signature = models.ForeignKey(
+        Employee, on_delete=models.CASCADE,
+        null=True, blank=True,
+        related_name='invoice_tests_as_secondary_signature'
+    )
     is_authorised_signatory = models.BooleanField(default=False)
+    primary_authorised_signature = models.BooleanField(default=False)
+    without_primary_signature = models.BooleanField(default=False)
+    without_secondary_signature = models.BooleanField(default=False)
+
+    secondary_authorised_signature = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="invoice_test_created_by",null=True)
     created_date = models.DateField(auto_now_add=True,null=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
@@ -232,10 +247,7 @@ class Receipt(models.Model):
     neft = models.CharField(max_length=150, null=True, blank=True)
     tds = models.CharField(max_length=150, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
-    
     amount  = models.DecimalField(max_digits=20, decimal_places=2, default=0)
-
-
     created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="payment_added_by",null=True)
     created_date = models.DateField(auto_now_add=True,null=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
@@ -369,3 +381,27 @@ class InvoiceDiscount(models.Model):
 
     def __str__(self):
         return f"Discount for Invoice {self.invoice.invoice_no}: {self.discount}%"
+    
+
+class InvoiceTax(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="invoice_taxes")
+    tax_name = models.CharField(max_length=255)
+    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="invoicetax_created_by"
+    )
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="invoicetax_modified_by"
+    )
+    modified_date = models.DateTimeField(auto_now=True)
+    enabled = models.BooleanField(default=True)
+    history = HistoricalRecords()
+
+    def __str__(self):
+        return f"Tax for Invoice {self.invoice.invoice_no}: {self.tax_percentage}%"

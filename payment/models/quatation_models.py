@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from account.models import Customer
+from django.contrib.auth.models import User
 from simple_history.models import HistoricalRecords
 
 def today():  # Safe helper
@@ -12,7 +13,6 @@ class Quotation(models.Model):
     quotation_number = models.CharField(max_length=20, unique=True, blank=True)  # Will be auto-generated
     quotation_qr = models.ImageField(upload_to='quotations/', blank=True, null=True)
     date_created = models.DateField(default=today)
-    tax = models.ManyToManyField('general.Tax', blank=True)
     before_tax = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     after_tax = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
@@ -53,11 +53,41 @@ class QuotationItem(models.Model):
 
     
 
-
-
 class QuotationReport(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name="quotation_reports")
     quotation_file = models.FileField(upload_to='quotation/', null=True, blank=True)
     created_by = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, related_name='quotation_reports_created')
     created_date = models.DateField(auto_now_add=True, null=True)
     history = HistoricalRecords()
+
+
+class QuotationTax(models.Model):
+    tax_name = models.CharField(max_length=255)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    quotation = models.ForeignKey(
+        Quotation,
+        on_delete=models.CASCADE,
+        related_name="quotation_taxes"
+    )
+    tax_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="quotationtax_created_by"
+    )
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="quotationtax_modified_by",
+        null=True,
+        blank=True
+    )
+    modified_date = models.DateTimeField(auto_now=True)
+    enabled = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.quotation} - {self.tax_percentage}%"

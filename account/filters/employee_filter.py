@@ -7,7 +7,7 @@ class EmployeeFilter(django_filters.FilterSet):
 
     class Meta:
         model = Employee
-        fields = []
+        fields = ['is_active','search']
 
     def filter_by_all(self, queryset, name, value):
         return queryset.filter(
