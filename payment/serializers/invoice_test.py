@@ -69,9 +69,7 @@ class InvoiceTestDetailSerializer(serializers.ModelSerializer):
         soup = BeautifulSoup(html, 'html.parser')
         header_sources = getattr(settings, 'INVOICE_HEADER_SOURCES', [
             f'{settings.BACKEND_DOMAIN}/static/header-hammer.png',
-            'https://files.covaiciviltechlab.com/static/header.gif',
-            'http://app.covaicivillab.com/static/header.gif',
-            'http://31.97.206.165/static/header.gif'
+            f'{settings.BACKEND_DOMAIN}/static/header.gif'
         ])
 
         for src in header_sources:
