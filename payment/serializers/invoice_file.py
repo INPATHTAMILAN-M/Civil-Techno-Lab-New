@@ -61,7 +61,7 @@ class InvoiceFileRetrieveSerializer(InvoiceFileBaseSerializer):
             return None
 
     def get_file_url(self, obj):
-        return f"{settings.BACKEND_DOMAIN}/media/api/{obj.file}"
+        return f"{settings.BACKEND_DOMAIN}/media/{obj.file}"
 
 
 class InvoiceFileListSerializer(InvoiceFileBaseSerializer):

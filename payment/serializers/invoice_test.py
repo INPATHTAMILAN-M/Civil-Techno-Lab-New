@@ -106,7 +106,7 @@ class InvoiceTestDetailSerializer(serializers.ModelSerializer):
         if hidden:
             img_tag = '<img style="visibility: hidden;" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" height="38px" width="38px">'
         else:
-            img_tag = f'<img src="{settings.BACKEND_DOMAIN}/api/media/{signature.signature}" height="150px" width="150px">'
+            img_tag = f'<img src="{settings.BACKEND_DOMAIN}/media/{signature.signature}" height="150px" width="150px">'
         return f"""
             <p id=\"dynamic-signature\">{img_tag}</p>
             <p style=\"font-size:12px\"><strong>{signature}<br>{signature.role}</strong></p>
@@ -141,7 +141,7 @@ class InvoiceTestDetailSerializer(serializers.ModelSerializer):
         else:
             right_block = "<p></p>"
 
-        qr_image_src = obj.invoice_image.url if hasattr(obj.invoice_image, 'url') else f"{settings.BACKEND_DOMAIN}/api/{obj.invoice_image}"
+        qr_image_src = obj.invoice_image.url if hasattr(obj.invoice_image, 'url') else f"{settings.BACKEND_DOMAIN}/{obj.invoice_image}"
         footer_img = f'<p><img alt="Logo" src="{settings.BACKEND_DOMAIN}/static/test-footer.png" style="width:100%" /></p>' if footer else ''
 
         return f"""

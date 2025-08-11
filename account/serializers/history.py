@@ -32,6 +32,7 @@ class HistorySerializer(serializers.Serializer):
             return {}
 
         delta = obj.diff_against(prev, foreign_keys_are_objs=True)
+        OMIT_FIELDS = ['updated_at', 'created_at', 'last_login','Report_template'] 
 
         def safe_value(value):
             # Convert FK objects to strings (e.g., __str__) or IDs
@@ -44,7 +45,7 @@ class HistorySerializer(serializers.Serializer):
                 'from': safe_value(change.old),
                 'to': safe_value(change.new)
             }
-            for change in delta.changes
+            for change in delta.changes  if change.field not in OMIT_FIELDS
         }
 
     def get_custom_info(self, obj):

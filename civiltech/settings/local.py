@@ -27,7 +27,7 @@ DEBUG = True
 
 USE_X_FORWARDED_HOST = True
 
-ALLOWED_HOSTS = ['127.0.0.1','bfclps4z-8000.inc1.devtunnels.ms']
+ALLOWED_HOSTS = ['127.0.0.1','napp.covaicivillab.com','nrtc.covaicivillab.com']
 
 
 # Application definition
@@ -135,7 +135,7 @@ WSGI_APPLICATION = 'civiltech.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'civil',
+        'NAME': 'civil-test-db',
         'USER': 'root',
         'PASSWORD': 'StrongPassword123',
         'HOST': '127.0.0.1',
@@ -196,8 +196,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = '/ckeditor/uploads/'
 
-BACKEND_DOMAIN = 'http://31.97.206.165'
-QR_DOMAIN = 'http://31.97.206.165'
+BACKEND_DOMAIN = 'https://napp.covaicivillab.com'
+QR_DOMAIN = 'https://nrtc.covaicivillab.com'
 
 CKEDITOR_CONFIGS = {
     'default': {
