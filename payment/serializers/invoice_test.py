@@ -98,9 +98,9 @@ class InvoiceTestDetailSerializer(serializers.ModelSerializer):
         soup.append(BeautifulSoup(signature_block, 'html.parser'))
         return str(soup)
 
-    def get_signature_html(self, obj, signature, hidden=False, label="Covai Civil Lab Private Limited"):
+    def get_signature_html(self, signature, hidden=False, label="Covai Civil Lab Private Limited"):
         
-        if obj.id == 33:
+        if signature.id == 33:
             return f"""
                 <p id=\"dynamic-signature\">/p>
                 <p style=\"font-size:12px\">/p>
@@ -129,9 +129,9 @@ class InvoiceTestDetailSerializer(serializers.ModelSerializer):
     def get_signature_block(self, obj, hidden=False, footer=True):
         if obj.primary_signature:
             if obj.without_primary_signature:
-                left_block = self.get_signature_html(obj,obj.primary_signature, hidden=True)
+                left_block = self.get_signature_html(obj.primary_signature, hidden=True)
             else:
-                left_block = self.get_signature_html(obj,obj.primary_signature)
+                left_block = self.get_signature_html(obj.primary_signature)
         elif obj.primary_authorised_signature:
             left_block = self.get_authorised_block()
         else:
@@ -139,9 +139,9 @@ class InvoiceTestDetailSerializer(serializers.ModelSerializer):
 
         if obj.secondary_signature:
             if obj.without_secondary_signature:
-                right_block = self.get_signature_html(obj,obj.secondary_signature, hidden=True)
+                right_block = self.get_signature_html(obj.secondary_signature, hidden=True)
             else:
-                right_block = self.get_signature_html(obj,obj.secondary_signature)
+                right_block = self.get_signature_html(obj.secondary_signature)
         elif obj.secondary_authorised_signature:
             right_block = self.get_authorised_block()
         else:
