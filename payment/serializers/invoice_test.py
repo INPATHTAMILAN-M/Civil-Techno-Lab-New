@@ -102,8 +102,8 @@ class InvoiceTestDetailSerializer(serializers.ModelSerializer):
         
         if signature.id == 33:
             return f"""
-                <p id=\"dynamic-signature\">/p>
-                <p style=\"font-size:12px\">/p>
+                <p id=\"dynamic-signature\"></p>
+                <p style=\"font-size:12px\"></p>
                 <p style=\"font-size:12px\"></p>
             """
         else:
