@@ -21,6 +21,9 @@ class InvoiceTestViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = InvoiceTestFilter
     pagination_class = CustomPagination
+    http_method_names = ['get','post','patch','delete']
+
+
 
     def get_serializer_class(self):
         if self.action == 'create':
